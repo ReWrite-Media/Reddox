@@ -1,7 +1,10 @@
 package net.minestom.script;
 
+import net.minestom.script.command.EntityCommand;
 import net.minestom.script.command.FunctionCommand;
+import net.minestom.script.command.WorldCommand;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandManager;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
@@ -31,7 +34,10 @@ public class ScriptManager {
 
         // Load commands
         {
-            MinecraftServer.getCommandManager().register(new FunctionCommand());
+            CommandManager commandManager = MinecraftServer.getCommandManager();
+            commandManager.register(new FunctionCommand());
+            commandManager.register(new WorldCommand());
+            commandManager.register(new EntityCommand());
         }
 
 

@@ -11,6 +11,9 @@ import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
+/**
+ * Command used to manage registered functions. Including running them.
+ */
 public class FunctionCommand extends Command {
     public FunctionCommand() {
         super("function");

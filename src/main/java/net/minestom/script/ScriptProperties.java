@@ -9,6 +9,9 @@ import org.jglrxavpok.hephaistos.nbt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Represents a list of properties to be forwarded and processed by scripts.
+ */
 public class ScriptProperties implements ProxyObject {
 
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
