@@ -7,6 +7,7 @@ import net.minestom.server.command.builder.Command;
 import org.jglrxavpok.hephaistos.nbt.NBT;
 
 import java.lang.String;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
@@ -20,9 +21,13 @@ public class FunctionCommand extends Command {
 
         setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /function run <name> [properties...]"));
 
+        final var propertiesArgument = Loop("properties",
+                Group("properties_group", Word("key"), NBT("value")))
+                .setDefaultValue(new ArrayList<>());
+
         addSyntax((sender, args) -> {
             final String name = args.get("function_name");
-            final List<Arguments> loopArguments = args.get("properties");
+            final List<Arguments> loopArguments = args.get(propertiesArgument);
 
             // Build the properties object
             ScriptProperties properties = new ScriptProperties();
@@ -32,10 +37,12 @@ public class FunctionCommand extends Command {
                 properties.putMember(key, nbt);
             }
 
-            ScriptManager.EXECUTOR.runFunction(name, properties);
-
-            sender.sendMessage("You executed the function: " + name);
-        }, Literal("run"), Word("function_name"), Loop("properties",
-                Group("properties_group", Word("key"), NBT("value"))));
+            final boolean success = ScriptManager.EXECUTOR.runFunction(name, properties);
+            if (success) {
+                sender.sendMessage("You executed the function: " + name);
+            } else {
+                sender.sendMessage("Unknown function name");
+            }
+        }, Literal("run"), Word("function_name"), propertiesArgument);
     }
 }
