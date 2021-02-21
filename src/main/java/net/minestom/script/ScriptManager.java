@@ -30,10 +30,22 @@ public class ScriptManager {
             .allowHostAccess(HostAccess.ALL).build();
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
+    private static volatile boolean loaded;
+
     /**
      * Loads and evaluate all scripts in the folder {@link #SCRIPT_FOLDER}.
      */
     public static void load() {
+        if (loaded) {
+            System.err.println("The script manager is already loaded!");
+            return;
+        }
+        loaded = true;
+
+        // Init events for signals
+        {
+            EventSignal.init(MinecraftServer.getGlobalEventHandler(), EXECUTOR);
+        }
 
         // Load commands
         {

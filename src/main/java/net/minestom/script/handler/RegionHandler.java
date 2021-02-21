@@ -1,6 +1,7 @@
 package net.minestom.script.handler;
 
 import net.minestom.server.utils.Vector;
+import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ public class RegionHandler {
 
     }
 
+    @Nullable
     public Region createRegion(String identifier, Vector minPos, Vector maxPos, NBTCompound nbtCompound) {
         if (regionMap.containsKey(identifier)) {
             return null;
@@ -23,6 +25,7 @@ public class RegionHandler {
         return region;
     }
 
+    @Nullable
     public Region getRegion(String identifier) {
         return regionMap.get(identifier);
     }

@@ -7,8 +7,10 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -19,16 +21,32 @@ import java.util.function.Consumer;
 public class Executor {
 
     private final Map<String, Consumer<ScriptProperties>> functionMap = new ConcurrentHashMap<>();
+    private final Map<String, List<Consumer<ScriptProperties>>> listenerMap = new ConcurrentHashMap<>();
 
     public void registerFunction(@NotNull String name, @NotNull Consumer<ScriptProperties> consumer) {
         this.functionMap.put(name, consumer);
     }
 
-    public boolean runFunction(@NotNull String name, @Nullable ScriptProperties properties) {
-        Consumer<ScriptProperties> consumer = functionMap.get(name);
+    public void registerListener(@NotNull String signal, @NotNull Consumer<ScriptProperties> consumer) {
+        List<Consumer<ScriptProperties>> listeners = listenerMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
+        listeners.add(consumer);
+    }
+
+    public boolean function(@NotNull String function, @NotNull ScriptProperties properties) {
+        Consumer<ScriptProperties> consumer = functionMap.get(function);
         if (consumer == null)
             return false;
         consumer.accept(properties);
+        return true;
+    }
+
+    public boolean signal(@NotNull String signal, @NotNull ScriptProperties properties) {
+        List<Consumer<ScriptProperties>> listeners = listenerMap.get(signal);
+        if (listeners == null || listeners.isEmpty())
+            return false;
+        for (Consumer<ScriptProperties> callback : listeners) {
+            callback.accept(properties);
+        }
         return true;
     }
 

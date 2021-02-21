@@ -37,7 +37,7 @@ public class FunctionCommand extends Command {
                 properties.putMember(key, nbt);
             }
 
-            final boolean success = ScriptManager.EXECUTOR.runFunction(name, properties);
+            final boolean success = ScriptManager.EXECUTOR.function(name, properties);
             if (success) {
                 sender.sendMessage("You executed the function: " + name);
             } else {
