@@ -3,6 +3,7 @@ package net.minestom.script.command.world;
 import net.minestom.script.command.ScriptCommand;
 import net.minestom.script.handler.RegionHandler;
 import net.minestom.script.utils.ArgumentUtils;
+import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.location.RelativeVec;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
@@ -69,6 +70,27 @@ public class RegionCommand extends ScriptCommand {
                         sender.sendMessage("region not found");
                     }
                 }, Literal("is_inside"), Word("identifier"), RelativeVec3("position"));
+            }
+
+            // 'get_data'
+            {
+                addSyntax((sender, args) -> {
+                    final String identifier = args.get("identifier");
+                    final RegionHandler.Region region = regionHandler.getRegion(identifier);
+
+                    CommandData data = new CommandData();
+
+                    data.set("success", region != null);
+                    if (region != null) {
+                        final NBTCompound nbtCompound = region.getNbtCompound();
+                        data.set("data", nbtCompound);
+                        sender.sendMessage("data: " + nbtCompound.toSNBT());
+                    } else {
+                        sender.sendMessage("region not found");
+                    }
+
+                    args.setReturnData(data);
+                }, Literal("get_data"), Word("identifier"));
             }
 
         }
