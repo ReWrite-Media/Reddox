@@ -9,5 +9,5 @@ function test(properties) {
 executor.registerListener("move", onSignal)
 
 function onSignal(properties) {
-    console.log("Signal called! "+properties.position.x)
+    //console.log("Signal called! "+properties.position.x)
 }

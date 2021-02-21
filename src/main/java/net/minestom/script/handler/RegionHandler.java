@@ -1,6 +1,8 @@
 package net.minestom.script.handler;
 
+import net.minestom.server.utils.Position;
 import net.minestom.server.utils.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
@@ -42,6 +44,19 @@ public class RegionHandler {
             this.nbtCompound = nbtCompound;
         }
 
+        public boolean isInside(@NotNull Vector vector) {
+            final double x = vector.getX();
+            final double y = vector.getY();
+            final double z = vector.getZ();
+            return x >= minPos.getX() && x <= maxPos.getX() &&
+                    y >= minPos.getY() && y <= maxPos.getY() &&
+                    z >= minPos.getZ() && z <= maxPos.getZ();
+        }
+
+        public boolean isInside(@NotNull Position position) {
+            return isInside(position.toVector());
+        }
+
         public String getIdentifier() {
             return identifier;
         }
@@ -57,6 +72,7 @@ public class RegionHandler {
         public NBTCompound getNbtCompound() {
             return nbtCompound;
         }
+
     }
 
 }

@@ -3,6 +3,7 @@ package net.minestom.script.command.world;
 import net.minestom.script.command.ScriptCommand;
 import net.minestom.script.handler.RegionHandler;
 import net.minestom.script.utils.ArgumentUtils;
+import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.location.RelativeVec;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
@@ -18,6 +19,9 @@ public class RegionCommand extends ScriptCommand {
         final RegionHandler regionHandler = getApi().getRegionHandler();
 
         setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /world region <create/edit> <identifier> [properties]"));
+
+        // All functions related to regions (eg: know if a position is inside a region)
+        addSubcommand(new RegionFunctionCommand());
 
         final var propertiesArgument = Loop("properties",
                 Group("1", Literal("position_start"), RelativeVec3("pos1")),
@@ -44,4 +48,30 @@ public class RegionCommand extends ScriptCommand {
             System.out.println("syntax2");
         }, Literal("edit"), Word("identifier"), propertiesArgument);
     }
+
+    private static class RegionFunctionCommand extends ScriptCommand {
+
+        public RegionFunctionCommand() {
+            super("function");
+
+            final RegionHandler regionHandler = getApi().getRegionHandler();
+
+            // 'is_inside'
+            {
+                // With explicit position
+                addSyntax((sender, args) -> {
+                    final String identifier = args.get("identifier");
+                    final RegionHandler.Region region = regionHandler.getRegion(identifier);
+                    if (region != null) {
+                        final Vector vector = ArgumentUtils.from(sender, args.get("position"));
+                        sender.sendMessage("inside: " + region.isInside(vector));
+                    } else {
+                        sender.sendMessage("region not found");
+                    }
+                }, Literal("is_inside"), Word("identifier"), RelativeVec3("position"));
+            }
+
+        }
+    }
+
 }
