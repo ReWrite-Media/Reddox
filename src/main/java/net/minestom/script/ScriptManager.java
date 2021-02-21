@@ -3,6 +3,7 @@ package net.minestom.script;
 import net.minestom.script.command.EntityCommand;
 import net.minestom.script.command.FunctionCommand;
 import net.minestom.script.command.WorldCommand;
+import net.minestom.script.handler.ScriptAPI;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import org.graalvm.polyglot.Context;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ScriptManager {
+
+    public static final ScriptAPI API = new ScriptAPI();
 
     public static final String SCRIPT_FOLDER = "scripts";
 
