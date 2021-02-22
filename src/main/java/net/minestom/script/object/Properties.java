@@ -40,6 +40,10 @@ public class Properties implements ProxyObject {
         this.properties.put(key, toValue(nbt));
     }
 
+    public void putMember(String key, Object object) {
+        this.properties.put(key, Value.asValue(object));
+    }
+
     @Nullable
     private static Value toValue(@NotNull NBT nbt) {
         Object object = null;
