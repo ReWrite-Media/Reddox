@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'org.example'
@@ -19,9 +20,14 @@ dependencies {
     implementation 'com.github.Minestom:Minestom:b0185aa7e1'
 
     // https://mvnrepository.com/artifact/org.eclipse.dirigible/dirigible-engine-javascript-graalvm
-    testImplementation group: 'org.eclipse.dirigible', name: 'dirigible-engine-javascript-graalvm', version: '5.8.0'
+    compile group: 'org.eclipse.dirigible', name: 'dirigible-engine-javascript-graalvm', version: '5.8.0'
 }
 
 test {
     useJUnitPlatform()
+}
+
+shadowJar {
+    // Only merge dependencies with the 'compile' configuration
+    configurations = [project.configurations.compile]
 }
