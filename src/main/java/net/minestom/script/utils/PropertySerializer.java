@@ -1,8 +1,9 @@
 package net.minestom.script.utils;
 
+import net.minestom.script.ScriptProperties;
 import net.minestom.server.utils.Position;
+import org.graalvm.polyglot.Value;
 import org.jetbrains.annotations.NotNull;
-import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
 /**
  * Serializes java objects into something understandable by any languages.
@@ -10,16 +11,16 @@ import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 public class PropertySerializer {
 
     @NotNull
-    public static NBTCompound fromPosition(@NotNull Position position) {
-        NBTCompound nbtCompound = new NBTCompound();
-        nbtCompound.setDouble("x", position.getX());
-        nbtCompound.setDouble("y", position.getY());
-        nbtCompound.setDouble("z", position.getZ());
+    public static Value fromPosition(@NotNull Position position) {
+        ScriptProperties scriptProperties = new ScriptProperties();
+        scriptProperties.putMember("x", Value.asValue(position.getX()));
+        scriptProperties.putMember("y", Value.asValue(position.getY()));
+        scriptProperties.putMember("z", Value.asValue(position.getZ()));
 
-        nbtCompound.setFloat("yaw", position.getYaw());
-        nbtCompound.setFloat("pitch", position.getPitch());
+        scriptProperties.putMember("yaw", Value.asValue(position.getYaw()));
+        scriptProperties.putMember("pitch", Value.asValue(position.getPitch()));
 
-        return nbtCompound;
+        return Value.asValue(scriptProperties);
     }
 
 }
