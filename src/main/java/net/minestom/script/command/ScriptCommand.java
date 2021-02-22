@@ -13,7 +13,16 @@ public class ScriptCommand extends Command {
         super(name);
         this.category = category;
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Default executor"));
+        setCondition((source, commandString) -> {
+            if (!source.isPlayer()) {
+                // Permission for server and console
+                return true;
+            }
+            // Permission depending on the end application
+            return ScriptManager.getCommandPermission().apply(source.asPlayer());
+        });
+
+        setDefaultExecutor((sender, args) -> sender.sendMessage("Default script executor"));
     }
 
     public ScriptCommand(@NotNull String name) {

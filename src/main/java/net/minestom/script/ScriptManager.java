@@ -6,6 +6,7 @@ import net.minestom.script.command.WorldCommand;
 import net.minestom.script.handler.ScriptAPI;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
+import net.minestom.server.entity.Player;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 public class ScriptManager {
 
@@ -31,6 +33,8 @@ public class ScriptManager {
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
     private static volatile boolean loaded;
+
+    private static Function<Player, Boolean> commandPermission = player -> false;
 
     /**
      * Loads and evaluate all scripts in the folder {@link #SCRIPT_FOLDER}.
@@ -65,15 +69,20 @@ public class ScriptManager {
         Value bindings = CONTEXT.getBindings("js");
         bindings.putMember("executor", EXECUTOR);
 
-        for (File file : scriptFolder.listFiles()) {
-            System.out.println("LOAD " + file);
+        final File[] folderFiles = scriptFolder.listFiles();
+        if (folderFiles == null) {
+            System.err.println(scriptFolder + " is not a folder!");
+            return;
+        }
+
+        for (File file : folderFiles) {
             try {
-                String fileString = Files.readString(file.toPath());
+                final String fileString = Files.readString(file.toPath());
 
                 Source source = Source.create("js", fileString);
                 Script script = new Script(source);
 
-                // Evaluate the script
+                // Evaluate the script (start registering listeners)
                 script.eval(CONTEXT);
 
                 SCRIPTS.add(script);
@@ -97,4 +106,12 @@ public class ScriptManager {
         return SCRIPTS;
     }
 
+    @NotNull
+    public static Function<Player, Boolean> getCommandPermission() {
+        return commandPermission;
+    }
+
+    public static void setCommandPermission(@NotNull Function<Player, Boolean> commandPermission) {
+        ScriptManager.commandPermission = commandPermission;
+    }
 }
