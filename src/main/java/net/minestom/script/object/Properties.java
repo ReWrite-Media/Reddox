@@ -1,4 +1,4 @@
-package net.minestom.script;
+package net.minestom.script.object;
 
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Represents a list of properties to be forwarded and processed by scripts.
  */
-public class ScriptProperties implements ProxyObject {
+public class Properties implements ProxyObject {
 
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
 
@@ -57,7 +57,7 @@ public class ScriptProperties implements ProxyObject {
             object = array;
         } else if (nbt instanceof NBTCompound) {
             NBTCompound compound = (NBTCompound) nbt;
-            ScriptProperties properties = new ScriptProperties();
+            Properties properties = new Properties();
             for (String key : compound.getKeys()) {
                 final NBT value = compound.get(key);
                 assert value != null;

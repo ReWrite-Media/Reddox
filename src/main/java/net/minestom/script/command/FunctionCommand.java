@@ -1,7 +1,7 @@
 package net.minestom.script.command;
 
 import net.minestom.script.ScriptManager;
-import net.minestom.script.ScriptProperties;
+import net.minestom.script.object.Properties;
 import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.command.builder.Command;
 import org.jglrxavpok.hephaistos.nbt.NBT;
@@ -30,7 +30,7 @@ public class FunctionCommand extends Command {
             final List<Arguments> loopArguments = args.get(propertiesArgument);
 
             // Build the properties object
-            ScriptProperties properties = new ScriptProperties();
+            Properties properties = new Properties();
             for (Arguments property : loopArguments) {
                 final String key = property.get("key");
                 final NBT nbt = property.get("value");

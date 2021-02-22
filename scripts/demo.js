@@ -9,5 +9,7 @@ function test(properties) {
 executor.registerListener("move", onSignal)
 
 function onSignal(properties) {
-    console.log("Signal called! "+properties.position.x)
+    let player = properties.player
+    executor.runAs(player, "entity give TheMode911 minecraft:diamond 1")
+    console.log("Player moved! " + player.username)
 }
