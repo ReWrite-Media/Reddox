@@ -35,8 +35,9 @@ public class Executor {
         this.functionMap.put(name, consumer);
     }
 
-    public void registerListener(@NotNull String signal, @NotNull Consumer<Properties> consumer) {
-        List<Consumer<Properties>> listeners = listenerMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
+    public void onSignal(@NotNull String signal, @NotNull Consumer<Properties> consumer) {
+        List<Consumer<Properties>> listeners =
+                listenerMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
         listeners.add(consumer);
     }
 

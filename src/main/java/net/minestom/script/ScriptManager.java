@@ -34,7 +34,7 @@ public class ScriptManager {
 
     private static volatile boolean loaded;
 
-    private static Function<Player, Boolean> commandPermission = player -> false;
+    private static Function<Player, Boolean> commandPermission = player -> true;
 
     /**
      * Loads and evaluate all scripts in the folder {@link #SCRIPT_FOLDER}.
