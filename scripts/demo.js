@@ -10,5 +10,5 @@ executor.onSignal("use_item", onSignal)
 
 function onSignal(properties) {
     let item = properties.item
-    console.log("Use item! " + item)
+    console.log("Use item! " + item + " " + item.material)
 }
