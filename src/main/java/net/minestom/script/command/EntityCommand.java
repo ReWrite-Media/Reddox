@@ -1,9 +1,6 @@
 package net.minestom.script.command;
 
-import net.minestom.script.command.entity.EffectCommand;
-import net.minestom.script.command.entity.GamemodeCommand;
-import net.minestom.script.command.entity.GiveCommand;
-import net.minestom.script.command.entity.TeleportCommand;
+import net.minestom.script.command.entity.*;
 
 public class EntityCommand extends ScriptCommand {
     public EntityCommand() {
@@ -13,5 +10,6 @@ public class EntityCommand extends ScriptCommand {
         addSubcommand(new GamemodeCommand());
         addSubcommand(new EffectCommand());
         addSubcommand(new GiveCommand());
+        addSubcommand(new TellrawCommand());
     }
 }

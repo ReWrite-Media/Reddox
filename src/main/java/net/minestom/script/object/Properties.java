@@ -15,6 +15,7 @@ import java.util.function.Supplier;
  */
 public class Properties implements ProxyObject {
 
+    // Logic from https://github.com/oracle/graaljs/issues/281
     private static final String TO_STRING_MEMBER = "toString";
 
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
