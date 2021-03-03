@@ -2,9 +2,11 @@ package script.demo;
 
 import net.minestom.script.ScriptManager;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
@@ -29,6 +31,9 @@ public class ScriptDemo {
             final Player player = event.getPlayer();
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(new Position(0, 42, 0));
+        });
+        globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
+            event.getPlayer().setGameMode(GameMode.CREATIVE);
         });
 
         {

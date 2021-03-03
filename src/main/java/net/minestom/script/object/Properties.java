@@ -8,16 +8,23 @@ import org.jglrxavpok.hephaistos.nbt.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Represents a list of properties to be forwarded and processed by scripts.
  */
 public class Properties implements ProxyObject {
 
+    private static final String TO_STRING_MEMBER = "toString";
+
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
 
     @Override
     public Object getMember(String key) {
+        if (key.equals(TO_STRING_MEMBER)) {
+            return (Supplier<String>) this::toString;
+        }
+
         return properties.get(key);
     }
 
@@ -28,12 +35,20 @@ public class Properties implements ProxyObject {
 
     @Override
     public boolean hasMember(String key) {
+        if (key.equals(TO_STRING_MEMBER)) {
+            return true;
+        }
+
         return properties.containsKey(key);
     }
 
     @Override
     public void putMember(String key, Value value) {
         this.properties.put(key, value);
+    }
+
+    public void putMember(String key, Properties properties) {
+        this.properties.put(key, Value.asValue(properties));
     }
 
     public void putMember(String key, NBT nbt) {

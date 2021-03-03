@@ -6,9 +6,9 @@ function test(properties) {
     console.log("function executed " + properties.value)
 }
 
-executor.onSignal("move", onSignal)
+executor.onSignal("use_item", onSignal)
 
 function onSignal(properties) {
-    let player = properties.player
-    console.log("Player moved! " + player.username+" "+player.type)
+    let item = properties.item
+    console.log("Use item! " + item)
 }
