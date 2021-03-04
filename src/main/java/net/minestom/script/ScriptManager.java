@@ -48,7 +48,7 @@ public class ScriptManager {
 
         // Init events for signals
         {
-            EventSignal.init(MinecraftServer.getGlobalEventHandler(), EXECUTOR);
+            EventSignal.init(MinecraftServer.getGlobalEventHandler());
         }
 
         // Load commands

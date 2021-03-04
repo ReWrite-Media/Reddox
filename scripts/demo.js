@@ -6,9 +6,8 @@ function test(properties) {
     console.log("function executed " + properties.value)
 }
 
-executor.onSignal("use_item", onSignal)
+executor.onSignal("entity_interact", onSignal)
 
 function onSignal(properties) {
-    let item = properties.item
-    console.log("Use item! " + item + " " + item.material)
+    console.log("test! " + properties.player.username)
 }
