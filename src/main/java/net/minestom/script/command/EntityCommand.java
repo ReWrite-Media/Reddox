@@ -12,5 +12,6 @@ public class EntityCommand extends ScriptCommand {
         addSubcommand(new GiveCommand());
         addSubcommand(new TellrawCommand());
         addSubcommand(new EntityEditorCommand());
+        addSubcommand(new KillCommand());
     }
 }

@@ -7,7 +7,9 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.event.player.PlayerUseItemOnBlockEvent;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +20,7 @@ public class EventSignal {
 
     public static final String MOVE_SIGNAL = "move";
     public static final String USE_ITEM_SIGNAL = "use_item";
+    public static final String USE_ITEM_BLOCK_SIGNAL = "use_item_block";
     public static final String ENTITY_INTERACT_SIGNAL = "entity_interact";
 
 
@@ -43,6 +46,17 @@ public class EventSignal {
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
             ScriptManager.EXECUTOR.signal(USE_ITEM_SIGNAL, properties);
+        });
+
+        // 'use_item_block'
+        globalEventHandler.addEventCallback(PlayerUseItemOnBlockEvent.class, event -> {
+            final Player player = event.getPlayer();
+            final BlockPosition position = event.getPosition();
+
+            Properties properties = new Properties();
+            properties.putMember("player", new PlayerProperty(player));
+            properties.putMember("position", new BlockPositionProperty(position));
+            ScriptManager.EXECUTOR.signal(USE_ITEM_BLOCK_SIGNAL, properties);
         });
 
         // 'entity_interact'

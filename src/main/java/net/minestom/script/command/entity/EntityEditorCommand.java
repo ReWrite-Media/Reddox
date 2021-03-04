@@ -3,17 +3,19 @@ package net.minestom.script.command.entity;
 import net.minestom.script.command.ScriptCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Arguments;
+import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.location.RelativeVec;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
+
+import java.lang.String;
 
 public class EntityEditorCommand extends ScriptCommand {
 
@@ -28,10 +30,14 @@ public class EntityEditorCommand extends ScriptCommand {
 
         // /entity-studio init
         addSyntax((sender, args) -> {
+            CommandData commandData = new CommandData();
+            args.setReturnData(commandData);
+
             final String identifier = args.get("identifier");
 
             if (CREATURES_MAP.containsKey(identifier)) {
                 sender.sendMessage("PROJECTOR WITH THIS ID ALREADY EXISTS");
+                commandData.set("success", false);
                 return;
             }
 
@@ -49,6 +55,7 @@ public class EntityEditorCommand extends ScriptCommand {
 
             CREATURES_MAP.put(identifier, creature);
 
+            commandData.set("success", true);
             sender.sendMessage("ENTITY CREATED SUCCESSFULLY: " + identifier);
 
         }, Literal("init"), Word("identifier"), EntityType("entity_type"), RelativeVec3("spawn_position"));
