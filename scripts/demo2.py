@@ -1,6 +1,6 @@
 print("python init")
 
-def lamb(properties):
-    print("function called")
+def callback(properties):
+    print("The player "+properties.player.username+" moved!")
 
-executor.registerFunction("py", lamb)
+executor.onSignal("move", callback)
