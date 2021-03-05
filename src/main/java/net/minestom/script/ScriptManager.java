@@ -7,6 +7,7 @@ import net.minestom.script.handler.ScriptAPI;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
+import org.apache.commons.io.FilenameUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
@@ -28,9 +30,13 @@ public class ScriptManager {
 
     public static final Executor EXECUTOR = new Executor();
 
-    private static final Context CONTEXT = Context.newBuilder("js")
+    private static final Context CONTEXT = Context.newBuilder("js", "python")
             .allowHostAccess(HostAccess.ALL).build();
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
+
+    private static final Map<String, String> EXTENSION_MAP = Map.of(
+            "js", "js",
+            "py", "python");
 
     private static volatile boolean loaded;
 
@@ -66,8 +72,17 @@ public class ScriptManager {
             return; // No script folder
         }
 
-        Value bindings = CONTEXT.getBindings("js");
-        bindings.putMember("executor", EXECUTOR);
+        // JS bindings
+        {
+            Value bindings = CONTEXT.getBindings("js");
+            bindings.putMember("executor", EXECUTOR);
+        }
+
+        // Python bindings
+        {
+            Value bindings = CONTEXT.getBindings("python");
+            bindings.putMember("executor", EXECUTOR);
+        }
 
         final File[] folderFiles = scriptFolder.listFiles();
         if (folderFiles == null) {
@@ -77,9 +92,17 @@ public class ScriptManager {
 
         for (File file : folderFiles) {
             try {
+                final String extension = FilenameUtils.getExtension(file.getName());
                 final String fileString = Files.readString(file.toPath());
 
-                Source source = Source.create("js", fileString);
+                final String language = EXTENSION_MAP.get(extension);
+                if (language == null) {
+                    // Invalid file extension
+                    System.err.println("Invalid file extension for " + file + ", ignored");
+                    continue;
+                }
+
+                Source source = Source.create(language, fileString);
                 Script script = new Script(source);
 
                 // Evaluate the script (start registering listeners)
