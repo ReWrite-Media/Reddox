@@ -18,11 +18,24 @@ public class RegionHandler {
     }
 
     @Nullable
-    public Region createRegion(String identifier, Vector minPos, Vector maxPos, NBTCompound nbtCompound) {
+    public Region createRegion(String identifier, Vector pos1, Vector pos2, NBTCompound nbtCompound) {
         if (regionMap.containsKey(identifier)) {
             return null;
         }
-        Region region = new Region(identifier, minPos, maxPos, nbtCompound);
+
+        final double minX = Math.min(pos1.getX(), pos2.getX());
+        final double minY = Math.min(pos1.getY(), pos2.getY());
+        final double minZ = Math.min(pos1.getZ(), pos2.getZ());
+
+        final double maxX = Math.max(pos1.getX(), pos2.getX());
+        final double maxY = Math.max(pos1.getY(), pos2.getY());
+        final double maxZ = Math.max(pos1.getZ(), pos2.getZ());
+
+        Region region = new Region(identifier,
+                new Vector(minX, minY, minZ),
+                new Vector(maxX, maxY, maxZ),
+                nbtCompound);
+
         this.regionMap.put(identifier, region);
         return region;
     }

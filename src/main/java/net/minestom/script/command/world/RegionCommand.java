@@ -38,14 +38,17 @@ public class RegionCommand extends ScriptCommand {
             NBTCompound data = args.get("region_data");
 
             RegionHandler.Region region = regionHandler.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
-            if (region != null) {
+            final boolean success = region != null;
+            if (success) {
                 sender.sendMessage("Region '" + identifier + "' created successfully!");
             } else {
                 sender.sendMessage("Region '" + identifier + "' already exists!");
             }
+            args.setReturnData(new CommandData().set("success", success));
         }, Literal("create"), Word("identifier"), RelativeVec3("pos1"), RelativeVec3("pos2"), NbtCompound("region_data").setDefaultValue(new NBTCompound()));
 
         addSyntax((sender, args) -> {
+            // TODO edit
             System.out.println("syntax2");
         }, Literal("edit"), Word("identifier"), propertiesArgument);
     }
