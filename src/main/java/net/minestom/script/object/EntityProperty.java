@@ -13,6 +13,7 @@ public class EntityProperty extends Properties {
         this.uuid = entity.getUuid();
         putMember("uuid", entity.getUuid().toString());
         putMember("type", entity.getEntityType().toString());
+        putMember("position", new PositionProperty(entity.getPosition()));
     }
 
     @Override
