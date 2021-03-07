@@ -1,5 +1,7 @@
 package net.minestom.script.object;
 
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -58,6 +60,15 @@ public class Properties implements ProxyObject {
 
     public void putMember(String key, Object object) {
         this.properties.put(key, Value.asValue(object));
+    }
+
+    @NotNull
+    public static Properties fromEntity(@NotNull Entity entity) {
+        if (entity instanceof Player) {
+            return new PlayerProperty((Player) entity);
+        }
+
+        return new EntityProperty(entity);
     }
 
     @Nullable

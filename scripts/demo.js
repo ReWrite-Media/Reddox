@@ -26,3 +26,7 @@ function onInteract(properties) {
     executor.run("entity kill "+targetUuid)
     console.log("entity killed")
 }
+
+executor.onSignal("entity_attack", (properties) => {
+    console.log(properties.entity+" attacked")
+})

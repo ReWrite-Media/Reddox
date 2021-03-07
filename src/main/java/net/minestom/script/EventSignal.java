@@ -4,6 +4,7 @@ import net.minestom.script.object.*;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
@@ -22,7 +23,7 @@ public class EventSignal {
     public static final String USE_ITEM_SIGNAL = "use_item";
     public static final String USE_ITEM_BLOCK_SIGNAL = "use_item_block";
     public static final String ENTITY_INTERACT_SIGNAL = "entity_interact";
-
+    public static final String ENTITY_ATTACK_SIGNAL = "entity_attack";
 
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
 
@@ -72,8 +73,19 @@ public class EventSignal {
 
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
-            properties.putMember("target", new EntityProperty(target));
+            properties.putMember("target", Properties.fromEntity(target));
             ScriptManager.EXECUTOR.signal(ENTITY_INTERACT_SIGNAL, properties);
+        });
+
+        // 'attack'
+        globalEventHandler.addEventCallback(EntityAttackEvent.class, event -> {
+            final Entity entity = event.getEntity();
+            final Entity target = event.getTarget();
+
+            Properties properties = new Properties();
+            properties.putMember("entity", Properties.fromEntity(entity));
+            properties.putMember("target", Properties.fromEntity(target));
+            ScriptManager.EXECUTOR.signal(ENTITY_ATTACK_SIGNAL, properties);
         });
     }
 
