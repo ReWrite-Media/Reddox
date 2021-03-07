@@ -3,7 +3,7 @@ package net.minestom.script;
 import net.minestom.script.command.EntityCommand;
 import net.minestom.script.command.FunctionCommand;
 import net.minestom.script.command.WorldCommand;
-import net.minestom.script.handler.ScriptAPI;
+import net.minestom.script.component.ScriptAPI;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;

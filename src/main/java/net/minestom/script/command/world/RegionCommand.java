@@ -1,7 +1,7 @@
 package net.minestom.script.command.world;
 
 import net.minestom.script.command.ScriptCommand;
-import net.minestom.script.handler.RegionHandler;
+import net.minestom.script.component.RegionComponent;
 import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.utils.Vector;
@@ -17,7 +17,7 @@ public class RegionCommand extends ScriptCommand {
     public RegionCommand() {
         super("region");
 
-        final RegionHandler regionHandler = getApi().getRegionHandler();
+        final RegionComponent regionComponent = getApi().getRegionHandler();
 
         setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /world region <create/edit> <identifier> [properties]"));
 
@@ -37,7 +37,7 @@ public class RegionCommand extends ScriptCommand {
             RelativeVec posEnd = args.get("pos2");
             NBTCompound data = args.get("region_data");
 
-            RegionHandler.Region region = regionHandler.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
+            RegionComponent.Region region = regionComponent.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
             final boolean success = region != null;
             if (success) {
                 sender.sendMessage("Region '" + identifier + "' created successfully!");
@@ -46,6 +46,17 @@ public class RegionCommand extends ScriptCommand {
             }
             args.setReturnData(new CommandData().set("success", success));
         }, Literal("create"), Word("identifier"), RelativeVec3("pos1"), RelativeVec3("pos2"), NbtCompound("region_data").setDefaultValue(new NBTCompound()));
+
+        addSyntax((sender, args) -> {
+            final String identifier = args.get("identifier");
+            final boolean success = regionComponent.deleteRegion(identifier);
+            if (success) {
+                sender.sendMessage("Region '" + identifier + "' has been deleted");
+            } else {
+                sender.sendMessage("Region '" + identifier + "' does not exist!");
+            }
+            args.setReturnData(new CommandData().set("success", success));
+        }, Literal("delete"), Word("identifier"));
 
         addSyntax((sender, args) -> {
             // TODO edit
@@ -58,20 +69,24 @@ public class RegionCommand extends ScriptCommand {
         public RegionFunctionCommand() {
             super("function");
 
-            final RegionHandler regionHandler = getApi().getRegionHandler();
+            final RegionComponent regionComponent = getApi().getRegionHandler();
 
             // 'is_inside'
             {
                 // With explicit position
                 addSyntax((sender, args) -> {
                     final String identifier = args.get("identifier");
-                    final RegionHandler.Region region = regionHandler.getRegion(identifier);
+                    final RegionComponent.Region region = regionComponent.getRegion(identifier);
+                    boolean inside;
                     if (region != null) {
                         final Vector vector = ArgumentUtils.from(sender, args.get("position"));
-                        sender.sendMessage("inside: " + region.isInside(vector));
+                        inside = region.isInside(vector);
+                        sender.sendMessage("inside: " + inside);
                     } else {
+                        inside = false;
                         sender.sendMessage("region not found");
                     }
+                    args.setReturnData(new CommandData().set("inside", inside));
                 }, Literal("is_inside"), Word("identifier"), RelativeVec3("position"));
             }
 
@@ -79,7 +94,7 @@ public class RegionCommand extends ScriptCommand {
             {
                 addSyntax((sender, args) -> {
                     final String identifier = args.get("identifier");
-                    final RegionHandler.Region region = regionHandler.getRegion(identifier);
+                    final RegionComponent.Region region = regionComponent.getRegion(identifier);
 
                     CommandData data = new CommandData();
 

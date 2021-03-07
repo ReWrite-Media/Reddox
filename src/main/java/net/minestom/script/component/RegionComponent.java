@@ -1,4 +1,4 @@
-package net.minestom.script.handler;
+package net.minestom.script.component;
 
 import net.minestom.server.utils.Position;
 import net.minestom.server.utils.Vector;
@@ -9,12 +9,12 @@ import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RegionHandler {
+public class RegionComponent extends ScriptComponent {
 
-    private Map<String, Region> regionMap = new ConcurrentHashMap<>();
+    private final Map<String, Region> regionMap = new ConcurrentHashMap<>();
 
-    protected RegionHandler() {
-
+    protected RegionComponent() {
+        // TODO signals
     }
 
     @Nullable
@@ -38,6 +38,10 @@ public class RegionHandler {
 
         this.regionMap.put(identifier, region);
         return region;
+    }
+
+    public boolean deleteRegion(String identifier) {
+        return regionMap.remove(identifier) != null;
     }
 
     @Nullable

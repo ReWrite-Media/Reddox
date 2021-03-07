@@ -23,10 +23,10 @@ function onUse(properties) {
 
 function onInteract(properties) {
     let targetUuid = properties.target.uuid
-    executor.run("entity kill "+targetUuid)
+    executor.run("entity kill " + targetUuid)
     console.log("entity killed")
 }
 
 executor.onSignal("entity_attack", (properties) => {
-    console.log(properties.entity+" attacked")
+    console.log(properties.entity + " attacked")
 })
