@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 
 /**
  * Layer between the server and the scripts.
@@ -30,8 +29,8 @@ public class Executor {
     private static final ConnectionManager CONNECTION_MANAGER = MinecraftServer.getConnectionManager();
     private final static List<Executor> EXECUTORS = new CopyOnWriteArrayList<>();
 
-    private final Map<String, Consumer<Properties>> functionMap = new ConcurrentHashMap<>();
-    private final Map<String, List<Consumer<Properties>>> listenerMap = new ConcurrentHashMap<>();
+    private final Map<String, FunctionCallback> functionMap = new ConcurrentHashMap<>();
+    private final Map<String, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
 
     protected void register() {
         EXECUTORS.add(this);
@@ -39,39 +38,39 @@ public class Executor {
 
     protected void unregister() {
         this.functionMap.clear();
-        this.listenerMap.clear();
+        this.signalMap.clear();
         EXECUTORS.remove(this);
     }
 
-    public void registerFunction(@NotNull String name, @NotNull Consumer<Properties> consumer) {
-        this.functionMap.put(name, consumer);
+    public void registerFunction(@NotNull String name, @NotNull FunctionCallback callback) {
+        // TODO prevent multiple scripts from registering the same function
+        this.functionMap.put(name, callback);
     }
 
-    public void onSignal(@NotNull String signal, @NotNull Consumer<Properties> consumer) {
-        List<Consumer<Properties>> listeners =
-                listenerMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
-        listeners.add(consumer);
+    public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
+        List<SignalCallback> listeners =
+                signalMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
+        listeners.add(callback);
     }
 
     public boolean function(@NotNull String function, @NotNull Properties properties) {
-        boolean exists = false;
         for (Executor executor : EXECUTORS) {
-            Consumer<Properties> consumer = functionMap.get(function);
-            if (consumer != null) {
-                exists = true;
-                consumer.accept(properties);
+            FunctionCallback callback = executor.functionMap.get(function);
+            if (callback != null) {
+                callback.accept(properties);
+                return true;
             }
         }
-        return exists;
+        return false;
     }
 
     public boolean signal(@NotNull String signal, @NotNull Properties properties) {
         boolean exists = false;
         for (Executor executor : EXECUTORS) {
-            List<Consumer<Properties>> listeners = executor.listenerMap.get(signal);
+            List<SignalCallback> listeners = executor.signalMap.get(signal);
             if (listeners != null && !listeners.isEmpty()) {
                 exists = true;
-                for (Consumer<Properties> callback : listeners) {
+                for (SignalCallback callback : listeners) {
                     callback.accept(properties);
                 }
             }
