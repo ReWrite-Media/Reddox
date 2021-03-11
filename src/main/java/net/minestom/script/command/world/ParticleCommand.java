@@ -1,6 +1,6 @@
 package net.minestom.script.command.world;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
@@ -12,7 +12,7 @@ import static net.minestom.server.command.builder.arguments.ArgumentType.Float;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
-public class ParticleCommand extends ScriptCommand {
+public class ParticleCommand extends RichCommand {
     public ParticleCommand() {
         super("particle");
 

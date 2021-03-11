@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.chat.ChatColor;
 import net.minestom.server.chat.ColoredText;
 import net.minestom.server.command.CommandSender;
@@ -17,7 +17,7 @@ import net.minestom.server.utils.location.RelativeVec;
 
 import java.util.List;
 
-public class TeleportCommand extends ScriptCommand {
+public class TeleportCommand extends RichCommand {
 
     private final ArgumentRelativeVec3 location = ArgumentType.RelativeVec3("location");
     private final ArgumentEntity destination = ArgumentType.Entities("destination").singleEntity(true);

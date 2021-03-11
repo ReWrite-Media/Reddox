@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.entity.GameMode;
@@ -10,7 +10,7 @@ import net.minestom.server.utils.entity.EntityFinder;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Entities;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Word;
 
-public class GamemodeCommand extends ScriptCommand {
+public class GamemodeCommand extends RichCommand {
     public GamemodeCommand() {
         super("gm");
 

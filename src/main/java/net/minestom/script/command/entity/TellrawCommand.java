@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.chat.JsonMessage;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
@@ -11,7 +11,7 @@ import java.util.List;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Component;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Entities;
 
-public class TellrawCommand extends ScriptCommand {
+public class TellrawCommand extends RichCommand {
     public TellrawCommand() {
         super("tellraw");
 

@@ -1,6 +1,6 @@
 package net.minestom.script.command.world;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.script.component.RegionComponent;
 import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandData;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
-public class RegionCommand extends ScriptCommand {
+public class RegionCommand extends RichCommand {
     public RegionCommand() {
         super("region");
 
@@ -64,7 +64,7 @@ public class RegionCommand extends ScriptCommand {
         }, Literal("edit"), Word("identifier"), propertiesArgument);
     }
 
-    private static class RegionFunctionCommand extends ScriptCommand {
+    private static class RegionFunctionCommand extends RichCommand {
 
         public RegionFunctionCommand() {
             super("function");

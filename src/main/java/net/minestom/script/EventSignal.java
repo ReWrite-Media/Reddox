@@ -27,6 +27,8 @@ public class EventSignal {
 
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
 
+        final Executor executor = ScriptManager.API.getExecutor();
+
         // 'move'
         globalEventHandler.addEventCallback(PlayerMoveEvent.class, event -> {
             final Player player = event.getPlayer();
@@ -35,7 +37,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            ScriptManager.EXECUTOR.signal(MOVE_SIGNAL, properties);
+            executor.signal(MOVE_SIGNAL, properties);
         });
 
         // 'use_item'
@@ -46,7 +48,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
-            ScriptManager.EXECUTOR.signal(USE_ITEM_SIGNAL, properties);
+            executor.signal(USE_ITEM_SIGNAL, properties);
         });
 
         // 'use_item_block'
@@ -57,7 +59,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new BlockPositionProperty(position));
-            ScriptManager.EXECUTOR.signal(USE_ITEM_BLOCK_SIGNAL, properties);
+            executor.signal(USE_ITEM_BLOCK_SIGNAL, properties);
         });
 
         // 'entity_interact'
@@ -74,7 +76,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("target", Properties.fromEntity(target));
-            ScriptManager.EXECUTOR.signal(ENTITY_INTERACT_SIGNAL, properties);
+            executor.signal(ENTITY_INTERACT_SIGNAL, properties);
         });
 
         // 'attack'
@@ -85,7 +87,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("entity", Properties.fromEntity(entity));
             properties.putMember("target", Properties.fromEntity(target));
-            ScriptManager.EXECUTOR.signal(ENTITY_ATTACK_SIGNAL, properties);
+            executor.signal(ENTITY_ATTACK_SIGNAL, properties);
         });
     }
 

@@ -7,6 +7,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
+import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
@@ -35,6 +36,8 @@ public class ScriptDemo {
         globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
             event.getPlayer().setGameMode(GameMode.CREATIVE);
         });
+
+        OptifineSupport.enable();
 
         {
             ScriptManager.load();

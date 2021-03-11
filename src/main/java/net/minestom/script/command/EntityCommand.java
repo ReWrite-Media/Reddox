@@ -2,7 +2,7 @@ package net.minestom.script.command;
 
 import net.minestom.script.command.entity.*;
 
-public class EntityCommand extends ScriptCommand {
+public class EntityCommand extends RichCommand {
     public EntityCommand() {
         super("entity", ScriptCategory.ENTITY_MANIPULATION);
 

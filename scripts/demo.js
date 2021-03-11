@@ -30,3 +30,7 @@ function onInteract(properties) {
 executor.onSignal("entity_attack", (properties) => {
     console.log(properties.entity + " attacked")
 })
+
+executor.onSignal("use_item", (properties) => {
+    console.log(properties.item + " test")
+})

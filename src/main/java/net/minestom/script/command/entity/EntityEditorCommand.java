@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.command.builder.CommandData;
@@ -17,7 +17,7 @@ import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
 import java.lang.String;
 
-public class EntityEditorCommand extends ScriptCommand {
+public class EntityEditorCommand extends RichCommand {
 
     private static final Map<String, EntityCreature> CREATURES_MAP = new ConcurrentHashMap<>();
 

@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.entity.Entity;
@@ -14,7 +14,7 @@ import java.util.List;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
-public class EffectCommand extends ScriptCommand {
+public class EffectCommand extends RichCommand {
     public EffectCommand() {
         super("effect");
 

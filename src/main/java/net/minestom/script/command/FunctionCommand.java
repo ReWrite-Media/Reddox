@@ -15,7 +15,7 @@ import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 /**
  * Command used to manage registered functions. Including running them.
  */
-public class FunctionCommand extends Command {
+public class FunctionCommand extends RichCommand {
     public FunctionCommand() {
         super("function");
 
@@ -37,7 +37,7 @@ public class FunctionCommand extends Command {
                 properties.putMember(key, nbt);
             }
 
-            final boolean success = ScriptManager.EXECUTOR.function(name, properties);
+            final boolean success = getApi().getExecutor().function(name, properties);
             if (success) {
                 sender.sendMessage("You executed the function: " + name);
             } else {

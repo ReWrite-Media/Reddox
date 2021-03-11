@@ -27,9 +27,21 @@ import java.util.function.Consumer;
  */
 public class Executor {
 
-    private final ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
+    private static final ConnectionManager CONNECTION_MANAGER = MinecraftServer.getConnectionManager();
+    private final static List<Executor> EXECUTORS = new CopyOnWriteArrayList<>();
+
     private final Map<String, Consumer<Properties>> functionMap = new ConcurrentHashMap<>();
     private final Map<String, List<Consumer<Properties>>> listenerMap = new ConcurrentHashMap<>();
+
+    protected void register() {
+        EXECUTORS.add(this);
+    }
+
+    protected void unregister() {
+        this.functionMap.clear();
+        this.listenerMap.clear();
+        EXECUTORS.remove(this);
+    }
 
     public void registerFunction(@NotNull String name, @NotNull Consumer<Properties> consumer) {
         this.functionMap.put(name, consumer);
@@ -42,21 +54,29 @@ public class Executor {
     }
 
     public boolean function(@NotNull String function, @NotNull Properties properties) {
-        Consumer<Properties> consumer = functionMap.get(function);
-        if (consumer == null)
-            return false;
-        consumer.accept(properties);
-        return true;
+        boolean exists = false;
+        for (Executor executor : EXECUTORS) {
+            Consumer<Properties> consumer = functionMap.get(function);
+            if (consumer != null) {
+                exists = true;
+                consumer.accept(properties);
+            }
+        }
+        return exists;
     }
 
     public boolean signal(@NotNull String signal, @NotNull Properties properties) {
-        List<Consumer<Properties>> listeners = listenerMap.get(signal);
-        if (listeners == null || listeners.isEmpty())
-            return false;
-        for (Consumer<Properties> callback : listeners) {
-            callback.accept(properties);
+        boolean exists = false;
+        for (Executor executor : EXECUTORS) {
+            List<Consumer<Properties>> listeners = executor.listenerMap.get(signal);
+            if (listeners != null && !listeners.isEmpty()) {
+                exists = true;
+                for (Consumer<Properties> callback : listeners) {
+                    callback.accept(properties);
+                }
+            }
         }
-        return true;
+        return exists;
     }
 
     @Nullable
@@ -75,7 +95,7 @@ public class Executor {
         final PlayerProperty playerProperty = playerValue.asProxyObject();
 
         final UUID uuid = UUID.fromString(((Value) playerProperty.getMember("uuid")).asString());
-        final Player player = connectionManager.getPlayer(uuid);
+        final Player player = CONNECTION_MANAGER.getPlayer(uuid);
         if (player == null)
             return null;
 

@@ -1,41 +1,78 @@
 package net.minestom.script.command;
 
+import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
-import net.minestom.script.component.ScriptAPI;
-import net.minestom.server.command.builder.Command;
 import org.jetbrains.annotations.NotNull;
 
-public class ScriptCommand extends Command {
+import java.util.List;
+import java.util.Optional;
 
-    private final String category;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
+import static net.minestom.server.command.builder.arguments.ArgumentType.String;
 
-    public ScriptCommand(@NotNull String name, @NotNull String category) {
-        super(name);
-        this.category = category;
+/**
+ * Manages registered scripts.
+ */
+public class ScriptCommand extends RichCommand {
+    public ScriptCommand() {
+        super("script");
 
-        setCondition((source, commandString) -> {
-            if (!source.isPlayer()) {
-                // Permission for server and console
-                return true;
-            }
-            // Permission depending on the end application
-            return ScriptManager.getCommandPermission().apply(source.asPlayer());
+        setDefaultExecutor((sender, args) -> {
+            sender.sendMessage("Usage: /script <list/load/unload> [path]");
         });
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Default script executor"));
-    }
 
-    public ScriptCommand(@NotNull String name) {
-        this(name, ScriptCategory.UNKNOWN);
+        addSyntax((sender, args) -> {
+            for (Script script : getScripts()) {
+                sender.sendMessage("Path: " + script.getFile());
+            }
+        }, Literal("list"));
+
+        addSyntax((sender, args) -> {
+            final String path = args.get("path");
+            Optional<Script> optionalScript = getScripts()
+                    .stream()
+                    .filter(script -> script.getFile().getPath().equals(path))
+                    .findFirst();
+
+            optionalScript.ifPresentOrElse(script -> {
+                // Valid path
+                if (script.isLoaded()) {
+                    sender.sendMessage("Script is already loaded");
+                } else {
+                    script.load();
+                    sender.sendMessage("Script loaded successfully!");
+                }
+            }, () -> {
+                // Invalid path
+                sender.sendMessage("Invalid path");
+            });
+        }, Literal("load"), String("path"));
+
+        addSyntax((sender, args) -> {
+            final String path = args.get("path");
+            Optional<Script> optionalScript = getScripts()
+                    .stream()
+                    .filter(script -> script.getFile().getPath().equals(path))
+                    .findFirst();
+
+            optionalScript.ifPresentOrElse(script -> {
+                // Valid path
+                if (script.isLoaded()) {
+                    script.unload();
+                    sender.sendMessage("Script unloaded successfully!");
+                } else {
+                    sender.sendMessage("Script is already unloaded");
+                }
+            }, () -> {
+                // Invalid path
+                sender.sendMessage("Invalid path");
+            });
+        }, Literal("unload"), String("path"));
     }
 
     @NotNull
-    public ScriptAPI getApi() {
-        return ScriptManager.API;
-    }
-
-    @NotNull
-    public String getCategory() {
-        return category;
+    private List<Script> getScripts() {
+        return ScriptManager.getScripts();
     }
 }

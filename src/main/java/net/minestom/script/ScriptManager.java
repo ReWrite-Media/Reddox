@@ -2,6 +2,7 @@ package net.minestom.script;
 
 import net.minestom.script.command.EntityCommand;
 import net.minestom.script.command.FunctionCommand;
+import net.minestom.script.command.ScriptCommand;
 import net.minestom.script.command.WorldCommand;
 import net.minestom.script.component.ScriptAPI;
 import net.minestom.server.MinecraftServer;
@@ -28,10 +29,6 @@ public class ScriptManager {
 
     public static final String SCRIPT_FOLDER = "scripts";
 
-    public static final Executor EXECUTOR = new Executor();
-
-    private static final Context CONTEXT = Context.newBuilder("js", "python")
-            .allowHostAccess(HostAccess.ALL).build();
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
     private static final Map<String, String> EXTENSION_MAP = Map.of(
@@ -60,6 +57,7 @@ public class ScriptManager {
         // Load commands
         {
             CommandManager commandManager = MinecraftServer.getCommandManager();
+            commandManager.register(new ScriptCommand());
             commandManager.register(new FunctionCommand());
             commandManager.register(new WorldCommand());
             commandManager.register(new EntityCommand());
@@ -70,18 +68,6 @@ public class ScriptManager {
 
         if (!scriptFolder.exists()) {
             return; // No script folder
-        }
-
-        // JS bindings
-        {
-            Value bindings = CONTEXT.getBindings("js");
-            bindings.putMember("executor", EXECUTOR);
-        }
-
-        // Python bindings
-        {
-            Value bindings = CONTEXT.getBindings("python");
-            bindings.putMember("executor", EXECUTOR);
         }
 
         final File[] folderFiles = scriptFolder.listFiles();
@@ -102,11 +88,12 @@ public class ScriptManager {
                     continue;
                 }
 
-                Source source = Source.create(language, fileString);
-                Script script = new Script(source);
+                final Executor executor = new Executor();
+                final Source source = Source.create(language, fileString);
+                Script script = new Script(file, source, executor);
 
                 // Evaluate the script (start registering listeners)
-                script.eval(CONTEXT);
+                script.load();
 
                 SCRIPTS.add(script);
             } catch (IOException e) {
@@ -116,7 +103,7 @@ public class ScriptManager {
     }
 
     public static void shutdown() {
-        CONTEXT.close();
+        //CONTEXT.close();
     }
 
     /**

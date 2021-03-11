@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
@@ -9,7 +9,7 @@ import net.minestom.server.utils.entity.EntityFinder;
 
 import java.util.List;
 
-public class KillCommand extends ScriptCommand {
+public class KillCommand extends RichCommand {
     public KillCommand() {
         super("kill");
 

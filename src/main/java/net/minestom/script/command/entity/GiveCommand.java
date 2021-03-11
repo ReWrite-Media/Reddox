@@ -1,6 +1,6 @@
 package net.minestom.script.command.entity;
 
-import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
@@ -11,7 +11,7 @@ import java.util.List;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
-public class GiveCommand extends ScriptCommand {
+public class GiveCommand extends RichCommand {
     public GiveCommand() {
         super("give");
 
