@@ -10,7 +10,6 @@ executor.onSignal("use_item_block", onUse)
 executor.onSignal("entity_interact", onInteract)
 
 function onUse(properties) {
-    console.log("test "+properties.block)
     let id = Math.floor(Math.random() * 1000);
     let entity = "minecraft:bee"
     let position = properties.block.position;
@@ -32,6 +31,6 @@ executor.onSignal("entity_attack", (properties) => {
     console.log(properties.entity + " attacked")
 })
 
-executor.onSignal("use_item", (properties) => {
-    console.log(properties.item + " test")
+executor.onSignal("block_place", (properties) => {
+    console.log(properties.block.properties.facing + " test")
 })

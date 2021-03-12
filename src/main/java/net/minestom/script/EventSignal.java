@@ -5,10 +5,7 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.entity.EntityAttackEvent;
-import net.minestom.server.event.player.PlayerEntityInteractEvent;
-import net.minestom.server.event.player.PlayerMoveEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
-import net.minestom.server.event.player.PlayerUseItemOnBlockEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
@@ -22,6 +19,7 @@ public class EventSignal {
     public static final String MOVE_SIGNAL = "move";
     public static final String USE_ITEM_SIGNAL = "use_item";
     public static final String USE_ITEM_BLOCK_SIGNAL = "use_item_block";
+    public static final String BLOCK_PLACE_SIGNAL = "block_place";
     public static final String ENTITY_INTERACT_SIGNAL = "entity_interact";
     public static final String ENTITY_ATTACK_SIGNAL = "entity_attack";
 
@@ -61,6 +59,18 @@ public class EventSignal {
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
             executor.signal(USE_ITEM_BLOCK_SIGNAL, properties);
+        });
+
+        // 'place_block'
+        globalEventHandler.addEventCallback(PlayerBlockPlaceEvent.class, event -> {
+            final Player player = event.getPlayer();
+            final BlockPosition position = event.getBlockPosition();
+            final short blockStateId = event.getBlockStateId();
+
+            Properties properties = new Properties();
+            properties.putMember("player", new PlayerProperty(player));
+            properties.putMember("block", new BlockProperty(blockStateId, position));
+            executor.signal(BLOCK_PLACE_SIGNAL, properties);
         });
 
         // 'entity_interact'
