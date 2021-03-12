@@ -10,9 +10,10 @@ executor.onSignal("use_item_block", onUse)
 executor.onSignal("entity_interact", onInteract)
 
 function onUse(properties) {
+    console.log("test "+properties.block)
     let id = Math.floor(Math.random() * 1000);
     let entity = "minecraft:bee"
-    let position = properties.position;
+    let position = properties.block.position;
     let data = executor.run("entity editor init " + id + " " + entity + " " + position)
     if (data.success) {
         console.log("success!")

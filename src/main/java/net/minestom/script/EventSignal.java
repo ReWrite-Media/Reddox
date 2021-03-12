@@ -55,10 +55,11 @@ public class EventSignal {
         globalEventHandler.addEventCallback(PlayerUseItemOnBlockEvent.class, event -> {
             final Player player = event.getPlayer();
             final BlockPosition position = event.getPosition();
+            final short blockStateId = player.getInstance().getBlockStateId(position);
 
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
-            properties.putMember("position", new BlockPositionProperty(position));
+            properties.putMember("block", new BlockProperty(blockStateId, position));
             executor.signal(USE_ITEM_BLOCK_SIGNAL, properties);
         });
 
