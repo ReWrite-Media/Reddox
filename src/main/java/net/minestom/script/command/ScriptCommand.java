@@ -2,6 +2,8 @@ package net.minestom.script.command;
 
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
+import net.minestom.server.chat.ChatColor;
+import net.minestom.server.chat.ColoredText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +26,8 @@ public class ScriptCommand extends RichCommand {
 
         addSyntax((sender, args) -> {
             for (Script script : getScripts()) {
-                sender.sendMessage("Path: " + script.getFile());
+                ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
+                sender.sendMessage(ColoredText.of(color, "Path: " + script.getFile()));
             }
         }, Literal("list"));
 
