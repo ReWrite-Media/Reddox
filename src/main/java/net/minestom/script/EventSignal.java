@@ -1,6 +1,6 @@
 package net.minestom.script;
 
-import net.minestom.script.object.*;
+import net.minestom.script.property.*;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;

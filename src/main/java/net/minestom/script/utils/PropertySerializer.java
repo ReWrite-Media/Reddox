@@ -1,6 +1,6 @@
 package net.minestom.script.utils;
 
-import net.minestom.script.object.Properties;
+import net.minestom.script.property.Properties;
 import net.minestom.server.utils.Position;
 import org.graalvm.polyglot.Value;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,7 @@
 package net.minestom.script;
 
-import net.minestom.script.object.PlayerProperty;
-import net.minestom.script.object.Properties;
+import net.minestom.script.property.PlayerProperty;
+import net.minestom.script.property.Properties;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.CommandResult;

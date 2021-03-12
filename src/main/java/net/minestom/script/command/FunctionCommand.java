@@ -1,9 +1,7 @@
 package net.minestom.script.command;
 
-import net.minestom.script.ScriptManager;
-import net.minestom.script.object.Properties;
+import net.minestom.script.property.Properties;
 import net.minestom.server.command.builder.Arguments;
-import net.minestom.server.command.builder.Command;
 import org.jglrxavpok.hephaistos.nbt.NBT;
 
 import java.lang.String;

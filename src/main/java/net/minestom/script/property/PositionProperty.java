@@ -1,4 +1,4 @@
-package net.minestom.script.object;
+package net.minestom.script.property;
 
 import net.minestom.server.utils.Position;
 import org.jetbrains.annotations.NotNull;

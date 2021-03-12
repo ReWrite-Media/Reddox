@@ -1,6 +1,6 @@
 package net.minestom.script;
 
-import net.minestom.script.object.Properties;
+import net.minestom.script.property.Properties;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface

@@ -1,4 +1,4 @@
-package net.minestom.script.object;
+package net.minestom.script.property;
 
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.NotNull;
