@@ -11,8 +11,9 @@ executor.onSignal("entity_interact", onInteract)
 
 function onUse(properties) {
     let id = Math.floor(Math.random() * 1000);
-    let entity = "minecraft:bee"
-    let position = properties.block.position;
+    let entity = "minecraft:skeleton"
+    let blockPosition = properties.block.position;
+    let position = blockPosition.x + " " + (blockPosition.y + 1) + " " + blockPosition.z
     let data = executor.run("entity editor init " + id + " " + entity + " " + position)
     if (data.success) {
         console.log("success!")
@@ -26,11 +27,3 @@ function onInteract(properties) {
     executor.run("entity kill " + targetUuid)
     console.log("entity killed")
 }
-
-executor.onSignal("entity_attack", (properties) => {
-    console.log(properties.entity + " attacked")
-})
-
-executor.onSignal("block_place", (properties) => {
-    console.log(properties.block.properties.facing + " test")
-})

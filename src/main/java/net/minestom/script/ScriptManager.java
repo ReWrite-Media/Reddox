@@ -9,15 +9,9 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import org.apache.commons.io.FilenameUtils;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,32 +71,27 @@ public class ScriptManager {
         }
 
         for (File file : folderFiles) {
-            try {
-                final String extension = FilenameUtils.getExtension(file.getName());
-                final String fileString = Files.readString(file.toPath());
+            final String extension = FilenameUtils.getExtension(file.getName());
 
-                final String language = EXTENSION_MAP.get(extension);
-                if (language == null) {
-                    // Invalid file extension
-                    System.err.println("Invalid file extension for " + file + ", ignored");
-                    continue;
-                }
-
-                final Executor executor = new Executor();
-                final Source source = Source.create(language, fileString);
-                Script script = new Script(file, source, executor);
-
-                // Evaluate the script (start registering listeners)
-                script.load();
-
-                SCRIPTS.add(script);
-            } catch (IOException e) {
-                e.printStackTrace();
+            final String language = EXTENSION_MAP.get(extension);
+            if (language == null) {
+                // Invalid file extension
+                System.err.println("Invalid file extension for " + file + ", ignored");
+                continue;
             }
+
+            final Executor executor = new Executor();
+            Script script = new Script(file, language, executor);
+
+            // Evaluate the script (start registering listeners)
+            script.load();
+
+            SCRIPTS.add(script);
         }
     }
 
     public static void shutdown() {
+        // TODO
         //CONTEXT.close();
     }
 
