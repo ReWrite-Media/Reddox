@@ -5,11 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockPositionProperty extends Properties {
 
-    private final BlockPosition blockPosition;
-
     public BlockPositionProperty(@NotNull BlockPosition blockPosition) {
-        this.blockPosition = blockPosition;
-
         putMember("x", blockPosition.getX());
         putMember("y", blockPosition.getY());
         putMember("z", blockPosition.getZ());
@@ -18,6 +14,8 @@ public class BlockPositionProperty extends Properties {
     @Override
     public String toString() {
         // Command-friendly conversion to be used as a position argument
-        return blockPosition.getX() + " " + blockPosition.getY() + " " + blockPosition.getZ();
+        return getMember("x") + " " +
+                getMember("y") + " " +
+                getMember("z");
     }
 }
