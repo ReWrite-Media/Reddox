@@ -3,7 +3,7 @@ console.log("debug from javascript!")
 // Register signals and api functions
 executor.registerFunction("test", test)
 executor.onSignal(signals.USE_ITEM_BLOCK, onUse)
-executor.onSignal(signals.ENTITY_INTERACT, onInteract)
+executor.onSignal("entity_interact", onInteract)
 
 
 function test(properties) {
@@ -19,7 +19,7 @@ function onUse(properties) {
 	blockPosition.x = blockPosition.x + 0.5
 	blockPosition.z = blockPosition.z + 0.5
 	
-    let position = blockPosition.x + " " + (blockPosition.y) + " " + blockPosition.z
+    let position = blockPosition.x + " " + blockPosition.y + " " + blockPosition.z
 
     let data = executor.run("entity editor init " + id + " " + entity + " " + position)
 

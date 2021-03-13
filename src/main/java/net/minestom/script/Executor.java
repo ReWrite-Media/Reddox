@@ -47,8 +47,14 @@ public class Executor {
         this.functionMap.put(name, callback);
     }
     
-    public void onSignal(@NotNull EventSignal signal, @NotNull SignalCallback callback) {
+    public void onSignal(@NotNull String id, @NotNull SignalCallback callback) {
     	
+    	EventSignal signal = EventSignal.valueOf(id.toUpperCase());
+    	// TODO: Error handling for incorrect id
+    	this.onSignal(signal, callback);
+    }
+    
+    public void onSignal(@NotNull EventSignal signal, @NotNull SignalCallback callback) {
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
         listeners.add(callback);
