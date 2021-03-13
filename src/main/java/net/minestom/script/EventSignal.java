@@ -34,7 +34,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            executor.signal(MOVE, properties);
+            executor.signal(MOVE.name(), properties);
         });
 
         // 'use_item'
@@ -45,7 +45,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
-            executor.signal(USE_ITEM, properties);
+            executor.signal(USE_ITEM.name(), properties);
         });
 
         // 'use_item_block'
@@ -57,7 +57,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(USE_ITEM_BLOCK, properties);
+            executor.signal(USE_ITEM_BLOCK.name(), properties);
         });
 
         // 'place_block'
@@ -69,7 +69,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(BLOCK_PLACE, properties);
+            executor.signal(BLOCK_PLACE.name(), properties);
         });
 
         // 'entity_interact'
@@ -86,7 +86,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_INTERACT, properties);
+            executor.signal(ENTITY_INTERACT.name(), properties);
         });
 
         // 'attack'
@@ -97,7 +97,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("entity", Properties.fromEntity(entity));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_ATTACK, properties);
+            executor.signal(ENTITY_ATTACK.name(), properties);
         });
     }
 

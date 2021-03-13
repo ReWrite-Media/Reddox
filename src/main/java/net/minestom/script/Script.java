@@ -90,7 +90,7 @@ public class Script {
         Map<String, Object> eventBindings = new HashMap<String, Object>();
         
         for (EventSignal event : EventSignal.values()) {
-        	eventBindings.put(event.name(), event);
+        	eventBindings.put(event.name(), event.name().toLowerCase());
         }
         
         bindings.putMember("signals", ProxyObject.fromMap(eventBindings));
