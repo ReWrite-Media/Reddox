@@ -30,7 +30,7 @@ public class Executor {
     private final static List<Executor> EXECUTORS = new CopyOnWriteArrayList<>();
 
     private final Map<String, FunctionCallback> functionMap = new ConcurrentHashMap<>();
-    private final Map<String, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
+    private final Map<EventSignal, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
 
     protected void register() {
         EXECUTORS.add(this);
@@ -46,8 +46,9 @@ public class Executor {
         // TODO prevent multiple scripts from registering the same function
         this.functionMap.put(name, callback);
     }
-
-    public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
+    
+    public void onSignal(@NotNull EventSignal signal, @NotNull SignalCallback callback) {
+    	
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal, s -> new CopyOnWriteArrayList<>());
         listeners.add(callback);
@@ -64,7 +65,7 @@ public class Executor {
         return false;
     }
 
-    public boolean signal(@NotNull String signal, @NotNull Properties properties) {
+    public boolean signal(@NotNull EventSignal signal, @NotNull Properties properties) {
         boolean exists = false;
         for (Executor executor : EXECUTORS) {
             List<SignalCallback> listeners = executor.signalMap.get(signal);

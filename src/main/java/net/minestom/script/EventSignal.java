@@ -14,14 +14,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Calls event-related signals.
  */
-public class EventSignal {
-
-    public static final String MOVE_SIGNAL = "move";
-    public static final String USE_ITEM_SIGNAL = "use_item";
-    public static final String USE_ITEM_BLOCK_SIGNAL = "use_item_block";
-    public static final String BLOCK_PLACE_SIGNAL = "block_place";
-    public static final String ENTITY_INTERACT_SIGNAL = "entity_interact";
-    public static final String ENTITY_ATTACK_SIGNAL = "entity_attack";
+public enum EventSignal {
+    MOVE,
+    USE_ITEM,
+    USE_ITEM_BLOCK,
+    BLOCK_PLACE,
+    ENTITY_INTERACT,
+    ENTITY_ATTACK;
 
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
 
@@ -35,7 +34,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            executor.signal(MOVE_SIGNAL, properties);
+            executor.signal(MOVE, properties);
         });
 
         // 'use_item'
@@ -46,7 +45,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
-            executor.signal(USE_ITEM_SIGNAL, properties);
+            executor.signal(USE_ITEM, properties);
         });
 
         // 'use_item_block'
@@ -58,7 +57,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(USE_ITEM_BLOCK_SIGNAL, properties);
+            executor.signal(USE_ITEM_BLOCK, properties);
         });
 
         // 'place_block'
@@ -70,7 +69,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(BLOCK_PLACE_SIGNAL, properties);
+            executor.signal(BLOCK_PLACE, properties);
         });
 
         // 'entity_interact'
@@ -87,7 +86,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_INTERACT_SIGNAL, properties);
+            executor.signal(ENTITY_INTERACT, properties);
         });
 
         // 'attack'
@@ -98,7 +97,7 @@ public class EventSignal {
             Properties properties = new Properties();
             properties.putMember("entity", Properties.fromEntity(entity));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_ATTACK_SIGNAL, properties);
+            executor.signal(ENTITY_ATTACK, properties);
         });
     }
 

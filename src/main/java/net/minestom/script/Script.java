@@ -1,14 +1,17 @@
 package net.minestom.script;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 public class Script {
 
@@ -79,8 +82,19 @@ public class Script {
         Context context = Context.newBuilder(language)
                 .allowHostAccess(HostAccess.ALL).build();
         Value bindings = context.getBindings(language);
+        
+        // Command executor
         bindings.putMember("executor", executor);
-
+        
+        // Event Signals
+        Map<String, Object> eventBindings = new HashMap<String, Object>();
+        
+        for (EventSignal event : EventSignal.values()) {
+        	eventBindings.put(event.name(), event);
+        }
+        
+        bindings.putMember("events", ProxyObject.fromMap(eventBindings));
+        
         return context;
     }
 }

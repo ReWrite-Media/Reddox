@@ -3,3 +3,6 @@
 /build/
 /build/classes/java/main/
 /build/classes/java/test/
+
+# Minestom
+/minecraft_data/

@@ -1,20 +1,28 @@
 console.log("debug from javascript!")
 
+// Register signals and api functions
 executor.registerFunction("test", test)
+executor.onSignal(events.USE_ITEM_BLOCK, onUse)
+executor.onSignal(events.ENTITY_INTERACT, onInteract)
+
 
 function test(properties) {
     console.log("function executed " + properties.value)
 }
 
-executor.onSignal("use_item_block", onUse)
-executor.onSignal("entity_interact", onInteract)
-
 function onUse(properties) {
-    let id = Math.floor(Math.random() * 1000);
+    let id = Math.floor(Math.random() * 1000)
     let entity = "minecraft:skeleton"
-    let blockPosition = properties.block.position;
-    let position = blockPosition.x + " " + (blockPosition.y + 1) + " " + blockPosition.z
+
+    let blockPosition = properties.block.position
+	blockPosition.y = blockPosition.y + 1
+	blockPosition.x = blockPosition.x + 0.5
+	blockPosition.z = blockPosition.z + 0.5
+	
+    let position = blockPosition.x + " " + (blockPosition.y) + " " + blockPosition.z
+
     let data = executor.run("entity editor init " + id + " " + entity + " " + position)
+
     if (data.success) {
         console.log("success!")
     } else {
@@ -24,6 +32,7 @@ function onUse(properties) {
 
 function onInteract(properties) {
     let targetUuid = properties.target.uuid
+
     executor.run("entity kill " + targetUuid)
     console.log("entity killed")
 }
