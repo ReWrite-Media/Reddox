@@ -15,9 +15,9 @@ function onUse(properties) {
     let entity = "minecraft:skeleton"
 
     let blockPosition = properties.block.position
-    blockPosition.y = blockPosition.y + 1
-    blockPosition.x = blockPosition.x + 0.5
-    blockPosition.z = blockPosition.z + 0.5
+    blockPosition.x += 0.5
+    blockPosition.y += 1
+    blockPosition.z += 0.5
 
     let data = executor.run("entity editor init " + id + " " + entity + " " + blockPosition)
 
