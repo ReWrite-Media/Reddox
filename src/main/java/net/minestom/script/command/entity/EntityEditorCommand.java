@@ -2,20 +2,19 @@ package net.minestom.script.command.entity;
 
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.builder.Arguments;
+import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.location.RelativeVec;
 
+import java.lang.String;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
-
-import java.lang.String;
 
 public class EntityEditorCommand extends RichCommand {
 
@@ -24,16 +23,16 @@ public class EntityEditorCommand extends RichCommand {
     public EntityEditorCommand() {
         super("editor");
 
-        setDefaultExecutor((sender, args) -> {
+        setDefaultExecutor((sender, context) -> {
             System.out.println("TODO USAGE");
         });
 
         // /entity-studio init
-        addSyntax((sender, args) -> {
+        addSyntax((sender, context) -> {
             CommandData commandData = new CommandData();
-            args.setReturnData(commandData);
+            context.setReturnData(commandData);
 
-            final String identifier = args.get("identifier");
+            final String identifier = context.get("identifier");
 
             if (CREATURES_MAP.containsKey(identifier)) {
                 sender.sendMessage("PROJECTOR WITH THIS ID ALREADY EXISTS");
@@ -41,8 +40,8 @@ public class EntityEditorCommand extends RichCommand {
                 return;
             }
 
-            final EntityType entityType = args.get("entity_type");
-            final RelativeVec relativeVec = args.get("spawn_position");
+            final EntityType entityType = context.get("entity_type");
+            final RelativeVec relativeVec = context.get("spawn_position");
 
             final Vector spawnPosition = relativeVec.from(sender.isPlayer() ? sender.asPlayer() : null);
 
@@ -61,13 +60,13 @@ public class EntityEditorCommand extends RichCommand {
         }, Literal("init"), Word("identifier"), EntityType("entity_type"), RelativeVec3("spawn_position"));
 
         // /entity-studio edit
-        addSyntax((sender, args) -> {
-            final String identifier = args.get("identifier");
+        addSyntax((sender, context) -> {
+            final String identifier = context.get("identifier");
             EntityCreature creature = CREATURES_MAP.get(identifier);
             System.out.println("ENTITY EDIT:" + creature);
 
-            List<Arguments> properties = args.get("properties");
-            for (Arguments property : properties) {
+            List<CommandContext> properties = context.get("properties");
+            for (CommandContext property : properties) {
                 if (property.has("position")) {
                     final RelativeVec relativeVec = property.get("position_value");
                     final Vector vector = relativeVec.from(sender.isPlayer() ? sender.asPlayer() : null);
@@ -90,8 +89,8 @@ public class EntityEditorCommand extends RichCommand {
                 Group("path_group", Literal("path"), RelativeVec3("path_value"))));
 
         // /entity-studio remove
-        addSyntax((sender, args) -> {
-            final String identifier = args.get("identifier");
+        addSyntax((sender, context) -> {
+            final String identifier = context.get("identifier");
             EntityCreature creature = CREATURES_MAP.remove(identifier);
             if (creature != null) {
                 creature.remove();

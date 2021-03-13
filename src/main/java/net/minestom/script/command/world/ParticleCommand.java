@@ -16,14 +16,14 @@ public class ParticleCommand extends RichCommand {
     public ParticleCommand() {
         super("particle");
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /particle <type> <position> <delta> <speed> <count>"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /particle <type> <position> <delta> <speed> <count>"));
 
-        addSyntax((sender, args) -> {
-                    final Particle particle = args.get("particle");
-                    final RelativeVec relativePosition = args.get("position");
-                    final RelativeVec relativeDelta = args.get("delta");
-                    final float speed = args.get("speed");
-                    final int count = args.get("count");
+        addSyntax((sender, context) -> {
+                    final Particle particle = context.get("particle");
+                    final RelativeVec relativePosition = context.get("position");
+                    final RelativeVec relativeDelta = context.get("delta");
+                    final float speed = context.get("speed");
+                    final int count = context.get("count");
 
                     final Vector position = ArgumentUtils.from(sender, relativePosition);
                     final Vector delta = ArgumentUtils.from(sender, relativeDelta);

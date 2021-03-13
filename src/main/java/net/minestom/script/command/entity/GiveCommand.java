@@ -15,12 +15,12 @@ public class GiveCommand extends RichCommand {
     public GiveCommand() {
         super("give");
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /entity give <target> <item> [<count>]"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /entity give <target> <item> [<count>]"));
 
-        addSyntax((sender, args) -> {
-            final EntityFinder entityFinder = args.get("target");
-            final ItemStack itemStack = args.get("item");
-            final int count = args.get("count");
+        addSyntax((sender, context) -> {
+            final EntityFinder entityFinder = context.get("target");
+            final ItemStack itemStack = context.get("item");
+            final int count = context.get("count");
             // FIXME: support count > 64
             itemStack.setAmount((byte) count);
 

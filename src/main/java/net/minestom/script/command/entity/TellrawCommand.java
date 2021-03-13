@@ -15,11 +15,11 @@ public class TellrawCommand extends RichCommand {
     public TellrawCommand() {
         super("tellraw");
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /entity tellraw <targets> <message>"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /entity tellraw <targets> <message>"));
 
-        addSyntax((sender, args) -> {
-            EntityFinder entityFinder = args.get("targets");
-            final JsonMessage message = args.get("message");
+        addSyntax((sender, context) -> {
+            EntityFinder entityFinder = context.get("targets");
+            final JsonMessage message = context.get("message");
             final List<Entity> entities = entityFinder.find(sender);
             for (Entity entity : entities) {
                 if (entity instanceof Player) {

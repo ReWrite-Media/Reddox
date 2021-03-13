@@ -13,7 +13,7 @@ public class KillCommand extends RichCommand {
     public KillCommand() {
         super("kill");
 
-        setDefaultExecutor((sender, args) -> {
+        setDefaultExecutor((sender, context) -> {
             if (!sender.isPlayer()) {
                 sender.sendMessage("Usage: /kill <targets>");
                 return;
@@ -22,8 +22,8 @@ public class KillCommand extends RichCommand {
             player.kill();
         });
 
-        addSyntax((sender, args) -> {
-            EntityFinder entityFinder = args.get("targets");
+        addSyntax((sender, context) -> {
+            EntityFinder entityFinder = context.get("targets");
             final List<Entity> entities = entityFinder.find(sender);
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity) {

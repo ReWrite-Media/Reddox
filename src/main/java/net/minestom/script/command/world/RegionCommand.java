@@ -19,7 +19,7 @@ public class RegionCommand extends RichCommand {
 
         final RegionComponent regionComponent = getApi().getRegionHandler();
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /world region <create/edit> <identifier> [properties]"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /world region <create/edit> <identifier> [properties]"));
 
         // All functions related to regions (eg: know if a position is inside a region)
         addSubcommand(new RegionFunctionCommand());
@@ -30,12 +30,12 @@ public class RegionCommand extends RichCommand {
                 Group("3", Literal("data"), NbtCompound("region_data")))
                 .setDefaultValue(new ArrayList<>());
 
-        addSyntax((sender, args) -> {
-            final String identifier = args.get("identifier");
+        addSyntax((sender, context) -> {
+            final String identifier = context.get("identifier");
 
-            RelativeVec posStart = args.get("pos1");
-            RelativeVec posEnd = args.get("pos2");
-            NBTCompound data = args.get("region_data");
+            RelativeVec posStart = context.get("pos1");
+            RelativeVec posEnd = context.get("pos2");
+            NBTCompound data = context.get("region_data");
 
             RegionComponent.Region region = regionComponent.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
             final boolean success = region != null;
@@ -44,21 +44,21 @@ public class RegionCommand extends RichCommand {
             } else {
                 sender.sendMessage("Region '" + identifier + "' already exists!");
             }
-            args.setReturnData(new CommandData().set("success", success));
+            context.setReturnData(new CommandData().set("success", success));
         }, Literal("create"), Word("identifier"), RelativeVec3("pos1"), RelativeVec3("pos2"), NbtCompound("region_data").setDefaultValue(new NBTCompound()));
 
-        addSyntax((sender, args) -> {
-            final String identifier = args.get("identifier");
+        addSyntax((sender, context) -> {
+            final String identifier = context.get("identifier");
             final boolean success = regionComponent.deleteRegion(identifier);
             if (success) {
                 sender.sendMessage("Region '" + identifier + "' has been deleted");
             } else {
                 sender.sendMessage("Region '" + identifier + "' does not exist!");
             }
-            args.setReturnData(new CommandData().set("success", success));
+            context.setReturnData(new CommandData().set("success", success));
         }, Literal("delete"), Word("identifier"));
 
-        addSyntax((sender, args) -> {
+        addSyntax((sender, context) -> {
             // TODO edit
             System.out.println("syntax2");
         }, Literal("edit"), Word("identifier"), propertiesArgument);
@@ -74,26 +74,26 @@ public class RegionCommand extends RichCommand {
             // 'is_inside'
             {
                 // With explicit position
-                addSyntax((sender, args) -> {
-                    final String identifier = args.get("identifier");
+                addSyntax((sender, context) -> {
+                    final String identifier = context.get("identifier");
                     final RegionComponent.Region region = regionComponent.getRegion(identifier);
                     boolean inside;
                     if (region != null) {
-                        final Vector vector = ArgumentUtils.from(sender, args.get("position"));
+                        final Vector vector = ArgumentUtils.from(sender, context.get("position"));
                         inside = region.isInside(vector);
                         sender.sendMessage("inside: " + inside);
                     } else {
                         inside = false;
                         sender.sendMessage("region not found");
                     }
-                    args.setReturnData(new CommandData().set("inside", inside));
+                    context.setReturnData(new CommandData().set("inside", inside));
                 }, Literal("is_inside"), Word("identifier"), RelativeVec3("position"));
             }
 
             // 'get_data'
             {
-                addSyntax((sender, args) -> {
-                    final String identifier = args.get("identifier");
+                addSyntax((sender, context) -> {
+                    final String identifier = context.get("identifier");
                     final RegionComponent.Region region = regionComponent.getRegion(identifier);
 
                     CommandData data = new CommandData();
@@ -107,7 +107,7 @@ public class RegionCommand extends RichCommand {
                         sender.sendMessage("region not found");
                     }
 
-                    args.setReturnData(data);
+                    context.setReturnData(data);
                 }, Literal("get_data"), Word("identifier"));
             }
 

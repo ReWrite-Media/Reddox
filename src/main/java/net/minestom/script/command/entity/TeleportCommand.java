@@ -4,7 +4,7 @@ import net.minestom.script.command.RichCommand;
 import net.minestom.server.chat.ChatColor;
 import net.minestom.server.chat.ColoredText;
 import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.builder.Arguments;
+import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec2;
@@ -39,7 +39,7 @@ public class TeleportCommand extends RichCommand {
         addSyntax(this::selfToPosition, location);
     }
 
-    private void usage(CommandSender sender, Arguments arguments) {
+    private void usage(CommandSender sender, CommandContext context) {
         if (sender.isPlayer()) {
             sender.sendMessage("Usage: /tp <location>");
             sender.sendMessage("Usage: /tp <destination>");
@@ -47,13 +47,13 @@ public class TeleportCommand extends RichCommand {
         sender.sendMessage("Usage: /tp <targets> (<destination>|<location>)");
     }
 
-    private void selfToEntity(CommandSender sender, Arguments args) {
+    private void selfToEntity(CommandSender sender, CommandContext context) {
         if (sender.isConsole()) {
-            usage(sender, args);
+            usage(sender, context);
             return;
         }
 
-        EntityFinder entityFinder = args.get(destination);
+        EntityFinder entityFinder = context.get(destination);
 
         List<Entity> entities = entityFinder.find(sender);
 
@@ -65,15 +65,15 @@ public class TeleportCommand extends RichCommand {
         }
     }
 
-    private void selfToPosition(CommandSender sender, Arguments args) {
+    private void selfToPosition(CommandSender sender, CommandContext context) {
         if (sender.isConsole()) {
-            usage(sender, args);
+            usage(sender, context);
             return;
         }
 
         Player player = sender.asPlayer();
 
-        RelativeVec relativeVec = args.get(location);
+        RelativeVec relativeVec = context.get(location);
         Position position = relativeVec.from(player).toPosition();
 
         teleport(player, position);
@@ -81,9 +81,9 @@ public class TeleportCommand extends RichCommand {
                 position.getX() + ", " + position.getY() + ", " + position.getZ());
     }
 
-    public void targetToLocation(CommandSender sender, Arguments args) {
-        RelativeVec relativeVec = args.get(location);
-        EntityFinder entityTarget = args.get(targets);
+    public void targetToLocation(CommandSender sender, CommandContext context) {
+        RelativeVec relativeVec = context.get(location);
+        EntityFinder entityTarget = context.get(targets);
 
         List<Entity> targetsEntity = entityTarget.find(sender);
 
@@ -106,11 +106,11 @@ public class TeleportCommand extends RichCommand {
         }
     }
 
-    public void targetToLocationWithDir(CommandSender sender, Arguments args) {
-        RelativeVec relativeVec = args.get(location);
-        RelativeVec relativeDirection = args.get(direction);
+    public void targetToLocationWithDir(CommandSender sender, CommandContext context) {
+        RelativeVec relativeVec = context.get(location);
+        RelativeVec relativeDirection = context.get(direction);
 
-        EntityFinder entityTarget = args.get(targets);
+        EntityFinder entityTarget = context.get(targets);
         List<Entity> targetsEntity = entityTarget.find(sender);
 
         if (targetsEntity.size() > 0) {
@@ -133,9 +133,9 @@ public class TeleportCommand extends RichCommand {
 
     }
 
-    public void targetToDestination(CommandSender sender, Arguments args) {
-        EntityFinder destinationFinder = args.get(destination);
-        EntityFinder entityTarget = args.get(targets);
+    public void targetToDestination(CommandSender sender, CommandContext context) {
+        EntityFinder destinationFinder = context.get(destination);
+        EntityFinder entityTarget = context.get(targets);
 
         List<Entity> targetsEntity = entityTarget.find(sender);
         Entity destination = destinationFinder.find(sender).get(0);
@@ -159,11 +159,11 @@ public class TeleportCommand extends RichCommand {
         }
     }
 
-    public void targetToDestinationWithDir(CommandSender sender, Arguments args) {
-        RelativeVec relativeVec = args.get(location);
-        RelativeVec relativeDirection = args.get(direction);
+    public void targetToDestinationWithDir(CommandSender sender, CommandContext context) {
+        RelativeVec relativeVec = context.get(location);
+        RelativeVec relativeDirection = context.get(direction);
 
-        EntityFinder entityTarget = args.get(targets);
+        EntityFinder entityTarget = context.get(targets);
         List<Entity> targetsEntity = entityTarget.find(sender);
 
         if (targetsEntity.size() > 0) {

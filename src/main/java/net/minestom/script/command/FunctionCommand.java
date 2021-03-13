@@ -1,7 +1,7 @@
 package net.minestom.script.command;
 
 import net.minestom.script.property.Properties;
-import net.minestom.server.command.builder.Arguments;
+import net.minestom.server.command.builder.CommandContext;
 import org.jglrxavpok.hephaistos.nbt.NBT;
 
 import java.lang.String;
@@ -23,13 +23,13 @@ public class FunctionCommand extends RichCommand {
                 Group("properties_group", Word("key"), NBT("value")))
                 .setDefaultValue(new ArrayList<>());
 
-        addSyntax((sender, args) -> {
-            final String name = args.get("function_name");
-            final List<Arguments> loopArguments = args.get(propertiesArgument);
+        addSyntax((sender, context) -> {
+            final String name = context.get("function_name");
+            final List<CommandContext> loopArguments = context.get(propertiesArgument);
 
             // Build the properties object
             Properties properties = new Properties();
-            for (Arguments property : loopArguments) {
+            for (CommandContext property : loopArguments) {
                 final String key = property.get("key");
                 final NBT nbt = property.get("value");
                 properties.putMember(key, nbt);

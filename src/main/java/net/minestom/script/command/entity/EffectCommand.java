@@ -2,7 +2,7 @@ package net.minestom.script.command.entity;
 
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.builder.Arguments;
+import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.potion.Potion;
@@ -25,9 +25,9 @@ public class EffectCommand extends RichCommand {
 
         // 'clear'
         {
-            addSyntax((sender, args) -> {
-                final PotionEffect potionEffect = args.get("effect");
-                final EntityFinder entityFinder = args.get("targets");
+            addSyntax((sender, context) -> {
+                final PotionEffect potionEffect = context.get("effect");
+                final EntityFinder entityFinder = context.get("targets");
                 final List<Entity> targets = entityFinder.find(sender);
 
                 for (Entity target : targets) {
@@ -37,9 +37,9 @@ public class EffectCommand extends RichCommand {
                 sender.sendMessage("Potion effect removed successfully!");
             }, Literal("clear"), targetArgument, effectArgument);
 
-            addSyntax((sender, args) -> {
+            addSyntax((sender, context) -> {
                 if (!sender.isPlayer()) {
-                    usage(sender, args);
+                    usage(sender, context);
                     return;
                 }
                 final Player player = sender.asPlayer();
@@ -50,11 +50,11 @@ public class EffectCommand extends RichCommand {
 
         // 'give'
         {
-            addSyntax((sender, args) -> {
-                        final PotionEffect potionEffect = args.get("effect");
-                        final EntityFinder entityFinder = args.get("targets");
-                        final int ticks = args.get("seconds");
-                        final int amplifier = args.get("amplifier");
+            addSyntax((sender, context) -> {
+                        final PotionEffect potionEffect = context.get("effect");
+                        final EntityFinder entityFinder = context.get("targets");
+                        final int ticks = context.get("seconds");
+                        final int amplifier = context.get("amplifier");
                         final List<Entity> targets = entityFinder.find(sender);
 
                         Potion potion = new Potion(potionEffect, (byte) amplifier, ticks * 20);
@@ -71,7 +71,7 @@ public class EffectCommand extends RichCommand {
 
     }
 
-    private void usage(CommandSender sender, Arguments args) {
+    private void usage(CommandSender sender, CommandContext context) {
         sender.sendMessage("Usage: /entity effect clear [<targets>] [<effect>]");
         sender.sendMessage("Usage: /entity effect give <targets> <effect> [<seconds>] [<amplifier>] [<hideParticles>]");
     }
