@@ -20,7 +20,7 @@ public class EffectCommand extends RichCommand {
 
         setDefaultExecutor(this::usage);
 
-        final var targetArgument = Entities("targets");
+        final var targetArgument = Entity("targets");
         final var effectArgument = Potion("effect");
 
         // 'clear'

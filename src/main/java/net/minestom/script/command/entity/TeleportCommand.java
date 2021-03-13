@@ -20,8 +20,8 @@ import java.util.List;
 public class TeleportCommand extends RichCommand {
 
     private final ArgumentRelativeVec3 location = ArgumentType.RelativeVec3("location");
-    private final ArgumentEntity destination = ArgumentType.Entities("destination").singleEntity(true);
-    private final ArgumentEntity targets = ArgumentType.Entities("targets");
+    private final ArgumentEntity destination = ArgumentType.Entity("destination").singleEntity(true);
+    private final ArgumentEntity targets = ArgumentType.Entity("targets");
     private final ArgumentRelativeVec2 direction = ArgumentType.RelativeVec2("direction");
 
     public TeleportCommand() {

@@ -34,6 +34,6 @@ public class GiveCommand extends RichCommand {
 
             sender.sendMessage("Items have been given successfully!");
 
-        }, Entities("target").onlyPlayers(true), ItemStack("item"), Integer("count").setDefaultValue(1));
+        }, Entity("target").onlyPlayers(true), ItemStack("item"), Integer("count").setDefaultValue(1));
     }
 }

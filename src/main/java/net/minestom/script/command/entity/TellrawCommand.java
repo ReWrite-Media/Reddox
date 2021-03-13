@@ -9,7 +9,7 @@ import net.minestom.server.utils.entity.EntityFinder;
 import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.Component;
-import static net.minestom.server.command.builder.arguments.ArgumentType.Entities;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Entity;
 
 public class TellrawCommand extends RichCommand {
     public TellrawCommand() {
@@ -29,7 +29,7 @@ public class TellrawCommand extends RichCommand {
             }
 
             sender.sendMessage("Message sent!");
-        }, Entities("targets").onlyPlayers(true), Component("message"));
+        }, Entity("targets").onlyPlayers(true), Component("message"));
 
     }
 }
