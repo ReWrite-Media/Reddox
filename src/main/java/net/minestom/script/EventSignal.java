@@ -9,6 +9,8 @@ import net.minestom.server.event.player.*;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,6 +24,8 @@ public enum EventSignal {
     ENTITY_INTERACT,
     ENTITY_ATTACK;
 
+    private static final String CANCEL_MEMBER = "cancel";
+
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
 
         final Executor executor = ScriptManager.API.getExecutor();
@@ -34,7 +38,8 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            executor.signal(MOVE.name(), properties);
+            ProxyObject output = executor.signal(MOVE.name(), properties);
+            event.setCancelled(isCancelled(output));
         });
 
         // 'use_item'
@@ -99,6 +104,20 @@ public enum EventSignal {
             properties.putMember("target", Properties.fromEntity(target));
             executor.signal(ENTITY_ATTACK.name(), properties);
         });
+    }
+
+    private static boolean isCancelled(ProxyObject output) {
+        if (!output.hasMember(CANCEL_MEMBER))
+            return false;
+        final Object member = output.getMember(CANCEL_MEMBER);
+        if (!(member instanceof Value))
+            return false;
+
+        final Value cancelled = (Value) member;
+        if (cancelled.isBoolean()) {
+            return cancelled.asBoolean();
+        }
+        return false;
     }
 
 }

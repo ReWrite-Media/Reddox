@@ -36,3 +36,7 @@ function onInteract(properties) {
     executor.run("entity kill " + targetUuid)
     console.log("entity killed")
 }
+
+executor.onSignal("move", (properties, output)=>{
+    output.cancel = false
+})
