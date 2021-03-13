@@ -13,6 +13,7 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -64,18 +65,18 @@ public class Executor {
         return false;
     }
 
-    public boolean signal(@NotNull String signal, @NotNull Properties properties) {
-        boolean exists = false;
+    @NotNull
+    public ProxyObject signal(@NotNull String signal, @NotNull Properties properties) {
+        ProxyObject result = ProxyObject.fromMap(new HashMap<>());
         for (Executor executor : EXECUTORS) {
             List<SignalCallback> listeners = executor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
-                exists = true;
                 for (SignalCallback callback : listeners) {
-                    callback.accept(properties);
+                    callback.accept(properties, result);
                 }
             }
         }
-        return exists;
+        return result;
     }
 
     @Nullable
