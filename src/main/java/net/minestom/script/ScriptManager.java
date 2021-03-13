@@ -1,9 +1,6 @@
 package net.minestom.script;
 
-import net.minestom.script.command.EntityCommand;
-import net.minestom.script.command.FunctionCommand;
-import net.minestom.script.command.ScriptCommand;
-import net.minestom.script.command.WorldCommand;
+import net.minestom.script.command.*;
 import net.minestom.script.component.ScriptAPI;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
@@ -55,6 +52,7 @@ public class ScriptManager {
             commandManager.register(new FunctionCommand());
             commandManager.register(new WorldCommand());
             commandManager.register(new EntityCommand());
+            commandManager.register(new UtilsCommand());
         }
 
 
@@ -96,7 +94,7 @@ public class ScriptManager {
     }
 
     /**
-     * Gets all the evaluated python scripts.
+     * Gets all the evaluated scripts.
      *
      * @return a list containing the scripts
      */
