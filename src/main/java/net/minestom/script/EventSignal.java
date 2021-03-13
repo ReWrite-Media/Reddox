@@ -17,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
  * Calls event-related signals.
  */
 public enum EventSignal {
-    MOVE,
-    USE_ITEM,
-    USE_ITEM_BLOCK,
-    BLOCK_PLACE,
-    ENTITY_INTERACT,
+    PLAYER_MOVE,
+    PLAYER_USE_ITEM,
+    PLAYER_USE_ITEM_ON_BLOCK,
+    PLAYER_BLOCK_PLACE,
+    PLAYER_ENTITY_INTERACT,
     ENTITY_ATTACK;
 
     private static final String CANCEL_MEMBER = "cancel";
@@ -38,7 +38,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            ProxyObject output = executor.signal(MOVE.name(), properties);
+            ProxyObject output = executor.signal(PLAYER_MOVE.name(), properties);
             event.setCancelled(isCancelled(output));
         });
 
@@ -50,7 +50,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
-            executor.signal(USE_ITEM.name(), properties);
+            executor.signal(PLAYER_USE_ITEM.name(), properties);
         });
 
         // 'use_item_block'
@@ -62,7 +62,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(USE_ITEM_BLOCK.name(), properties);
+            executor.signal(PLAYER_USE_ITEM_ON_BLOCK.name(), properties);
         });
 
         // 'place_block'
@@ -74,7 +74,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(BLOCK_PLACE.name(), properties);
+            executor.signal(PLAYER_BLOCK_PLACE.name(), properties);
         });
 
         // 'entity_interact'
@@ -91,7 +91,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_INTERACT.name(), properties);
+            executor.signal(PLAYER_ENTITY_INTERACT.name(), properties);
         });
 
         // 'attack'
