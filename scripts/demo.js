@@ -2,8 +2,8 @@ console.log("debug from javascript!")
 
 // Register signals and api functions
 executor.registerFunction("test", test)
-executor.onSignal(events.USE_ITEM_BLOCK, onUse)
-executor.onSignal(events.ENTITY_INTERACT, onInteract)
+executor.onSignal(signals.USE_ITEM_BLOCK, onUse)
+executor.onSignal(signals.ENTITY_INTERACT, onInteract)
 
 
 function test(properties) {

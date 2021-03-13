@@ -93,7 +93,7 @@ public class Script {
         	eventBindings.put(event.name(), event);
         }
         
-        bindings.putMember("events", ProxyObject.fromMap(eventBindings));
+        bindings.putMember("signals", ProxyObject.fromMap(eventBindings));
         
         return context;
     }
