@@ -26,7 +26,7 @@ public class RichCommand extends Command {
             return ScriptManager.getCommandPermission().apply(source.asPlayer());
         });
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Default script executor"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Default script executor"));
     }
 
     public RichCommand(@NotNull String name) {

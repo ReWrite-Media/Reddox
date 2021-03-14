@@ -17,7 +17,7 @@ public class FunctionCommand extends RichCommand {
     public FunctionCommand() {
         super("function");
 
-        setDefaultExecutor((sender, args) -> sender.sendMessage("Usage: /function run <name> [properties...]"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /function run <name> [properties...]"));
 
         final var propertiesArgument = Loop("properties",
                 Group("properties_group", Word("key"), NBT("value")))

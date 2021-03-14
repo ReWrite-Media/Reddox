@@ -10,17 +10,19 @@ import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskBuilder;
 import net.minestom.server.utils.time.TimeUnit;
 import net.minestom.server.utils.time.UpdateOption;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.String;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
-
-import java.lang.String;
 
 public class ScheduleCommand extends RichCommand {
     private static final CommandManager COMMAND_MANAGER = MinecraftServer.getCommandManager();
@@ -34,6 +36,7 @@ public class ScheduleCommand extends RichCommand {
         // /schedule list
         {
             addSyntax((sender, context) -> {
+                sender.sendMessage("Task count: " + SCHEDULED_TASKS_MAP.size());
                 for (Map.Entry<Task, String> entry : SCHEDULED_TASKS_MAP.entrySet()) {
                     final Task task = entry.getKey();
                     final String command = entry.getValue();
@@ -45,8 +48,8 @@ public class ScheduleCommand extends RichCommand {
         // /schedule remove <id>
         {
 
-            addSyntax((sender, args) -> {
-                final int id = args.get("task_id");
+            addSyntax((sender, context) -> {
+                final int id = context.get("task_id");
 
                 final boolean removed = SCHEDULED_TASKS_MAP.keySet().removeIf(task -> {
                     if (task.getId() == id) {
@@ -66,9 +69,9 @@ public class ScheduleCommand extends RichCommand {
 
         // /schedule delayed <delay> <command>
         {
-            addSyntax((sender, args) -> {
-                final UpdateOption delay = args.get("delay");
-                final CommandResult commandResult = args.get("command");
+            addSyntax((sender, context) -> {
+                final UpdateOption delay = context.get("delay");
+                final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, commandResult, delay, null);
             }, Literal("delayed"), Time("delay"), Command("command"));
@@ -76,10 +79,10 @@ public class ScheduleCommand extends RichCommand {
 
         // /schedule delayed_repeat <delay> <repeat> <command>
         {
-            addSyntax((sender, args) -> {
-                final UpdateOption delay = args.get("delay");
-                final UpdateOption repeat = args.get("repeat");
-                final CommandResult commandResult = args.get("command");
+            addSyntax((sender, context) -> {
+                final UpdateOption delay = context.get("delay");
+                final UpdateOption repeat = context.get("repeat");
+                final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, commandResult, delay, repeat);
             }, Literal("delayed_repeat"), Time("delay"), Time("repeat"), Command("command"));
@@ -87,9 +90,9 @@ public class ScheduleCommand extends RichCommand {
 
         // /schedule repeat <repeat> <command>
         {
-            addSyntax((sender, args) -> {
-                final UpdateOption repeat = args.get("repeat");
-                final CommandResult commandResult = args.get("command");
+            addSyntax((sender, context) -> {
+                final UpdateOption repeat = context.get("repeat");
+                final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, commandResult, null, repeat);
             }, Literal("repeat"), Time("repeat"), Command("command"));
@@ -97,9 +100,9 @@ public class ScheduleCommand extends RichCommand {
 
         // /schedule gmt <time> <command>
         {
-            addSyntax((sender, args) -> {
-                final String timeString = args.get("utc_time"); // // eg: 2021-02-07T19:16:19Z
-                final CommandResult commandResult = args.get("command");
+            addSyntax((sender, context) -> {
+                final String timeString = context.get("utc_time"); // // eg: 2021-02-07T19:16:19Z
+                final CommandResult commandResult = context.get("command");
 
                 final Instant now = Instant.now();
                 final Instant time = Instant.parse(timeString);
@@ -117,12 +120,19 @@ public class ScheduleCommand extends RichCommand {
 
     }
 
-    private static void scheduleTask(CommandSender sender, CommandResult commandResult,
-                                     UpdateOption delay, UpdateOption repeat) {
+    private static void scheduleTask(@NotNull CommandSender sender, @NotNull CommandResult commandResult,
+                                     @Nullable UpdateOption delay, @Nullable UpdateOption repeat) {
         final String input = commandResult.getInput();
-        // TODO remove task from list automatically if not repeated
-        TaskBuilder taskBuilder = SCHEDULER_MANAGER.buildTask(() ->
-                commandResult.getParsedCommand().execute(COMMAND_MANAGER.getConsoleSender(), input));
+        AtomicReference<Task> taskReference = new AtomicReference<>();
+        TaskBuilder taskBuilder = SCHEDULER_MANAGER.buildTask(() -> {
+            commandResult.getParsedCommand().execute(COMMAND_MANAGER.getConsoleSender(), input);
+            if (repeat == null) {
+                final Task task = taskReference.get();
+                if (task != null) {
+                    SCHEDULED_TASKS_MAP.remove(task);
+                }
+            }
+        });
 
         if (delay != null) {
             taskBuilder.delay(delay.getValue(), delay.getTimeUnit());
@@ -133,6 +143,7 @@ public class ScheduleCommand extends RichCommand {
         }
 
         final Task task = taskBuilder.schedule();
+        taskReference.set(task);
         SCHEDULED_TASKS_MAP.put(task, input);
 
         sender.sendMessage("You created the task " + task.getId() + " successfully (" + input + ")");
