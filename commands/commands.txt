@@ -1,0 +1,25 @@
+
+Standard:
+	SuperCategory CommandName FunctionCategory Function
+
+Attributes {
+
+	<attribute> = movement speed, health, damage, etc.
+
+
+	entity attribute get <total|base> <attribute> <entity uuid> // Returns the total or base value of a specific attribute
+	entity attribute get modifier <attribute> <modifier name> <entity uuid> // Gets the value of the specific attribute modifier
+	
+	entity attribute set base <attribute> <entity uuid> <value> // Sets the base value of the specified entity's attribute
+	entity attribute edit modifier value <attribute> <modifier name> <entity uuid> <value>	// Updates the value of a specific modifier
+	entity attribute edit modifier type <attribute> <modifier name> <entity uuid> <modifier type>	// Updates the type of a specific modifier
+	    
+	entity attribute remove modifier <attribute> <modifier name> <entity uuid> // removes this modifier from the specified entity
+	
+	entity attribute add modifier <attribute> <modifier name> <modifier type> <entity uuid> <value>	// adds a modifier to a specific entity
+}
+
+Title {
+	text title send <all|title|subtitle> <player uuid> <duration> <text nbt string> // Sends a title to a player for a specified duration
+	text title stop <all|title|subtitle> <player uuid> // Stops the player's title from playing 
+}
