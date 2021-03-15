@@ -19,7 +19,7 @@ function onUse(properties) {
     blockPosition.y += 1
     blockPosition.z += 0.5
 
-    let data = executor.run("entity editor init " + id + " " + entity + " " + blockPosition)
+    let data = executor.run("entity editor init", id, entity, blockPosition)
 
     if (data.success) {
         console.log("success!")
@@ -31,7 +31,7 @@ function onUse(properties) {
 function onInteract(properties) {
     let targetUuid = properties.target.uuid
 
-    executor.run("entity kill " + targetUuid)
+    executor.run("entity kill", targetUuid)
     console.log("entity killed")
 }
 

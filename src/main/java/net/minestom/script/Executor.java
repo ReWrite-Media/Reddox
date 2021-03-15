@@ -8,17 +8,16 @@ import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.utils.validate.Check;
+import org.apache.commons.lang3.StringUtils;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Layer between the server and the scripts.
@@ -47,7 +46,7 @@ public class Executor {
         // TODO prevent multiple scripts from registering the same function
         this.functionMap.put(name, callback);
     }
-    
+
     public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
@@ -80,13 +79,16 @@ public class Executor {
     }
 
     @Nullable
-    public ProxyObject run(@NotNull String command) {
+    public ProxyObject run(@NotNull Object... input) {
+        final String command = Arrays.stream(input)
+                .map(Object::toString)
+                .collect(Collectors.joining(StringUtils.SPACE));
         final CommandResult result = MinecraftServer.getCommandManager().executeServerCommand(command);
         return retrieveCommandData(result, command);
     }
 
     @Nullable
-    public ProxyObject runAs(@NotNull Value playerValue, @NotNull String command) {
+    public ProxyObject runAs(@NotNull Value playerValue, @NotNull Object... input) {
         Check.argCondition(!playerValue.isProxyObject(), "#runAs requires a player!");
         {
             ProxyObject proxyObject = playerValue.asProxyObject();
@@ -99,6 +101,9 @@ public class Executor {
         if (player == null)
             return null;
 
+        final String command = Arrays.stream(input)
+                .map(Object::toString)
+                .collect(Collectors.joining(StringUtils.SPACE));
         final CommandResult result = MinecraftServer.getCommandManager().execute(player, command);
         return retrieveCommandData(result, command);
     }
