@@ -11,18 +11,15 @@ function test(properties) {
 }
 
 function onUse(properties) {
-    let id = Math.floor(Math.random() * 1000)
-    let entity = "minecraft:skeleton"
-
     let blockPosition = properties.block.position
     blockPosition.x += 0.5
     blockPosition.y += 1
     blockPosition.z += 0.5
 
-    let data = executor.run("entity editor init", id, entity, blockPosition)
+    let data = executor.run("entity editor init", "minecraft:skeleton", blockPosition)
 
     if (data.success) {
-        console.log("success!")
+        console.log("You created the entity " + data.entity.uuid + " successfully!")
     } else {
         console.log("failure")
     }
