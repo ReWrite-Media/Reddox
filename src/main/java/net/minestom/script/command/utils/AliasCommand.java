@@ -17,6 +17,9 @@ public class AliasCommand extends RichCommand {
     public AliasCommand() {
         super("alias");
 
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage("Usage: /alias create <name> <command>"));
+
         final CommandManager commandManager = MinecraftServer.getCommandManager();
         final ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
 
