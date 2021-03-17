@@ -5,6 +5,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandResult;
+import net.minestom.server.command.builder.ParsedCommand;
 import net.minestom.server.timer.SchedulerManager;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskBuilder;
@@ -122,10 +123,16 @@ public class ScheduleCommand extends RichCommand {
 
     private static void scheduleTask(@NotNull CommandSender sender, @NotNull CommandResult commandResult,
                                      @Nullable UpdateOption delay, @Nullable UpdateOption repeat) {
+        final ParsedCommand parsedCommand = commandResult.getParsedCommand();
+        if (parsedCommand == null) {
+            sender.sendMessage("Invalid command");
+            return;
+        }
+
         final String input = commandResult.getInput();
         AtomicReference<Task> taskReference = new AtomicReference<>();
         TaskBuilder taskBuilder = SCHEDULER_MANAGER.buildTask(() -> {
-            commandResult.getParsedCommand().execute(COMMAND_MANAGER.getConsoleSender(), input);
+            parsedCommand.execute(COMMAND_MANAGER.getConsoleSender());
             if (repeat == null) {
                 final Task task = taskReference.get();
                 if (task != null) {
