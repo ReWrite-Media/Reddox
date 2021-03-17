@@ -1,11 +1,16 @@
 // Should stop intellij from getting mad about executor methods
 const executor = {
-    onSignal() {},
-    registerCommand() {},
-    alias() {},
-    make() {},
-    run() {}
+    onSignal() {
+    },
+    registerCommand() {
+    },
+    alias() {
+    },
+    make() {
+    },
+    run() {
     }
+}
 // Minescript interacts with the server using various commands and signals.
 // Commands allow you to take action, and signal to listen to certain events.
 
@@ -14,18 +19,18 @@ const executor = {
 
 // Run command with a single method, and retrieve its returned data
 let data = executor.run("health add Notch 5")
-console.log("The player has now "+data.health+" health!")
+console.log("The player has now " + data.health + " health!")
 
-executor.onSignal("move", (properties)=>{
+executor.onSignal("move", (properties) => {
     let player = properties.player
 
     // Commands can be run as another sender
     // TODO: options to ignore player permission & prevent from being sent
     executor.runAs(player, "say I am moving!")
-    console.log("the player "+player.username+" moved to "+properties.position)
+    console.log("the player " + player.username + " moved to " + properties.position)
 });
 
-executor.onSignal("move", (properties, output)=>{
+executor.onSignal("move", (properties, output) => {
     // Each signal has an optional "output" properties which
     // will be forwarded to following listeners and the signal caller.
     output.cancel = false
@@ -35,19 +40,19 @@ executor.onSignal("move", (properties, output)=>{
 
 // Commands are defined by a syntax and an executor, the syntax consists
 // of a single string, and the executor is a callback.
-executor.registerCommand('test [name: String] [value: Integer]', (context)=>{
+executor.registerCommand('test [name: String] [value: Integer]', (context) => {
     // The context gives us data relative to the command execution.
     // In this case, the argument values.
     let name = context.name
     let value = context.value
-    console.log("Command 'test' with the name "+name+" and value "+value)
+    console.log("Command 'test' with the name " + name + " and value " + value)
 });
 
 // Functions can be made from commands,
 // they allow you to define your own syntax
 const healPlayer = executor.make('heal {0} {1}') // -> /heal <player> <value>
 const success = healPlayer("Notch", 5).success; // -> /heal Notch 5
-console.log("heal status: "+success)
+console.log("heal status: " + success)
 
 
 // Filtering
