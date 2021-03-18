@@ -1,14 +1,5 @@
 package net.minestom.script.command;
 
-import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
-import static net.minestom.server.command.builder.arguments.ArgumentType.StringArray;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import org.jetbrains.annotations.NotNull;
-
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.command.editor.EditorCommand;
@@ -18,6 +9,14 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.suggestion.Suggestion;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
+import static net.minestom.server.command.builder.arguments.ArgumentType.StringArray;
 
 /**
  * Manages registered scripts.
@@ -25,9 +24,9 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 public class ScriptCommand extends RichCommand {
     public ScriptCommand() {
         super("script");
-        
+
         this.addSubcommand(new EditorCommand());
-        
+
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage("Usage: /script <list/load/unload> [path]");
         });
@@ -39,13 +38,14 @@ public class ScriptCommand extends RichCommand {
 
         addSyntax((sender, context) -> {
             for (Script script : getScripts()) {
-                ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
-                
-                String filePath = script.getFilePath();
-                if (filePath != null)
-                	sender.sendMessage(ColoredText.of(color, "Path: " + filePath));
-                else
-                	sender.sendMessage(ColoredText.of(color, "Path: N/A"));
+                final ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
+
+                final String filePath = script.getFilePath();
+                if (filePath != null) {
+                    sender.sendMessage(ColoredText.of(color, "Path: " + filePath));
+                } else {
+                    sender.sendMessage(ColoredText.of(color, "Path: N/A"));
+                }
             }
         }, Literal("list"));
 

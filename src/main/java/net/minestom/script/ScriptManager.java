@@ -81,15 +81,14 @@ public class ScriptManager {
             final Executor executor = new Executor();
             Script script = new Script(file, language, executor);
 
-            // Evaluate the script (start registering listeners)
-            script.load();
-
             addScript(script);
         }
     }
     
     public static void addScript(Script script) {
     	SCRIPTS.add(script);
+        // Evaluate the script (start registering listeners)
+        script.load();
     }
 
     public static void shutdown() {
