@@ -8,6 +8,8 @@ executor.onSignal("player_entity_interact", onInteract)
 
 function test(properties) {
     console.log("function executed " + properties.value)
+    let spawnEntity = executor.make("entity editor create {0} 0 50 0")
+    spawnEntity("minecraft:skeleton")
 }
 
 function onUse(properties) {

@@ -14,6 +14,7 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -106,6 +107,14 @@ public class Executor {
                 .collect(Collectors.joining(StringUtils.SPACE));
         final CommandResult result = MinecraftServer.getCommandManager().execute(player, command);
         return retrieveCommandData(result, command);
+    }
+
+    @NotNull
+    public CommandFunction make(@NotNull String string) {
+        return args -> {
+            final String input = MessageFormat.format(string, args);
+            return run(input);
+        };
     }
 
     @Nullable
