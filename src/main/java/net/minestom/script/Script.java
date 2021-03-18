@@ -12,10 +12,12 @@ import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Script {
 
-    private final File file;
+    private final String fileString;
+    private final String filePath;
     private final String language;
     private final Executor executor;
 
@@ -23,10 +25,17 @@ public class Script {
     private Context context;
 
     public Script(@NotNull File file, @NotNull String language, @NotNull Executor executor) {
-        this.file = file;
+        this.fileString = readFile(file);
+        this.filePath = file.getPath();
         this.language = language;
         this.executor = executor;
-
+    }
+    
+    public Script(@NotNull String fileString, @NotNull String language, @NotNull Executor executor) {
+        this.fileString = fileString;
+        this.filePath = null;
+        this.language = language;
+        this.executor = executor;
     }
 
     public void load() {
@@ -34,7 +43,7 @@ public class Script {
             return;
         this.loaded = true;
 
-        final Source source = createSource(file, language);
+        final Source source = Source.create(language, fileString);
         assert source != null;
         this.context = createContext(source.getLanguage(), executor);
         this.context.eval(source);
@@ -50,9 +59,14 @@ public class Script {
     }
 
     @NotNull
-    public File getFile() {
-        return file;
+    public String getFileString() {
+        return fileString;
     }
+    
+    @Nullable
+	public String getFilePath() {
+		return filePath;
+	}
 
     @NotNull
     public String getLanguage() {
@@ -67,15 +81,15 @@ public class Script {
     public boolean isLoaded() {
         return loaded;
     }
-
-    private static Source createSource(File file, String language) {
-        try {
-            final String fileString = Files.readString(file.toPath());
-            return Source.create(language, fileString);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    
+    private static String readFile(File file) {
+    	String fileString = null;
+    	try {
+			fileString = Files.readString(file.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return fileString;
     }
 
     private static Context createContext(String language, Executor executor) {

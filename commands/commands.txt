@@ -7,19 +7,32 @@ Attributes {
 	<attribute> = movement speed, health, damage, etc.
 
 
-	entity attribute get <total|base> <attribute> <entity uuid> // Returns the total or base value of a specific attribute
-	entity attribute get modifier <attribute> <modifier name> <entity uuid> // Gets the value of the specific attribute modifier
+	entity attribute query get <total|base> <attribute> <entity uuid> // Returns the total or base value of a specific attribute
+	entity attribute query get modifier <attribute> <modifier name> <entity uuid> // Gets the value of the specific attribute modifier
+	entity attribute query get modifiers <attribute> <entity uuid> // Gets all pf the modifiers associated with the entity and attribute
 	
-	entity attribute set base <attribute> <entity uuid> <value> // Sets the base value of the specified entity's attribute
-	entity attribute edit modifier value <attribute> <modifier name> <entity uuid> <value>	// Updates the value of a specific modifier
-	entity attribute edit modifier type <attribute> <modifier name> <entity uuid> <modifier type>	// Updates the type of a specific modifier
+	entity attribute modify set base <attribute> <value> <entity uuid> // Sets the base value of the specified entity's attribute
+	
+	entity attribute modify edit modifier value <attribute> <modifier name> <value> <entity uuid>	// Updates the value of a specific modifier
+	entity attribute modify edit modifier type <attribute> <modifier name> <modifier type> <entity uuid>	// Updates the type of a specific modifier
 	    
-	entity attribute remove modifier <attribute> <modifier name> <entity uuid> // removes this modifier from the specified entity
+	entity attribute modify remove modifier <attribute> <modifier name> <entity uuid> // Removes this modifier from the specified entity
 	
-	entity attribute add modifier <attribute> <modifier name> <modifier type> <entity uuid> <value>	// adds a modifier to a specific entity
+	entity attribute modify add modifier <attribute> <modifier name> <modifier type> <value> <entity uuid>	// Adds a modifier to a specific entity
 }
 
 Title {
 	text title send <all|title|subtitle> <player uuid> <duration> <text nbt string> // Sends a title to a player for a specified duration
 	text title stop <all|title|subtitle> <player uuid> // Stops the player's title from playing 
 }
+
+Bossbar {
+	text bossbar modify create <name> <text nbt string> // Creates a bossbar
+	text bossbar modify addplayer <name> <player uuid>
+	text bossbar modify removeplayer <name> <player uuid>
+	text bossbar modify remove <name>
+	text bossbar modify set <name> <players|display text|color|max value|value|segment amount> <value>
+	
+	text bossbar query <name> // Returns command data with [players, display text, color, max value, value, segment amount]
+}
+

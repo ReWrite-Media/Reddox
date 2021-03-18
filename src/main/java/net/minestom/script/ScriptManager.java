@@ -84,8 +84,12 @@ public class ScriptManager {
             // Evaluate the script (start registering listeners)
             script.load();
 
-            SCRIPTS.add(script);
+            addScript(script);
         }
+    }
+    
+    public static void addScript(Script script) {
+    	SCRIPTS.add(script);
     }
 
     public static void shutdown() {

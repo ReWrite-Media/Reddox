@@ -1,9 +1,10 @@
 package net.minestom.script.property;
 
-import net.minestom.server.entity.Entity;
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import net.minestom.server.entity.Entity;
 
 public class EntityProperty extends Properties {
 
@@ -14,6 +15,7 @@ public class EntityProperty extends Properties {
         putMember("uuid", entity.getUuid().toString());
         putMember("type", entity.getEntityType().toString());
         putMember("position", new PositionProperty(entity.getPosition()));
+        putMember("world", new WorldProperty(entity.getInstance()));
     }
 
     @Override

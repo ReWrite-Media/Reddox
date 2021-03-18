@@ -19,6 +19,7 @@ public class BlockProperty extends Properties {
         }
 
         putMember("type", block.toString());
+        putMember("blockstate", block.getBlockId());
         putMember("position", new BlockPositionProperty(blockPosition));
         putMember("properties", properties);
     }

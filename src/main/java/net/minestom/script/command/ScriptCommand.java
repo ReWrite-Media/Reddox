@@ -1,21 +1,23 @@
 package net.minestom.script.command;
 
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
+import static net.minestom.server.command.builder.arguments.ArgumentType.StringArray;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
+import net.minestom.script.command.editor.EditorCommand;
 import net.minestom.server.chat.ChatColor;
 import net.minestom.server.chat.ColoredText;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.suggestion.Suggestion;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
-import static net.minestom.server.command.builder.arguments.ArgumentType.StringArray;
 
 /**
  * Manages registered scripts.
@@ -23,7 +25,9 @@ import static net.minestom.server.command.builder.arguments.ArgumentType.StringA
 public class ScriptCommand extends RichCommand {
     public ScriptCommand() {
         super("script");
-
+        
+        this.addSubcommand(new EditorCommand());
+        
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage("Usage: /script <list/load/unload> [path]");
         });
@@ -36,7 +40,12 @@ public class ScriptCommand extends RichCommand {
         addSyntax((sender, context) -> {
             for (Script script : getScripts()) {
                 ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
-                sender.sendMessage(ColoredText.of(color, "Path: " + script.getFile()));
+                
+                String filePath = script.getFilePath();
+                if (filePath != null)
+                	sender.sendMessage(ColoredText.of(color, "Path: " + filePath));
+                else
+                	sender.sendMessage(ColoredText.of(color, "Path: N/A"));
             }
         }, Literal("list"));
 
@@ -91,7 +100,7 @@ public class ScriptCommand extends RichCommand {
     private void processPath(CommandSender sender, String path, Consumer<Script> scriptConsumer) {
         Optional<Script> optionalScript = getScripts()
                 .stream()
-                .filter(script -> script.getFile().getPath().equals(path))
+                .filter(script -> script.getFilePath().equals(path))
                 .findFirst();
 
         // Valid path
@@ -104,7 +113,7 @@ public class ScriptCommand extends RichCommand {
     private void pathSuggestion(CommandSender sender, CommandContext context, Suggestion suggestion) {
         final String input = suggestion.getInput();
         for (Script script : getScripts()) {
-            final String path = script.getFile().getPath();
+            final String path = script.getFilePath();
             if (path.contains(input)) {
                 suggestion.addEntry(new SuggestionEntry(path));
             }

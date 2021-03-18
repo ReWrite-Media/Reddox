@@ -8,5 +8,6 @@ public class PlayerProperty extends EntityProperty {
     public PlayerProperty(@NotNull Player player) {
         super(player);
         putMember("username", player.getUsername());
+        putMember("helditem", new ItemProperty(player.getInventory().getItemStack(player.getHeldSlot())));
     }
 }

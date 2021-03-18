@@ -1,5 +1,6 @@
 package net.minestom.script.command;
 
+import net.minestom.script.command.world.BlockCommand;
 import net.minestom.script.command.world.ParticleCommand;
 import net.minestom.script.command.world.RegionCommand;
 
@@ -9,5 +10,6 @@ public class WorldCommand extends RichCommand {
 
         addSubcommand(new RegionCommand());
         addSubcommand(new ParticleCommand());
+        addSubcommand(new BlockCommand());
     }
 }
