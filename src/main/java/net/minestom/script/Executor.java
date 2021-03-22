@@ -121,7 +121,7 @@ public class Executor {
     private ProxyObject retrieveCommandData(@NotNull CommandResult result, @NotNull String input) {
         final CommandResult.Type type = result.getType();
         if (type != CommandResult.Type.SUCCESS) {
-            System.err.println("ERROR COMMAND " + input + " with result " + type);
+            System.err.println("ERROR COMMAND '" + input + "' with result: " + type);
         }
         final CommandData commandData = result.getCommandData();
         if (commandData == null)

@@ -5,11 +5,13 @@ executor.registerFunction("test", test)
 executor.onSignal(signals.PLAYER_USE_ITEM_ON_BLOCK, onUse)
 executor.onSignal("player_entity_interact", onInteract)
 
+const createEntity = executor.make("entity editor create {0}")
+const killEntity = executor.make("entity kill {0}")
 
 function test(properties) {
-    console.log("function executed " + properties.value)
-    let spawnEntity = executor.make("entity editor create {0} 0 50 0")
-    spawnEntity("minecraft:skeleton")
+    console.log(`function executed ${properties.value}`)
+
+    createEntity("minecraft:skeleton 0 50 0")
 }
 
 function onUse(properties) {
@@ -18,10 +20,10 @@ function onUse(properties) {
     blockPosition.y += 1
     blockPosition.z += 0.5
 
-    let data = executor.run("entity editor init", "minecraft:skeleton", blockPosition)
+    let data = createEntity("minecraft:skeleton " + blockPosition)
 
     if (data.success) {
-        console.log("You created the entity " + data.entity.uuid + " successfully!")
+        console.log(`You created the entity ${data.entity.uuid} successfully!`)
     } else {
         console.log("failure")
     }
@@ -30,7 +32,7 @@ function onUse(properties) {
 function onInteract(properties) {
     let targetUuid = properties.target.uuid
 
-    executor.run("entity kill", targetUuid)
+    killEntity(targetUuid)
     console.log("entity killed")
 }
 

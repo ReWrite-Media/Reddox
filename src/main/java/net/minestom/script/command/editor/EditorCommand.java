@@ -3,9 +3,9 @@ package net.minestom.script.command.editor;
 import net.minestom.script.Executor;
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
+import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.chat.ColoredText;
-import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.Player.Hand;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EditorCommand extends Command {
+public class EditorCommand extends RichCommand {
 
     private Map<Player, ItemStack> items = new HashMap<Player, ItemStack>();
 
