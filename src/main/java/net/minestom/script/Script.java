@@ -23,18 +23,15 @@ public class Script {
     private boolean loaded;
     private Context context;
 
-    public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull Executor executor) {
-        this.name = name;
-        this.fileString = readFile(file);
-        this.language = language;
-        this.executor = executor;
-    }
-
     public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull Executor executor) {
         this.name = name;
         this.fileString = fileString;
         this.language = language;
         this.executor = executor;
+    }
+
+    public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull Executor executor) {
+        this(name, readFile(file), language, executor);
     }
 
     public void load() {

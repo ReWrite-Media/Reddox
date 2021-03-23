@@ -76,8 +76,8 @@ public class ScriptCommand extends RichCommand {
                 processPath(sender, String.join(" ", path), script -> {
                     script.unload();
                     script.load();
+                    sender.sendMessage("Script reloaded");
                 });
-                sender.sendMessage("Script reloaded");
             } else {
                 // Reload all scripts
                 var scripts = getScripts();
