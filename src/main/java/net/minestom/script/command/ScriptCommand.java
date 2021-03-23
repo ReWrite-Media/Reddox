@@ -12,6 +12,7 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -39,13 +40,8 @@ public class ScriptCommand extends RichCommand {
         addSyntax((sender, context) -> {
             for (Script script : getScripts()) {
                 final ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
-
-                final String filePath = script.getFilePath();
-                if (filePath != null) {
-                    sender.sendMessage(ColoredText.of(color, "Path: " + filePath));
-                } else {
-                    sender.sendMessage(ColoredText.of(color, "Path: N/A"));
-                }
+                final String name = script.getName();
+                sender.sendMessage(ColoredText.of(color, "Path: " + name));
             }
         }, Literal("list"));
 
@@ -100,11 +96,10 @@ public class ScriptCommand extends RichCommand {
     private void processPath(CommandSender sender, String path, Consumer<Script> scriptConsumer) {
         Optional<Script> optionalScript = getScripts()
                 .stream()
-                .filter(script -> script.getFilePath().equals(path))
+                .filter(script -> Objects.equals(script.getName(), path))
                 .findFirst();
 
-        // Valid path
-        optionalScript.ifPresentOrElse(scriptConsumer::accept, () -> {
+        optionalScript.ifPresentOrElse(scriptConsumer, () -> {
             // Invalid path
             sender.sendMessage("Invalid path");
         });
@@ -113,9 +108,9 @@ public class ScriptCommand extends RichCommand {
     private void pathSuggestion(CommandSender sender, CommandContext context, Suggestion suggestion) {
         final String input = suggestion.getInput();
         for (Script script : getScripts()) {
-            final String path = script.getFilePath();
-            if (path.contains(input)) {
-                suggestion.addEntry(new SuggestionEntry(path));
+            final String name = script.getName();
+            if (name.toLowerCase().contains(input.toLowerCase())) {
+                suggestion.addEntry(new SuggestionEntry(name));
             }
         }
     }

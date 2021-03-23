@@ -71,7 +71,7 @@ public class EditorCommand extends RichCommand {
                 String fileString = String.join("\n", meta.getPages());
 
                 final Executor executor = new Executor();
-                Script script = new Script(fileString, meta.getTitle(), executor);
+                Script script = new Script("IG-Script", fileString, meta.getTitle(), executor);
                 ScriptManager.addScript(script);
 
                 player.sendMessage("Done!");

@@ -19,6 +19,7 @@ public class ScriptManager {
     public static final ScriptAPI API = new ScriptAPI();
 
     public static final String SCRIPT_FOLDER = "scripts";
+    public static final String MAIN_SCRIPT = "main";
 
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
@@ -69,6 +70,17 @@ public class ScriptManager {
         }
 
         for (File file : folderFiles) {
+            final String name = file.getName();
+            if (file.isDirectory()) {
+                // Find main file
+                file = findMainFile(file);
+                if (file == null) {
+                    System.err.println("Directory " +
+                            file + " is invalid, you need a script with the name " +
+                            MAIN_SCRIPT);
+                    continue;
+                }
+            }
             final String extension = FilenameUtils.getExtension(file.getName());
 
             final String language = EXTENSION_MAP.get(extension);
@@ -79,14 +91,29 @@ public class ScriptManager {
             }
 
             final Executor executor = new Executor();
-            Script script = new Script(file, language, executor);
+            Script script = new Script(name, file, language, executor);
 
             addScript(script);
         }
     }
-    
+
+    private static File findMainFile(@NotNull File directory) {
+        final File[] folderFiles = directory.listFiles();
+        if (folderFiles == null) {
+            return null;
+        }
+
+        for (File file : folderFiles) {
+            final String name = FilenameUtils.removeExtension(file.getName());
+            if (name.equals(MAIN_SCRIPT)) {
+                return file;
+            }
+        }
+        return null;
+    }
+
     public static void addScript(Script script) {
-    	SCRIPTS.add(script);
+        SCRIPTS.add(script);
         // Evaluate the script (start registering listeners)
         script.load();
     }
