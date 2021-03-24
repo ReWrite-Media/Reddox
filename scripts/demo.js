@@ -36,6 +36,8 @@ function onInteract(properties) {
     console.log("entity killed")
 }
 
+executor.run("utils map set Test:test 5")
+
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)
 })
