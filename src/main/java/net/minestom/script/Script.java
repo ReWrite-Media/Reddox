@@ -1,5 +1,6 @@
 package net.minestom.script;
 
+import net.minestom.script.utils.NbtConversionUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
@@ -11,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Script {
 
@@ -89,8 +92,25 @@ public class Script {
     }
 
     private static Context createContext(String language, Executor executor) {
+        HostAccess hostAccess = HostAccess.newBuilder(HostAccess.ALL)
+                // Fix list being sent as map
+                .targetTypeMapping(
+                        List.class,
+                        Object.class,
+                        Objects::nonNull,
+                        v -> v,
+                        HostAccess.TargetMappingPrecedence.HIGHEST)
+                // Convert all objects to nbt compound
+                .targetTypeMapping(
+                        Map.class,
+                        Object.class,
+                        Objects::nonNull,
+                        NbtConversionUtils::fromMap)
+                .build();
+
         Context context = Context.newBuilder(language)
-                .allowHostAccess(HostAccess.ALL).build();
+                .allowHostAccess(hostAccess).build();
+
         Value bindings = context.getBindings(language);
 
         // Command executor

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.*;
 
+import java.util.List;
 import java.util.Map;
 
 public class NbtConversionUtils {
@@ -48,22 +49,33 @@ public class NbtConversionUtils {
         NBTCompound compound = new NBTCompound();
 
         map.forEach((key, value) -> {
-            // FIXME: graaljs provides an empty map instead of lists
             if (value instanceof Integer) {
                 compound.setInt(key, (Integer) value);
             } else if (value instanceof Double) {
                 compound.setDouble(key, (Double) value);
             } else if (value instanceof String) {
                 compound.setString(key, (String) value);
-            } else if (value instanceof Map) {
-                compound.set(key, fromMap((Map<String, Object>) value));
+            } else if (value instanceof NBTCompound) {
+                compound.set(key, (NBTCompound) value);
+            } else if (value instanceof List) {
+                compound.set(key, fromList((List<Object>) value));
             } else {
                 System.out.println("TODO NBT TYPE: " + value.getClass());
             }
-
         });
 
         return compound;
+    }
+
+    public static NBTList fromList(@NotNull List<Object> list) {
+        // TODO
+        NBTList<NBTInt> nbtList = new NBTList<>(NBTTypes.TAG_Int);
+
+        list.forEach(value -> {
+            System.out.println("list value: " + value.getClass());
+        });
+
+        return nbtList;
     }
 
 }

@@ -2,7 +2,6 @@ package net.minestom.script;
 
 import net.minestom.script.property.PlayerProperty;
 import net.minestom.script.property.Properties;
-import net.minestom.script.utils.NbtConversionUtils;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.CommandResult;
@@ -130,14 +129,9 @@ public class Executor {
         return properties;
     }
 
-    private static String inputToString(Object... inputs){
+    private static String inputToString(Object... inputs) {
         return Arrays.stream(inputs)
-                .map(o -> {
-                    if(o instanceof Map){
-                        return NbtConversionUtils.fromMap((Map<String, Object>) o).toSNBT();
-                    }
-                    return o.toString();
-                })
+                .map(Object::toString)
                 .collect(Collectors.joining(StringUtils.SPACE));
     }
 

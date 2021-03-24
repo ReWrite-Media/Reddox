@@ -36,9 +36,18 @@ function onInteract(properties) {
     console.log("entity killed")
 }
 
-executor.run("utils map set Test:test 5")
+const object = {
+    id: "c001",
+    name: "Hello Test",
+    array: [2, 3],
+    float: 3.5,
+    number: {
+        num: 5
+    }
+};
+executor.run("utils map set Test:test",object)
 let data = executor.run("utils map get Test:test")
-console.log("number: "+(data.value+5))
+console.log("debug: "+data.value.number.num)
 
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)
