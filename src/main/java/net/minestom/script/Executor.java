@@ -2,6 +2,7 @@ package net.minestom.script;
 
 import net.minestom.script.property.PlayerProperty;
 import net.minestom.script.property.Properties;
+import net.minestom.script.utils.NbtConversionUtils;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.CommandResult;
@@ -80,16 +81,14 @@ public class Executor {
     }
 
     @Nullable
-    public ProxyObject run(@NotNull Object... input) {
-        final String command = Arrays.stream(input)
-                .map(Object::toString)
-                .collect(Collectors.joining(StringUtils.SPACE));
+    public ProxyObject run(@NotNull Object... inputs) {
+        final String command = inputToString(inputs);
         final CommandResult result = MinecraftServer.getCommandManager().executeServerCommand(command);
         return retrieveCommandData(result, command);
     }
 
     @Nullable
-    public ProxyObject runAs(@NotNull Value playerValue, @NotNull Object... input) {
+    public ProxyObject runAs(@NotNull Value playerValue, @NotNull Object... inputs) {
         Check.argCondition(!playerValue.isProxyObject(), "#runAs requires a player!");
         {
             ProxyObject proxyObject = playerValue.asProxyObject();
@@ -102,9 +101,7 @@ public class Executor {
         if (player == null)
             return null;
 
-        final String command = Arrays.stream(input)
-                .map(Object::toString)
-                .collect(Collectors.joining(StringUtils.SPACE));
+        final String command = inputToString(inputs);
         final CommandResult result = MinecraftServer.getCommandManager().execute(player, command);
         return retrieveCommandData(result, command);
     }
@@ -131,6 +128,17 @@ public class Executor {
         Properties properties = new Properties();
         commandData.getDataMap().forEach(properties::putMember);
         return properties;
+    }
+
+    private static String inputToString(Object... inputs){
+        return Arrays.stream(inputs)
+                .map(o -> {
+                    if(o instanceof Map){
+                        return NbtConversionUtils.fromMap((Map<String, Object>) o).toSNBT();
+                    }
+                    return o.toString();
+                })
+                .collect(Collectors.joining(StringUtils.SPACE));
     }
 
 }
