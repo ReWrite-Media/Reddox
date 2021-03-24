@@ -37,6 +37,8 @@ function onInteract(properties) {
 }
 
 executor.run("utils map set Test:test 5")
+let data = executor.run("utils map get Test:test")
+console.log("number: "+(data.value+5))
 
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)

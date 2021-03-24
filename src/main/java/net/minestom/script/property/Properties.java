@@ -50,16 +50,14 @@ public class Properties implements ProxyObject {
         this.properties.put(key, value);
     }
 
-    public void putMember(String key, Properties properties) {
-        this.properties.put(key, Value.asValue(properties));
-    }
-
-    public void putMember(String key, NBT nbt) {
-        this.properties.put(key, toValue(nbt));
-    }
-
     public void putMember(String key, Object object) {
-        this.properties.put(key, Value.asValue(object));
+        final Value value;
+        if (object instanceof NBT) {
+            value = toValue((NBT) object);
+        } else {
+            value = Value.asValue(object);
+        }
+        putMember(key, value);
     }
 
     @NotNull

@@ -127,7 +127,10 @@ public class Executor {
         if (commandData == null)
             return null;
 
-        return ProxyObject.fromMap(commandData.getDataMap());
+        // Convert all members to polyglot 'Value'
+        Properties properties = new Properties();
+        commandData.getDataMap().forEach(properties::putMember);
+        return properties;
     }
 
 }
