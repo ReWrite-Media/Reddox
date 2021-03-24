@@ -1,35 +1,30 @@
 package net.minestom.script;
 
-import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyObject;
-import org.jetbrains.annotations.NotNull;
-
-import net.minestom.script.property.BlockProperty;
-import net.minestom.script.property.ItemProperty;
-import net.minestom.script.property.PlayerProperty;
-import net.minestom.script.property.PositionProperty;
-import net.minestom.script.property.Properties;
+import net.minestom.script.property.*;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.entity.EntityAttackEvent;
-import net.minestom.server.event.player.PlayerBlockPlaceEvent;
-import net.minestom.server.event.player.PlayerEntityInteractEvent;
-import net.minestom.server.event.player.PlayerMoveEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
-import net.minestom.server.event.player.PlayerUseItemOnBlockEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Calls event-related signals.
  */
 public enum EventSignal {
-	/**
-	 * player: PlayerProperty<br>
-	 * position: PositionProperty
-	 */
+    /**
+     * player: PlayerProperty
+     */
+    PLAYER_JOIN,
+    /**
+     * player: PlayerProperty<br>
+     * position: PositionProperty
+     */
     PLAYER_MOVE,
     /**
      * player: PlayerProperty<br>
@@ -58,10 +53,21 @@ public enum EventSignal {
     ENTITY_ATTACK;
 
     private static final String CANCEL_MEMBER = "cancel";
-    
+
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
-    	
-    	final Executor executor = ScriptManager.API.getExecutor();
+
+        final Executor executor = ScriptManager.API.getExecutor();
+
+        // 'player_join'
+        globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
+            if (event.isFirstSpawn()) {
+                final Player player = event.getPlayer();
+
+                Properties properties = new Properties();
+                properties.putMember("player", new PlayerProperty(player));
+                executor.signal(PLAYER_JOIN.name(), properties);
+            }
+        });
 
         // 'move'
         globalEventHandler.addEventCallback(PlayerMoveEvent.class, event -> {
@@ -74,7 +80,7 @@ public enum EventSignal {
             ProxyObject output = executor.signal(PLAYER_MOVE.name(), properties);
             event.setCancelled(isCancelled(output));
         });
-    	
+
         // 'use_item'
         globalEventHandler.addEventCallback(PlayerUseItemEvent.class, event -> {
             final Player player = event.getPlayer();

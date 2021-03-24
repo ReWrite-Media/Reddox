@@ -36,6 +36,6 @@ function onInteract(properties) {
     console.log("entity killed")
 }
 
-executor.onSignal("move", (properties, output) => {
-    output.cancel = false
+executor.onSignal("player_join", (properties) => {
+    console.log("join "+properties.player.username)
 })
