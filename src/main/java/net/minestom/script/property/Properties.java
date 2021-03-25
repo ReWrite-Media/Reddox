@@ -19,6 +19,7 @@ public class Properties implements ProxyObject {
 
     // Logic from https://github.com/oracle/graaljs/issues/281
     private static final String TO_STRING_MEMBER = "toString";
+    public static final String TYPE_MEMBER = "_type";
 
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
 
@@ -26,6 +27,9 @@ public class Properties implements ProxyObject {
     public Object getMember(String key) {
         if (key.equals(TO_STRING_MEMBER)) {
             return (Supplier<String>) this::toString;
+        }
+        if (key.equals(TYPE_MEMBER)) {
+            return getClass().getSimpleName();
         }
 
         return properties.get(key);
@@ -38,7 +42,8 @@ public class Properties implements ProxyObject {
 
     @Override
     public boolean hasMember(String key) {
-        if (key.equals(TO_STRING_MEMBER)) {
+        if (key.equals(TO_STRING_MEMBER)
+                || key.equals(TYPE_MEMBER)) {
             return true;
         }
 

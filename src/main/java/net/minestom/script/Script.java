@@ -1,5 +1,6 @@
 package net.minestom.script;
 
+import net.minestom.script.property.Properties;
 import net.minestom.script.utils.NbtConversionUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
@@ -100,11 +101,11 @@ public class Script {
                         Objects::nonNull,
                         v -> v,
                         HostAccess.TargetMappingPrecedence.HIGHEST)
-                // Convert all objects to nbt compound
+                // Convert all native objects to nbt compound
                 .targetTypeMapping(
                         Map.class,
                         Object.class,
-                        Objects::nonNull,
+                        map -> !map.containsKey(Properties.TYPE_MEMBER),
                         NbtConversionUtils::fromMap)
                 .build();
 
