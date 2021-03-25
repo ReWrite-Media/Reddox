@@ -47,7 +47,7 @@ const object = {
 };
 executor.run("utils map set Test:test",object)
 let data = executor.run("utils map get Test:test")
-console.log("debug: "+data.value.number.num)
+console.log("debug: "+data.value.array[1])
 
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)

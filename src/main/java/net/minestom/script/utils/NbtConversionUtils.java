@@ -8,6 +8,7 @@ import org.jglrxavpok.hephaistos.nbt.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class NbtConversionUtils {
 
@@ -47,35 +48,73 @@ public class NbtConversionUtils {
     @NotNull
     public static NBTCompound fromMap(@NotNull Map<String, Object> map) {
         NBTCompound compound = new NBTCompound();
-
         map.forEach((key, value) -> {
-            if (value instanceof Integer) {
-                compound.setInt(key, (Integer) value);
-            } else if (value instanceof Double) {
-                compound.setDouble(key, (Double) value);
-            } else if (value instanceof String) {
-                compound.setString(key, (String) value);
-            } else if (value instanceof NBTCompound) {
-                compound.set(key, (NBTCompound) value);
-            } else if (value instanceof List) {
-                compound.set(key, fromList((List<Object>) value));
-            } else {
-                System.out.println("TODO NBT TYPE: " + value.getClass());
-            }
+            NBTConverter<?> converter = getConverter(value);
+            compound.set(key, converter.makeNBT());
         });
 
         return compound;
     }
 
-    public static NBTList fromList(@NotNull List<Object> list) {
-        // TODO
-        NBTList<NBTInt> nbtList = new NBTList<>(NBTTypes.TAG_Int);
+    public static NBTList<?> fromList(@NotNull List<Object> list) {
+        NBTList<NBT> nbtList = null;
 
-        list.forEach(value -> {
-            System.out.println("list value: " + value.getClass());
-        });
+        for (Object value : list) {
+            NBTConverter<?> converter = getConverter(value);
+            if (nbtList == null) {
+                // Use first element of the list as the list's type
+                nbtList = new NBTList<>(converter.getType());
+            }
+            nbtList.add(converter.makeNBT());
+        }
 
         return nbtList;
+    }
+
+    @NotNull
+    private static NBTConverter<?> getConverter(@NotNull Object value) {
+        // TODO byte/int/long arrays
+        if (value instanceof Byte) {
+            return new NBTConverter<>((Byte) value, NBTTypes.TAG_Byte, NBTByte::new);
+        } else if (value instanceof Short) {
+            return new NBTConverter<>((Short) value, NBTTypes.TAG_Short, NBTShort::new);
+        } else if (value instanceof Integer) {
+            return new NBTConverter<>((Integer) value, NBTTypes.TAG_Int, NBTInt::new);
+        } else if (value instanceof Long) {
+            return new NBTConverter<>((Long) value, NBTTypes.TAG_Long, NBTLong::new);
+        } else if (value instanceof Float) {
+            return new NBTConverter<>((Float) value, NBTTypes.TAG_Float, NBTFloat::new);
+        } else if (value instanceof Double) {
+            return new NBTConverter<>((Double) value, NBTTypes.TAG_Double, NBTDouble::new);
+        } else if (value instanceof String) {
+            return new NBTConverter<>((String) value, NBTTypes.TAG_String, NBTString::new);
+        } else if (value instanceof List) {
+            return new NBTConverter<>((List) value, NBTTypes.TAG_List, NbtConversionUtils::fromList);
+        } else if (value instanceof NBTCompound) {
+            return new NBTConverter<>((NBTCompound) value, NBTTypes.TAG_Compound, nbtCompound -> nbtCompound);
+        }
+
+        throw new IllegalArgumentException("Type " + value.getClass() + " is not an expected nbt value");
+    }
+
+    private static class NBTConverter<T> {
+        private final T value;
+        private final int type;
+        private final Function<T, NBT> converter;
+
+        private NBTConverter(T value, int type, Function<T, NBT> converter) {
+            this.value = value;
+            this.type = type;
+            this.converter = converter;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public NBT makeNBT() {
+            return converter.apply(value);
+        }
     }
 
 }
