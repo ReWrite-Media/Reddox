@@ -23,13 +23,14 @@ public class Properties implements ProxyObject {
 
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
 
+    public Properties() {
+        putMember(TYPE_MEMBER, getClass().getSimpleName());
+    }
+
     @Override
     public Object getMember(String key) {
         if (key.equals(TO_STRING_MEMBER)) {
             return (Supplier<String>) this::toString;
-        }
-        if (key.equals(TYPE_MEMBER)) {
-            return getClass().getSimpleName();
         }
 
         return properties.get(key);
@@ -42,8 +43,7 @@ public class Properties implements ProxyObject {
 
     @Override
     public boolean hasMember(String key) {
-        if (key.equals(TO_STRING_MEMBER)
-                || key.equals(TYPE_MEMBER)) {
+        if (key.equals(TO_STRING_MEMBER)) {
             return true;
         }
 
