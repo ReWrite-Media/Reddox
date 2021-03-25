@@ -62,6 +62,11 @@ public class ScriptManager {
     }
 
     public static synchronized void reload() {
+        shutdown();
+        loadScripts();
+    }
+
+    public static synchronized void shutdown() {
         // Unload all current scripts
         {
             for (Script script : getScripts()) {
@@ -69,9 +74,6 @@ public class ScriptManager {
             }
             SCRIPTS.clear();
         }
-
-        // Re-load new scripts
-        loadScripts();
     }
 
     /**
