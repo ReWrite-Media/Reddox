@@ -2,7 +2,6 @@ package net.minestom.script.command.editor;
 
 import net.minestom.script.Executor;
 import net.minestom.script.Script;
-import net.minestom.script.ScriptManager;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.chat.ColoredText;
@@ -72,7 +71,8 @@ public class EditorCommand extends RichCommand {
 
                 final Executor executor = new Executor();
                 Script script = new Script("IG-Script", fileString, meta.getTitle(), executor);
-                ScriptManager.addScript(script);
+                // FIXME
+                //ScriptManager.addScript(script);
 
                 player.sendMessage("Done!");
             }

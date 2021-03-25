@@ -80,9 +80,8 @@ public class ScriptCommand extends RichCommand {
                 });
             } else {
                 // Reload all scripts
+                ScriptManager.reload();
                 var scripts = getScripts();
-                getScripts().forEach(Script::unload);
-                getScripts().forEach(Script::load);
                 sender.sendMessage("You did reload " + scripts.size() + " scripts!");
             }
         }, Literal("reload"), pathArgument);

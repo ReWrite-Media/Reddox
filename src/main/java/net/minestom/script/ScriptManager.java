@@ -7,6 +7,7 @@ import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -56,7 +57,43 @@ public class ScriptManager {
             commandManager.register(new UtilsCommand());
         }
 
+        // Load scripts
+        loadScripts();
+    }
 
+    public static synchronized void reload() {
+        // Unload all current scripts
+        {
+            for (Script script : getScripts()) {
+                script.unload();
+            }
+            SCRIPTS.clear();
+        }
+
+        // Re-load new scripts
+        loadScripts();
+    }
+
+    /**
+     * Gets all the evaluated scripts.
+     *
+     * @return a list containing the scripts
+     */
+    @NotNull
+    public static List<Script> getScripts() {
+        return SCRIPTS;
+    }
+
+    @NotNull
+    public static Function<Player, Boolean> getCommandPermission() {
+        return commandPermission;
+    }
+
+    public static void setCommandPermission(@NotNull Function<Player, Boolean> commandPermission) {
+        ScriptManager.commandPermission = commandPermission;
+    }
+
+    private static synchronized void loadScripts() {
         final File scriptFolder = new File(SCRIPT_FOLDER);
 
         if (!scriptFolder.exists()) {
@@ -93,10 +130,13 @@ public class ScriptManager {
             final Executor executor = new Executor();
             Script script = new Script(name, file, language, executor);
 
-            addScript(script);
+            SCRIPTS.add(script);
+            // Evaluate the script (start registering listeners)
+            script.load();
         }
     }
 
+    @Nullable
     private static File findMainFile(@NotNull File directory) {
         final File[] folderFiles = directory.listFiles();
         if (folderFiles == null) {
@@ -110,35 +150,5 @@ public class ScriptManager {
             }
         }
         return null;
-    }
-
-    public static void addScript(Script script) {
-        SCRIPTS.add(script);
-        // Evaluate the script (start registering listeners)
-        script.load();
-    }
-
-    public static void shutdown() {
-        // TODO
-        //CONTEXT.close();
-    }
-
-    /**
-     * Gets all the evaluated scripts.
-     *
-     * @return a list containing the scripts
-     */
-    @NotNull
-    public static List<Script> getScripts() {
-        return SCRIPTS;
-    }
-
-    @NotNull
-    public static Function<Player, Boolean> getCommandPermission() {
-        return commandPermission;
-    }
-
-    public static void setCommandPermission(@NotNull Function<Player, Boolean> commandPermission) {
-        ScriptManager.commandPermission = commandPermission;
     }
 }
