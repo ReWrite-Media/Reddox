@@ -1,6 +1,8 @@
 package net.minestom.script.command;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.minestom.script.Script;
@@ -39,10 +41,29 @@ public class ScriptCommand extends RichCommand {
                 .setSuggestionCallback(this::pathSuggestion);
 
         addSyntax((sender, context) -> {
-            for (Script script : getScripts()) {
+            var scripts = getScripts();
+
+            Component component = Component.text("Scripts (" + scripts.size() + ")", NamedTextColor.WHITE);
+
+            sender.sendMessage(component);
+
+            for (Script script : scripts) {
                 final TextColor color = script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED;
                 final String name = script.getName();
-                sender.sendMessage(Component.text("Path: " + name, color));
+
+                Component scriptComponent = Component.text(name, color)
+                        .append(Component.space())
+                        .append(Component.text("[Load]")
+                                .color(NamedTextColor.GRAY)
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to load", NamedTextColor.GRAY)))
+                                .clickEvent(ClickEvent.runCommand("/script load " + name)))
+                        .append(Component.space())
+                        .append(Component.text("[Unload]")
+                                .color(NamedTextColor.DARK_GRAY)
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to unload", NamedTextColor.DARK_GRAY)))
+                                .clickEvent(ClickEvent.runCommand("/script unload " + name)));
+
+                sender.sendMessage(scriptComponent);
             }
         }, Literal("list"));
 
@@ -50,10 +71,10 @@ public class ScriptCommand extends RichCommand {
             final String[] path = context.get(pathArgument);
             processPath(sender, String.join(" ", path), script -> {
                 if (script.isLoaded()) {
-                    sender.sendMessage(Component.text("Script is already loaded"));
+                    sender.sendMessage(Component.text("Script is already loaded", NamedTextColor.RED));
                 } else {
                     script.load();
-                    sender.sendMessage(Component.text("Script loaded successfully!"));
+                    sender.sendMessage(Component.text("Script loaded successfully!", NamedTextColor.GREEN));
                 }
             });
         }, Literal("load"), pathArgument);
@@ -63,9 +84,9 @@ public class ScriptCommand extends RichCommand {
             processPath(sender, String.join(" ", path), script -> {
                 if (script.isLoaded()) {
                     script.unload();
-                    sender.sendMessage(Component.text("Script unloaded successfully!"));
+                    sender.sendMessage(Component.text("Script unloaded successfully!", NamedTextColor.GREEN));
                 } else {
-                    sender.sendMessage(Component.text("Script is already unloaded"));
+                    sender.sendMessage(Component.text("Script is already unloaded", NamedTextColor.RED));
                 }
             });
         }, Literal("unload"), pathArgument);
@@ -77,13 +98,13 @@ public class ScriptCommand extends RichCommand {
                 processPath(sender, String.join(" ", path), script -> {
                     script.unload();
                     script.load();
-                    sender.sendMessage(Component.text("Script reloaded"));
+                    sender.sendMessage(Component.text("Script reloaded", NamedTextColor.GREEN));
                 });
             } else {
                 // Reload all scripts
                 ScriptManager.reload();
                 var scripts = getScripts();
-                sender.sendMessage(Component.text("You did reload " + scripts.size() + " scripts!"));
+                sender.sendMessage(Component.text("You did reload " + scripts.size() + " scripts!", NamedTextColor.GREEN));
             }
         }, Literal("reload"), pathArgument);
     }
@@ -99,10 +120,8 @@ public class ScriptCommand extends RichCommand {
                 .filter(script -> Objects.equals(script.getName(), path))
                 .findFirst();
 
-        optionalScript.ifPresentOrElse(scriptConsumer, () -> {
-            // Invalid path
-            sender.sendMessage(Component.text("Invalid path"));
-        });
+        optionalScript.ifPresentOrElse(scriptConsumer, () ->
+                sender.sendMessage(Component.text("Invalid path", NamedTextColor.RED)));
     }
 
     private void pathSuggestion(CommandSender sender, CommandContext context, Suggestion suggestion) {
