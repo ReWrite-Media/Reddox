@@ -1,6 +1,8 @@
 package net.minestom.script.command.entity;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.Properties;
@@ -19,6 +21,8 @@ import net.minestom.server.utils.location.RelativeVec;
 import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
+
+import java.lang.String;
 
 public class EntityEditorCommand extends RichCommand {
 
@@ -50,7 +54,16 @@ public class EntityEditorCommand extends RichCommand {
 
             commandData.set("success", true);
             commandData.set("entity", Properties.fromEntity(creature));
-            sender.sendMessage(Component.text("Entity created successfully, uuid: " + creature.getUuid()));
+
+            final String uuid = creature.getUuid().toString();
+            Component component = Component.text("Entity created:")
+                    .append(Component.space())
+                    .append(Component.text(uuid)
+                            .color(NamedTextColor.GRAY)
+                            .hoverEvent(HoverEvent.showText(Component.text("Click to copy", NamedTextColor.GRAY)))
+                            .clickEvent(ClickEvent.copyToClipboard(uuid)));
+
+            sender.sendMessage(component);
 
         }, Literal("create"), EntityType("entity_type"), RelativeVec3("spawn_position"));
 
@@ -83,7 +96,7 @@ public class EntityEditorCommand extends RichCommand {
                 }
             }
 
-            sender.sendMessage(Component.text("Entity edited!"));
+            sender.sendMessage(Component.text("Entity edited!", NamedTextColor.GREEN));
 
         }, Literal("edit"), entityArgument, Loop("properties",
                 Group("position_group", Literal("position"), RelativeVec3("position_value")),
@@ -95,9 +108,9 @@ public class EntityEditorCommand extends RichCommand {
             final Entity entity = entityFinder.findFirstEntity(sender);
             if (entity != null) {
                 entity.remove();
-                sender.sendMessage(Component.text("Entity removed"));
+                sender.sendMessage(Component.text("Entity removed", NamedTextColor.GREEN));
             } else {
-                sender.sendMessage(Component.text("Entity not found"));
+                sender.sendMessage(Component.text("Entity not found", NamedTextColor.RED));
             }
         }, Literal("remove"), entityArgument);
     }

@@ -1,6 +1,7 @@
 package net.minestom.script.command.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
@@ -29,7 +30,7 @@ public class AliasCommand extends RichCommand {
 
             CommandResult commandResult = context.get("alias");
             if (commandResult.getParsedCommand() == null) {
-                sender.sendMessage(Component.text("Invalid command"));
+                sender.sendMessage(Component.text("Invalid command", NamedTextColor.RED));
                 return;
             }
 
@@ -42,7 +43,7 @@ public class AliasCommand extends RichCommand {
                 connection.sendPacket(commandManager.createDeclareCommandsPacket(player));
             });
 
-            sender.sendMessage(Component.text("Alias created successfully!"));
+            sender.sendMessage(Component.text("Alias created successfully!", NamedTextColor.GREEN));
         }, Literal("create"), Word("name"), Command("alias"));
     }
 
@@ -58,7 +59,7 @@ public class AliasCommand extends RichCommand {
                 if (parsedCommand != null) {
                     parsedCommand.execute(sender);
                 } else {
-                    sender.sendMessage(Component.text("Alias is incorrect"));
+                    sender.sendMessage(Component.text("Alias is incorrect", NamedTextColor.RED));
                 }
 
             }, Command("cmd").setShortcut(shortcut));

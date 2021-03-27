@@ -1,6 +1,7 @@
 package net.minestom.script.command.entity;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
@@ -37,7 +38,7 @@ public class GamemodeCommand extends RichCommand {
 
     private void executeOnSelf(CommandSender sender, CommandContext context) {
         if (!sender.isPlayer()) {
-            sender.sendMessage(Component.text("The command is only available for player"));
+            sender.sendMessage(Component.text("The command is only available for player", NamedTextColor.RED));
             return;
         }
 
@@ -46,7 +47,7 @@ public class GamemodeCommand extends RichCommand {
         GameMode gamemode = context.get("gamemode");
         assert gamemode != null; // mode is not supposed to be null, because gamemodeName will be valid
         player.setGameMode(gamemode);
-        player.sendMessage(Component.text("You are now playing in " + gamemode.toString().toLowerCase()));
+        player.sendMessage(Component.text("You are now playing in " + gamemode.toString().toLowerCase(), NamedTextColor.GREEN));
     }
 
     private void executeOnOther(CommandSender sender, CommandContext context) {
@@ -56,14 +57,14 @@ public class GamemodeCommand extends RichCommand {
         assert gamemode != null; // mode is not supposed to be null, because gamemodeName will be valid
         assert target != null;
         target.setGameMode(gamemode);
-        target.sendMessage(Component.text("You are now playing in " + gamemode.toString().toLowerCase()));
+        target.sendMessage(Component.text("You are now playing in " + gamemode.toString().toLowerCase(), NamedTextColor.GREEN));
     }
 
     private void targetCallback(CommandSender sender, ArgumentSyntaxException exception) {
-        sender.sendMessage(Component.text("'" + exception.getInput() + "' is not a valid player name."));
+        sender.sendMessage(Component.text("'" + exception.getInput() + "' is not a valid player name.", NamedTextColor.RED));
     }
 
     private void gameModeCallback(CommandSender sender, ArgumentSyntaxException exception) {
-        sender.sendMessage(Component.text("'" + exception.getInput() + "' is not a valid gamemode!"));
+        sender.sendMessage(Component.text("'" + exception.getInput() + "' is not a valid gamemode!", NamedTextColor.RED));
     }
 }

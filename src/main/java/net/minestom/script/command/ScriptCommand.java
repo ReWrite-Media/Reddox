@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.command.editor.EditorCommand;
@@ -48,19 +47,17 @@ public class ScriptCommand extends RichCommand {
             sender.sendMessage(component);
 
             for (Script script : scripts) {
-                final TextColor color = script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED;
                 final String name = script.getName();
-
-                Component scriptComponent = Component.text(name, color)
+                Component scriptComponent = Component.text(name, script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED)
                         .append(Component.space())
                         .append(Component.text("[Load]")
                                 .color(NamedTextColor.GRAY)
-                                .hoverEvent(HoverEvent.showText(Component.text("Click to load", NamedTextColor.GRAY)))
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to load " + name, NamedTextColor.GRAY)))
                                 .clickEvent(ClickEvent.runCommand("/script load " + name)))
                         .append(Component.space())
                         .append(Component.text("[Unload]")
                                 .color(NamedTextColor.DARK_GRAY)
-                                .hoverEvent(HoverEvent.showText(Component.text("Click to unload", NamedTextColor.DARK_GRAY)))
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to unload " + name, NamedTextColor.DARK_GRAY)))
                                 .clickEvent(ClickEvent.runCommand("/script unload " + name)));
 
                 sender.sendMessage(scriptComponent);

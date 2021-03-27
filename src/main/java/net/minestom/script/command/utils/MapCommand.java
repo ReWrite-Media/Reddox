@@ -1,6 +1,7 @@
 package net.minestom.script.command.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
@@ -17,8 +18,6 @@ import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
 public class MapCommand extends RichCommand {
 
-    private static final String NAMESPACE_SEPARATOR = ":";
-
     private final Map<String, NBT> nbtMap = new ConcurrentHashMap<>();
 
     public MapCommand() {
@@ -33,7 +32,7 @@ public class MapCommand extends RichCommand {
 
             nbtMap.put(key.toLowerCase(), nbt);
 
-            sender.sendMessage(Component.text("Map entry '" + key + "' updated"));
+            sender.sendMessage(Component.text("Map entry '" + key + "' updated", NamedTextColor.GREEN));
         }, Literal("set"), keyArgument, NBT("value"));
 
         addSyntax((sender, context) -> {
@@ -45,9 +44,12 @@ public class MapCommand extends RichCommand {
             if (success) {
                 final NBT nbt = nbtMap.get(key.toLowerCase());
                 commandData.set("value", nbt);
-                sender.sendMessage(Component.text("Map value: " + nbt.toSNBT()));
+                Component component = Component.text("Map value:", NamedTextColor.WHITE)
+                        .append(Component.space())
+                        .append(Component.text(nbt.toSNBT(), NamedTextColor.GREEN));
+                sender.sendMessage(component);
             } else {
-                sender.sendMessage(Component.text("Key not found!"));
+                sender.sendMessage(Component.text("Key not found!", NamedTextColor.RED));
             }
 
             context.setReturnData(commandData);
