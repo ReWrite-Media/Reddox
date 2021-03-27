@@ -1,10 +1,10 @@
 package net.minestom.script.command.display;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.command.arguments.ArgumentFlexibleComponent;
 import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.Player;
 import net.minestom.server.utils.entity.EntityFinder;
 
 import java.util.List;
@@ -22,12 +22,10 @@ public class TellrawCommand extends RichCommand {
             EntityFinder entityFinder = context.get("targets");
             final Component component = context.get("component");
             final List<Entity> entities = entityFinder.find(sender);
-            for (Entity entity : entities) {
-                if (entity instanceof Player) {
-                    final Player player = (Player) entity;
-                    player.sendMessage(component);
-                }
-            }
+
+            entities.stream()
+                    .filter(entity -> entity instanceof Audience)
+                    .forEach(entity -> ((Audience) entity).sendMessage(component));
 
             sender.sendMessage(Component.text("Message sent!"));
         }, Entity("targets").onlyPlayers(true), new ArgumentFlexibleComponent("component", true));
