@@ -24,8 +24,9 @@ public class TellrawCommand extends RichCommand {
             final List<Entity> entities = entityFinder.find(sender);
 
             entities.stream()
-                    .filter(entity -> entity instanceof Audience)
-                    .forEach(entity -> ((Audience) entity).sendMessage(component));
+                    .filter(Audience.class::isInstance)
+                    .map(Audience.class::cast)
+                    .forEach(audience -> audience.sendMessage(component));
 
             sender.sendMessage(Component.text("Message sent!"));
         }, Entity("targets").onlyPlayers(true), new ArgumentFlexibleComponent("component", true));
