@@ -1,5 +1,6 @@
 package net.minestom.script.command;
 
+import net.minestom.script.command.display.TellrawCommand;
 import net.minestom.script.command.entity.*;
 
 public class EntityCommand extends RichCommand {
@@ -10,7 +11,6 @@ public class EntityCommand extends RichCommand {
         addSubcommand(new GamemodeCommand());
         addSubcommand(new EffectCommand());
         addSubcommand(new GiveCommand());
-        addSubcommand(new TellrawCommand());
         addSubcommand(new EntityEditorCommand());
         addSubcommand(new KillCommand());
     }

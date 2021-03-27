@@ -54,6 +54,7 @@ public class ScriptManager {
             commandManager.register(new FunctionCommand());
             commandManager.register(new WorldCommand());
             commandManager.register(new EntityCommand());
+            commandManager.register(new DisplayCommand());
             commandManager.register(new UtilsCommand());
         }
 
