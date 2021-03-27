@@ -43,7 +43,7 @@ public class ScriptCommand extends RichCommand {
         addSyntax((sender, context) -> {
             var scripts = getScripts();
 
-            Component component = Component.text("Scripts (" + scripts.size() + ")", NamedTextColor.WHITE);
+            Component component = Component.text("Scripts (" + scripts.size() + "):", NamedTextColor.WHITE);
 
             sender.sendMessage(component);
 
