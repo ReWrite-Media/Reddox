@@ -6,6 +6,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minestom.server.command.builder.NodeMaker;
 import net.minestom.server.command.builder.arguments.Argument;
+import net.minestom.server.command.builder.arguments.ArgumentString;
+import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +28,16 @@ public class ArgumentFlexibleComponent extends Argument<Component> {
     }
 
     @Override
-    public @NotNull Component parse(@NotNull String input) {
+    public @NotNull Component parse(@NotNull String input) throws ArgumentSyntaxException {
         try {
             // Verify if the input is valid json
             final JsonReader reader = new JsonReader(new StringReader(input));
             return GsonComponentSerializer.gson().serializer().getAdapter(Component.class).read(reader);
         } catch (Exception e) {
+            if (!infinite) {
+                // Input needs to be quoted
+                input = ArgumentString.staticParse(input);
+            }
             // Otherwise parse with MiniMessage
             return MINI_MESSAGE.parse(input);
         }
