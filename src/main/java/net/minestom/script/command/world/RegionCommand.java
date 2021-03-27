@@ -1,5 +1,6 @@
 package net.minestom.script.command.world;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.component.RegionComponent;
 import net.minestom.script.utils.ArgumentUtils;
@@ -19,7 +20,8 @@ public class RegionCommand extends RichCommand {
 
         final RegionComponent regionComponent = getApi().getRegionHandler();
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /world region <create/edit> <identifier> [properties]"));
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage(Component.text("Usage: /world region <create/edit> <identifier> [properties]")));
 
         // All functions related to regions (eg: know if a position is inside a region)
         addSubcommand(new RegionFunctionCommand());
@@ -40,9 +42,9 @@ public class RegionCommand extends RichCommand {
             RegionComponent.Region region = regionComponent.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
             final boolean success = region != null;
             if (success) {
-                sender.sendMessage("Region '" + identifier + "' created successfully!");
+                sender.sendMessage(Component.text("Region '" + identifier + "' created successfully!"));
             } else {
-                sender.sendMessage("Region '" + identifier + "' already exists!");
+                sender.sendMessage(Component.text("Region '" + identifier + "' already exists!"));
             }
             context.setReturnData(new CommandData().set("success", success));
         }, Literal("create"), Word("identifier"), RelativeVec3("pos1"), RelativeVec3("pos2"), NbtCompound("region_data").setDefaultValue(new NBTCompound()));
@@ -51,9 +53,9 @@ public class RegionCommand extends RichCommand {
             final String identifier = context.get("identifier");
             final boolean success = regionComponent.deleteRegion(identifier);
             if (success) {
-                sender.sendMessage("Region '" + identifier + "' has been deleted");
+                sender.sendMessage(Component.text("Region '" + identifier + "' has been deleted"));
             } else {
-                sender.sendMessage("Region '" + identifier + "' does not exist!");
+                sender.sendMessage(Component.text("Region '" + identifier + "' does not exist!"));
             }
             context.setReturnData(new CommandData().set("success", success));
         }, Literal("delete"), Word("identifier"));
@@ -81,10 +83,10 @@ public class RegionCommand extends RichCommand {
                     if (region != null) {
                         final Vector vector = ArgumentUtils.from(sender, context.get("position"));
                         inside = region.isInside(vector);
-                        sender.sendMessage("inside: " + inside);
+                        sender.sendMessage(Component.text("inside: " + inside));
                     } else {
                         inside = false;
-                        sender.sendMessage("region not found");
+                        sender.sendMessage(Component.text("region not found"));
                     }
                     context.setReturnData(new CommandData().set("inside", inside));
                 }, Literal("is_inside"), Word("identifier"), RelativeVec3("position"));
@@ -102,9 +104,9 @@ public class RegionCommand extends RichCommand {
                     if (region != null) {
                         final NBTCompound nbtCompound = region.getNbtCompound();
                         data.set("data", nbtCompound);
-                        sender.sendMessage("data: " + nbtCompound.toSNBT());
+                        sender.sendMessage(Component.text("data: " + nbtCompound.toSNBT()));
                     } else {
-                        sender.sendMessage("region not found");
+                        sender.sendMessage(Component.text("region not found"));
                     }
 
                     context.setReturnData(data);

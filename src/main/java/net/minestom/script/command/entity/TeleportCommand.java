@@ -1,8 +1,9 @@
 package net.minestom.script.command.entity;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.script.command.RichCommand;
-import net.minestom.server.chat.ChatColor;
-import net.minestom.server.chat.ColoredText;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
@@ -41,10 +42,10 @@ public class TeleportCommand extends RichCommand {
 
     private void usage(CommandSender sender, CommandContext context) {
         if (sender.isPlayer()) {
-            sender.sendMessage("Usage: /tp <location>");
-            sender.sendMessage("Usage: /tp <destination>");
+            sender.sendMessage(Component.text("Usage: /tp <location>"));
+            sender.sendMessage(Component.text("Usage: /tp <destination>"));
         }
-        sender.sendMessage("Usage: /tp <targets> (<destination>|<location>)");
+        sender.sendMessage(Component.text("Usage: /tp <targets> (<destination>|<location>)"));
     }
 
     private void selfToEntity(CommandSender sender, CommandContext context) {
@@ -59,9 +60,9 @@ public class TeleportCommand extends RichCommand {
 
         if (entities.size() > 0) {
             teleport(sender.asPlayer(), entities.get(0).getPosition());
-            sender.sendMessage("Teleport to entity");
+            sender.sendMessage(Component.text("Teleport to entity"));
         } else {
-            sender.sendMessage(ColoredText.of(ChatColor.RED, "No destination found"));
+            sender.sendMessage(Component.text("No destination found", NamedTextColor.RED));
         }
     }
 
@@ -77,8 +78,8 @@ public class TeleportCommand extends RichCommand {
         Position position = relativeVec.from(player).toPosition();
 
         teleport(player, position);
-        player.sendMessage("Teleported " + player.getUsername() + " to " +
-                position.getX() + ", " + position.getY() + ", " + position.getZ());
+        player.sendMessage(Component.text("Teleported " + player.getUsername() + " to " +
+                position.getX() + ", " + position.getY() + ", " + position.getZ()));
     }
 
     public void targetToLocation(CommandSender sender, CommandContext context) {
@@ -95,14 +96,11 @@ public class TeleportCommand extends RichCommand {
                     .forEach(entity -> {
                         Position position = relativeVec.from(entity).toPosition();
                         teleport(entity, position);
-                        String entityName = entity.getCustomName() == null ?
-                                entity.getEntityType().name() : entity.getCustomName().getRawMessage();
-                        sender.sendMessage("Teleported " + entityName + " to " +
-                                position.getX() + ", " + position.getY() + ", " + position.getZ());
+                        sendTeleportedMessage(sender, entity, position);
                     });
-            sender.sendMessage("Teleported target(s)");
+            sender.sendMessage(Component.text("Teleported target(s)"));
         } else {
-            sender.sendMessage(ColoredText.of(ChatColor.RED, "No target found"));
+            sender.sendMessage(Component.text("No target found", NamedTextColor.RED));
         }
     }
 
@@ -121,14 +119,11 @@ public class TeleportCommand extends RichCommand {
                     .forEach(entity -> {
                         Position position = relativeVec.from(entity).toPosition().setDirection(relativeDirection.from(entity));
                         teleport(entity, position);
-                        String entityName = entity.getCustomName() == null ?
-                                entity.getEntityType().name() : entity.getCustomName().getRawMessage();
-                        sender.sendMessage("Teleported " + entityName + " to " +
-                                position.getX() + ", " + position.getY() + ", " + position.getZ());
+                        sendTeleportedMessage(sender, entity, position);
                     });
-            sender.sendMessage("Teleported target(s)");
+            sender.sendMessage(Component.text("Teleported target(s)"));
         } else {
-            sender.sendMessage(ColoredText.of(ChatColor.RED, "No target found"));
+            sender.sendMessage(Component.text("No target found", NamedTextColor.RED));
         }
 
     }
@@ -148,14 +143,11 @@ public class TeleportCommand extends RichCommand {
                     .forEach(entity -> {
                         Position position = destination.getPosition();
                         teleport(entity, position);
-                        String entityName = entity.getCustomName() == null ?
-                                entity.getEntityType().name() : entity.getCustomName().getRawMessage();
-                        sender.sendMessage("Teleported " + entityName + " to " +
-                                position.getX() + ", " + position.getY() + ", " + position.getZ());
+                        sendTeleportedMessage(sender, entity, position);
                     });
             sender.sendMessage("Teleported target(s)");
         } else {
-            sender.sendMessage(ColoredText.of(ChatColor.RED, "No target found"));
+            sender.sendMessage(Component.text("No target found", NamedTextColor.RED));
         }
     }
 
@@ -174,18 +166,22 @@ public class TeleportCommand extends RichCommand {
                     .forEach(entity -> {
                         Position position = relativeVec.from(entity).toPosition().setDirection(relativeDirection.from(entity));
                         teleport(entity, position);
-                        String entityName = entity.getCustomName() == null ?
-                                entity.getEntityType().name() : entity.getCustomName().getRawMessage();
-                        sender.sendMessage("Teleported " + entityName + " to " +
-                                position.getX() + ", " + position.getY() + ", " + position.getZ());
+                        sendTeleportedMessage(sender, entity, position);
                     });
-            sender.sendMessage("Teleported target(s)");
+            sender.sendMessage(Component.text("Teleported target(s)"));
         } else {
-            sender.sendMessage(ColoredText.of(ChatColor.RED, "No target found"));
+            sender.sendMessage(Component.text("No target found", NamedTextColor.RED));
         }
     }
 
     public void teleport(Entity target, Position result) {
         target.teleport(result);
+    }
+
+    private void sendTeleportedMessage(CommandSender sender, Entity entity, Position position) {
+        String entityName = entity.getCustomName() == null ?
+                entity.getEntityType().name() : LegacyComponentSerializer.legacyAmpersand().serialize(entity.getCustomName());
+        sender.sendMessage(Component.text("Teleported " + entityName + " to " +
+                position.getX() + ", " + position.getY() + ", " + position.getZ()));
     }
 }

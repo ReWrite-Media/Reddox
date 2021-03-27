@@ -17,7 +17,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    implementation 'com.github.Minestom:Minestom:622f632989'
+    implementation 'com.github.Minestom:Minestom:4ec6da5adf'
 
     // https://mvnrepository.com/artifact/org.eclipse.dirigible/dirigible-engine-javascript-graalvm
     compile group: 'org.eclipse.dirigible', name: 'dirigible-engine-javascript-graalvm', version: '5.8.0'

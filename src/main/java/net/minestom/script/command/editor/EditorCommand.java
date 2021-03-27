@@ -1,5 +1,6 @@
 package net.minestom.script.command.editor;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.Executor;
 import net.minestom.script.Script;
 import net.minestom.script.command.RichCommand;
@@ -45,7 +46,7 @@ public class EditorCommand extends RichCommand {
         ItemStack bookItem = new ItemStack(Material.WRITABLE_BOOK, (byte) 1);
         WritableBookMeta meta = new WritableBookMeta();
         meta.setPages(
-                List.of("// Put code here:\n")
+                List.of(Component.text("// Put code here:\n"))
         );
 
         inventory.setItemInMainHand(bookItem);
@@ -67,10 +68,10 @@ public class EditorCommand extends RichCommand {
 
                 player.sendMessage("Running Script...");
 
-                String fileString = String.join("\n", meta.getPages());
+                //String fileString = String.join("\n", meta.getPages());
 
                 final Executor executor = new Executor();
-                Script script = new Script("IG-Script", fileString, meta.getTitle(), executor);
+                //Script script = new Script("IG-Script", fileString, meta.getTitle(), executor);
                 // FIXME
                 //ScriptManager.addScript(script);
 

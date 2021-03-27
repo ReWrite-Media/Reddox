@@ -1,5 +1,6 @@
 package net.minestom.script.command.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
@@ -34,7 +35,7 @@ public class EffectCommand extends RichCommand {
                     target.removeEffect(potionEffect);
                 }
 
-                sender.sendMessage("Potion effect removed successfully!");
+                sender.sendMessage(Component.text("Potion effect removed successfully!"));
             }, Literal("clear"), targetArgument, effectArgument);
 
             addSyntax((sender, context) -> {
@@ -44,7 +45,7 @@ public class EffectCommand extends RichCommand {
                 }
                 final Player player = sender.asPlayer();
                 player.clearEffects();
-                sender.sendMessage("Your effects have been cleared!");
+                sender.sendMessage(Component.text("Your effects have been cleared!"));
             }, Literal("clear"));
         }
 
@@ -63,7 +64,7 @@ public class EffectCommand extends RichCommand {
                             target.addEffect(potion);
                         }
 
-                        sender.sendMessage("Potion effect applied successfully!");
+                        sender.sendMessage(Component.text("Potion effect applied successfully!"));
                     }, Literal("give"), targetArgument, effectArgument,
                     Integer("seconds").setDefaultValue(30),
                     Integer("amplifier").setDefaultValue(0));
@@ -72,7 +73,7 @@ public class EffectCommand extends RichCommand {
     }
 
     private void usage(CommandSender sender, CommandContext context) {
-        sender.sendMessage("Usage: /entity effect clear [<targets>] [<effect>]");
-        sender.sendMessage("Usage: /entity effect give <targets> <effect> [<seconds>] [<amplifier>] [<hideParticles>]");
+        sender.sendMessage(Component.text("Usage: /entity effect clear [<targets>] [<effect>]"));
+        sender.sendMessage(Component.text("Usage: /entity effect give <targets> <effect> [<seconds>] [<amplifier>] [<hideParticles>]"));
     }
 }

@@ -1,5 +1,6 @@
 package net.minestom.script.command;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.component.ScriptAPI;
 import net.minestom.server.command.builder.Command;
@@ -26,7 +27,7 @@ public class RichCommand extends Command {
             return ScriptManager.getCommandPermission().apply(source.asPlayer());
         });
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage("Default script executor"));
+        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Default script executor")));
     }
 
     public RichCommand(@NotNull String name) {

@@ -1,5 +1,6 @@
 package net.minestom.script.command.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Entity;
@@ -15,7 +16,7 @@ public class KillCommand extends RichCommand {
 
         setDefaultExecutor((sender, context) -> {
             if (!sender.isPlayer()) {
-                sender.sendMessage("Usage: /kill <targets>");
+                sender.sendMessage(Component.text("Usage: /kill <targets>"));
                 return;
             }
             final Player player = sender.asPlayer();
@@ -32,7 +33,7 @@ public class KillCommand extends RichCommand {
                     entity.remove();
                 }
             }
-            sender.sendMessage("Entities removed!");
+            sender.sendMessage(Component.text("Entities removed!"));
         }, ArgumentType.Entity("targets").setDefaultValue(new EntityFinder()));
     }
 }

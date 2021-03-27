@@ -1,5 +1,6 @@
 package net.minestom.script.command.utils;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
@@ -37,11 +38,11 @@ public class ScheduleCommand extends RichCommand {
         // /schedule list
         {
             addSyntax((sender, context) -> {
-                sender.sendMessage("Task count: " + SCHEDULED_TASKS_MAP.size());
+                sender.sendMessage(Component.text("Task count: " + SCHEDULED_TASKS_MAP.size()));
                 for (Map.Entry<Task, String> entry : SCHEDULED_TASKS_MAP.entrySet()) {
                     final Task task = entry.getKey();
                     final String command = entry.getValue();
-                    sender.sendMessage("Task id '" + task.getId() + "' with cmd " + command);
+                    sender.sendMessage(Component.text("Task id '" + task.getId() + "' with cmd " + command));
                 }
             }, Literal("list"));
         }
@@ -56,14 +57,14 @@ public class ScheduleCommand extends RichCommand {
                     if (task.getId() == id) {
                         SCHEDULER_MANAGER.removeTask(task);
 
-                        sender.sendMessage("You removed the task " + id + " successfully");
+                        sender.sendMessage(Component.text("You removed the task " + id + " successfully"));
                         return true;
                     }
                     return false;
                 });
 
                 if (!removed) {
-                    sender.sendMessage("The task " + id + " does not exist");
+                    sender.sendMessage(Component.text("The task " + id + " does not exist"));
                 }
             }, Literal("remove"), Integer("task_id"));
         }
@@ -125,7 +126,7 @@ public class ScheduleCommand extends RichCommand {
                                      @Nullable UpdateOption delay, @Nullable UpdateOption repeat) {
         final ParsedCommand parsedCommand = commandResult.getParsedCommand();
         if (parsedCommand == null) {
-            sender.sendMessage("Invalid command");
+            sender.sendMessage(Component.text("Invalid command"));
             return;
         }
 
@@ -153,6 +154,6 @@ public class ScheduleCommand extends RichCommand {
         taskReference.set(task);
         SCHEDULED_TASKS_MAP.put(task, input);
 
-        sender.sendMessage("You created the task " + task.getId() + " successfully (" + input + ")");
+        sender.sendMessage(Component.text("You created the task " + task.getId() + " successfully (" + input + ")"));
     }
 }

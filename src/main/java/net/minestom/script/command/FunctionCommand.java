@@ -1,5 +1,6 @@
 package net.minestom.script.command;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.property.Properties;
 import net.minestom.server.command.builder.CommandContext;
 import org.jglrxavpok.hephaistos.nbt.NBT;
@@ -17,7 +18,8 @@ public class FunctionCommand extends RichCommand {
     public FunctionCommand() {
         super("function");
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /function run <name> [properties...]"));
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage(Component.text("Usage: /function run <name> [properties...]")));
 
         final var propertiesArgument = Loop("properties",
                 Group("properties_group", Word("key"), NBT("value")))
@@ -37,9 +39,9 @@ public class FunctionCommand extends RichCommand {
 
             final boolean success = getApi().getExecutor().function(name, properties);
             if (success) {
-                sender.sendMessage("You executed the function: " + name);
+                sender.sendMessage(Component.text("You executed the function: " + name));
             } else {
-                sender.sendMessage("Unknown function name");
+                sender.sendMessage(Component.text("Unknown function name"));
             }
         }, Literal("run"), Word("function_name"), propertiesArgument);
     }

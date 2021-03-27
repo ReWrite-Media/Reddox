@@ -1,5 +1,6 @@
 package net.minestom.script.command.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
@@ -15,7 +16,8 @@ public class GiveCommand extends RichCommand {
     public GiveCommand() {
         super("give");
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /entity give <target> <item> [<count>]"));
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage(Component.text("Usage: /entity give <target> <item> [<count>]")));
 
         addSyntax((sender, context) -> {
             final EntityFinder entityFinder = context.get("target");
@@ -32,7 +34,7 @@ public class GiveCommand extends RichCommand {
                 }
             }
 
-            sender.sendMessage("Items have been given successfully!");
+            sender.sendMessage(Component.text("Items have been given successfully!"));
 
         }, Entity("target").onlyPlayers(true), ItemStack("item"), Integer("count").setDefaultValue(1));
     }

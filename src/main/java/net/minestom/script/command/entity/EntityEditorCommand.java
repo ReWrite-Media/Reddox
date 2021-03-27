@@ -1,5 +1,7 @@
 package net.minestom.script.command.entity;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.ArgumentUtils;
@@ -24,7 +26,7 @@ public class EntityEditorCommand extends RichCommand {
         super("editor");
 
         setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /editor <create/edit/remove>");
+            sender.sendMessage(Component.text("Usage: /editor <create/edit/remove>"));
         });
 
         var entityArgument = Entity("entity").singleEntity(true);
@@ -48,7 +50,7 @@ public class EntityEditorCommand extends RichCommand {
 
             commandData.set("success", true);
             commandData.set("entity", Properties.fromEntity(creature));
-            sender.sendMessage("Entity created successfully, uuid: " + creature.getUuid());
+            sender.sendMessage(Component.text("Entity created successfully, uuid: " + creature.getUuid()));
 
         }, Literal("create"), EntityType("entity_type"), RelativeVec3("spawn_position"));
 
@@ -58,7 +60,7 @@ public class EntityEditorCommand extends RichCommand {
             final Entity entity = entityFinder.findFirstEntity(sender);
 
             if (entity == null) {
-                sender.sendMessage("Entity not found");
+                sender.sendMessage(Component.text("Entity not found", NamedTextColor.RED));
                 return;
             }
 
@@ -81,7 +83,7 @@ public class EntityEditorCommand extends RichCommand {
                 }
             }
 
-            sender.sendMessage("Entity edited!");
+            sender.sendMessage(Component.text("Entity edited!"));
 
         }, Literal("edit"), entityArgument, Loop("properties",
                 Group("position_group", Literal("position"), RelativeVec3("position_value")),
@@ -93,9 +95,9 @@ public class EntityEditorCommand extends RichCommand {
             final Entity entity = entityFinder.findFirstEntity(sender);
             if (entity != null) {
                 entity.remove();
-                sender.sendMessage("Entity removed");
+                sender.sendMessage(Component.text("Entity removed"));
             } else {
-                sender.sendMessage("Entity not found");
+                sender.sendMessage(Component.text("Entity not found"));
             }
         }, Literal("remove"), entityArgument);
     }

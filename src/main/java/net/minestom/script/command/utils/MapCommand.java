@@ -1,5 +1,6 @@
 package net.minestom.script.command.utils;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
@@ -32,7 +33,7 @@ public class MapCommand extends RichCommand {
 
             nbtMap.put(key.toLowerCase(), nbt);
 
-            sender.sendMessage("Map entry '" + key + "' updated");
+            sender.sendMessage(Component.text("Map entry '" + key + "' updated"));
         }, Literal("set"), keyArgument, NBT("value"));
 
         addSyntax((sender, context) -> {
@@ -44,9 +45,9 @@ public class MapCommand extends RichCommand {
             if (success) {
                 final NBT nbt = nbtMap.get(key.toLowerCase());
                 commandData.set("value", nbt);
-                sender.sendMessage("Map value: " + nbt.toSNBT());
+                sender.sendMessage(Component.text("Map value: " + nbt.toSNBT()));
             } else {
-                sender.sendMessage("Key not found!");
+                sender.sendMessage(Component.text("Key not found!"));
             }
 
             context.setReturnData(commandData);

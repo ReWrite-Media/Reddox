@@ -1,5 +1,6 @@
 package net.minestom.script.command.world;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
@@ -16,7 +17,8 @@ public class ParticleCommand extends RichCommand {
     public ParticleCommand() {
         super("particle");
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage("Usage: /particle <type> <position> <delta> <speed> <count>"));
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage(Component.text("Usage: /particle <type> <position> <delta> <speed> <count>")));
 
         addSyntax((sender, context) -> {
                     final Particle particle = context.get("particle");
@@ -36,7 +38,7 @@ public class ParticleCommand extends RichCommand {
                         sender.asPlayer().sendPacketToViewersAndSelf(particlePacket);
                     }
 
-                    sender.sendMessage("Particle(s) sent!");
+                    sender.sendMessage(Component.text("Particle(s) sent!"));
 
                 }, Particle("particle"), RelativeVec3("position"),
                 RelativeVec3("delta"), Float("speed"),

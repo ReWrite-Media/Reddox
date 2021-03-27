@@ -1,10 +1,11 @@
 package net.minestom.script.command;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.command.editor.EditorCommand;
-import net.minestom.server.chat.ChatColor;
-import net.minestom.server.chat.ColoredText;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.suggestion.Suggestion;
@@ -29,7 +30,7 @@ public class ScriptCommand extends RichCommand {
         this.addSubcommand(new EditorCommand());
 
         setDefaultExecutor((sender, context) -> {
-            sender.sendMessage("Usage: /script <list/load/unload> [path]");
+            sender.sendMessage(Component.text("Usage: /script <list/load/unload> [path]"));
         });
 
 
@@ -39,9 +40,9 @@ public class ScriptCommand extends RichCommand {
 
         addSyntax((sender, context) -> {
             for (Script script : getScripts()) {
-                final ChatColor color = script.isLoaded() ? ChatColor.BRIGHT_GREEN : ChatColor.RED;
+                final TextColor color = script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED;
                 final String name = script.getName();
-                sender.sendMessage(ColoredText.of(color, "Path: " + name));
+                sender.sendMessage(Component.text("Path: " + name, color));
             }
         }, Literal("list"));
 
@@ -49,10 +50,10 @@ public class ScriptCommand extends RichCommand {
             final String[] path = context.get(pathArgument);
             processPath(sender, String.join(" ", path), script -> {
                 if (script.isLoaded()) {
-                    sender.sendMessage("Script is already loaded");
+                    sender.sendMessage(Component.text("Script is already loaded"));
                 } else {
                     script.load();
-                    sender.sendMessage("Script loaded successfully!");
+                    sender.sendMessage(Component.text("Script loaded successfully!"));
                 }
             });
         }, Literal("load"), pathArgument);
@@ -62,9 +63,9 @@ public class ScriptCommand extends RichCommand {
             processPath(sender, String.join(" ", path), script -> {
                 if (script.isLoaded()) {
                     script.unload();
-                    sender.sendMessage("Script unloaded successfully!");
+                    sender.sendMessage(Component.text("Script unloaded successfully!"));
                 } else {
-                    sender.sendMessage("Script is already unloaded");
+                    sender.sendMessage(Component.text("Script is already unloaded"));
                 }
             });
         }, Literal("unload"), pathArgument);
@@ -76,13 +77,13 @@ public class ScriptCommand extends RichCommand {
                 processPath(sender, String.join(" ", path), script -> {
                     script.unload();
                     script.load();
-                    sender.sendMessage("Script reloaded");
+                    sender.sendMessage(Component.text("Script reloaded"));
                 });
             } else {
                 // Reload all scripts
                 ScriptManager.reload();
                 var scripts = getScripts();
-                sender.sendMessage("You did reload " + scripts.size() + " scripts!");
+                sender.sendMessage(Component.text("You did reload " + scripts.size() + " scripts!"));
             }
         }, Literal("reload"), pathArgument);
     }
@@ -100,7 +101,7 @@ public class ScriptCommand extends RichCommand {
 
         optionalScript.ifPresentOrElse(scriptConsumer, () -> {
             // Invalid path
-            sender.sendMessage("Invalid path");
+            sender.sendMessage(Component.text("Invalid path"));
         });
     }
 

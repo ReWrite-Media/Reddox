@@ -105,7 +105,7 @@ public class Script {
                 .targetTypeMapping(
                         Map.class,
                         Object.class,
-                        map -> !map.containsKey(Properties.TYPE_MEMBER),
+                        map -> map != null && !map.containsKey(Properties.TYPE_MEMBER),
                         NbtConversionUtils::fromMap)
                 .build();
 
