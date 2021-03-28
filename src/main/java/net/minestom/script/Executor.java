@@ -44,9 +44,13 @@ public class Executor {
     protected synchronized void unregister() {
         this.signalMap.clear();
 
+        final boolean hasCommand = !commandMap.isEmpty();
         this.commandMap.forEach((s, command) ->
                 MinecraftServer.getCommandManager().unregister(command));
         this.commandMap.clear();
+        if (hasCommand) {
+            CommandUtils.updateCommands();
+        }
 
         EXECUTORS.remove(this);
     }
