@@ -67,20 +67,28 @@ public class BossBarCommand extends RichCommand {
         addSyntax((sender, context) -> {
             final String identifier = context.get(identifierArgument);
             final Component component = context.get(nameArgument);
-            BossBar bossBar = BossBar.bossBar(component,
+            final BossBar bossBar = BossBar.bossBar(component,
                     DEFAULT_PROGRESS, DEFAULT_COLOR, DEFAULT_OVERLAY);
 
-            bossBarMap.put(identifier, bossBar);
+            synchronized (bossBarMap) {
+                if (!bossBarMap.containsKey(identifier)) {
+                    bossBarMap.put(identifier, bossBar);
+                    sender.sendMessage(Component.text("Boss bar '" + identifier + "' created successfully!", NamedTextColor.GREEN));
+                } else {
+                    sender.sendMessage(Component.text("A boss bar with the identifier '" + identifier + "' already exists!", NamedTextColor.RED));
+                }
+            }
 
-            sender.sendMessage(Component.text("Bossbar '" + identifier + "' created successfully!", NamedTextColor.GREEN));
-
-        }, Literal("add"), identifierArgument, nameArgument);
+        }, Literal("create"), identifierArgument, nameArgument);
 
         addSyntax((sender, context) -> {
             final String identifier = context.get(identifierArgument);
             processBossBar(sender, identifier, bossBar -> {
-                MinecraftServer.getBossBarManager().destroyBossBar(bossBar);
-                sender.sendMessage(Component.text("Bossbar '" + identifier + "' destroyed", NamedTextColor.GREEN));
+                synchronized (bossBarMap){
+                    bossBarMap.remove(identifier);
+                    MinecraftServer.getBossBarManager().destroyBossBar(bossBar);
+                    sender.sendMessage(Component.text("Bossbar '" + identifier + "' destroyed", NamedTextColor.GREEN));
+                }
             });
         }, Literal("remove"), identifierArgument);
 
@@ -100,7 +108,7 @@ public class BossBarCommand extends RichCommand {
                     bossBar.color(color);
                     sender.sendMessage(Component.text("Color modified", NamedTextColor.GREEN));
                 });
-            }, identifierArgument, Literal("color"),Enum("value", BossBar.Color.class).setFormat(ArgumentEnum.Format.LOWER_CASED));
+            }, identifierArgument, Literal("color"), Enum("value", BossBar.Color.class).setFormat(ArgumentEnum.Format.LOWER_CASED));
 
             addSyntax((sender, context) -> {
                 final String identifier = context.get(identifierArgument);
