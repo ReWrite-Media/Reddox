@@ -31,7 +31,7 @@ Title {
 }
 
 Chat {
-	display tellraw <text>
+	display tellraw <targets> <text>
 }
 
 Bossbar {
