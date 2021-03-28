@@ -1,10 +1,14 @@
 package net.minestom.script;
 
+import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.PlayerProperty;
 import net.minestom.script.property.Properties;
+import net.minestom.script.utils.CommandUtils;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.CommandResult;
+import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.utils.validate.Check;
@@ -30,39 +34,27 @@ public class Executor {
     private static final ConnectionManager CONNECTION_MANAGER = MinecraftServer.getConnectionManager();
     private final static List<Executor> EXECUTORS = new CopyOnWriteArrayList<>();
 
-    private final Map<String, FunctionCallback> functionMap = new ConcurrentHashMap<>();
     private final Map<String, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
+    private final Map<String, Command> commandMap = new ConcurrentHashMap<>();
 
     protected void register() {
         EXECUTORS.add(this);
     }
 
-    protected void unregister() {
-        this.functionMap.clear();
+    protected synchronized void unregister() {
         this.signalMap.clear();
-        EXECUTORS.remove(this);
-    }
 
-    public void registerFunction(@NotNull String name, @NotNull FunctionCallback callback) {
-        // TODO prevent multiple scripts from registering the same function
-        this.functionMap.put(name, callback);
+        this.commandMap.forEach((s, command) ->
+                MinecraftServer.getCommandManager().unregister(command));
+        this.commandMap.clear();
+
+        EXECUTORS.remove(this);
     }
 
     public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
         listeners.add(callback);
-    }
-
-    public boolean function(@NotNull String function, @NotNull Properties properties) {
-        for (Executor executor : EXECUTORS) {
-            FunctionCallback callback = executor.functionMap.get(function);
-            if (callback != null) {
-                callback.accept(properties);
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull
@@ -77,6 +69,38 @@ public class Executor {
             }
         }
         return result;
+    }
+
+    public synchronized void registerCommand(@NotNull String format, @NotNull CommandCallback callback) {
+        String commandName;
+        if (format.contains(StringUtils.SPACE)) {
+            final int index = format.indexOf(StringUtils.SPACE);
+            commandName = format.substring(0, index);
+            format = format.substring(index + 1);
+        } else {
+            // No argument
+            commandName = format;
+            format = "";
+        }
+
+        // Create command
+        Command command = new RichCommand(commandName);
+        command.addSyntax((sender, context) -> {
+            if (!sender.isPlayer()) {
+                // TODO console support
+                System.err.println("Currently only players can use script commands");
+                return;
+            }
+            PlayerProperty playerProperty = new PlayerProperty(sender.asPlayer());
+            Properties properties = new Properties();
+            context.getMap().forEach(properties::putMember);
+
+            callback.accept(playerProperty, properties);
+        }, ArgumentType.generate(format));
+
+        this.commandMap.put(commandName, command);
+        MinecraftServer.getCommandManager().register(command);
+        CommandUtils.updateCommands();
     }
 
     @Nullable

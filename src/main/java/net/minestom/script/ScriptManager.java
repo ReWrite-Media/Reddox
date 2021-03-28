@@ -51,7 +51,7 @@ public class ScriptManager {
         {
             CommandManager commandManager = MinecraftServer.getCommandManager();
             commandManager.register(new ScriptCommand());
-            commandManager.register(new FunctionCommand());
+            commandManager.register(new SignalCommand());
             commandManager.register(new WorldCommand());
             commandManager.register(new EntityCommand());
             commandManager.register(new DisplayCommand());
