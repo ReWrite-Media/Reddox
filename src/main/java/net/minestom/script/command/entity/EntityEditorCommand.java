@@ -35,7 +35,7 @@ public class EntityEditorCommand extends RichCommand {
 
         var entityArgument = Entity("entity").singleEntity(true);
 
-        // /editor init
+        // /editor create
         addSyntax((sender, context) -> {
             CommandData commandData = new CommandData();
             context.setReturnData(commandData);
