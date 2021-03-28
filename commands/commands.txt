@@ -31,18 +31,14 @@ Title {
 }
 
 Chat {
-	text chat send legacy <player|console> <legacy text>
-	text chat send raw <player|console> <raw text>
-	text chat send json <player|console> <json text>
+	display tellraw <text>
 }
 
 Bossbar {
-	text bossbar create <name> <text nbt string> // Creates a bossbar
-	text bossbar addplayer <name> <player uuid>
-	text bossbar removeplayer <name> <player uuid>
-	text bossbar remove <name>
-	text bossbar set <name> <players|display text|color|max value|value|segment amount> <value>
+    display bossbar create <identifier> <name>
+    display bossbar remove <identifier>
+	display bossbar <identifier> set <players|name|color|progress|style> <value>
 	
-	text bossbar query <name> // Returns command data with [players, display text, color, max value, value, segment amount]
+	display bossbar <identifier> query // Returns command data with [players, name, color, progress, style]
 }
 
