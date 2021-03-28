@@ -49,6 +49,8 @@ executor.run("utils map set Test:test",object)
 let data = executor.run("utils map get Test:test")
 console.log("debug: "+data.value.array[1])
 
+executor.run("display bossbar add test <red>name")
+
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)
 })
