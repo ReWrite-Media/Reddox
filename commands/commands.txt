@@ -37,8 +37,8 @@ Chat {
 Bossbar {
     display bossbar create <identifier> <name>
     display bossbar remove <identifier>
-	display bossbar <identifier> set <players|name|color|progress|style> <value>
+    display bossbar <identifier> set <players|name|color|progress|style> <value>
 	
-	display bossbar <identifier> query // Returns command data with [players, name, color, progress, style]
+    display bossbar <identifier> query // Returns command data with [players, name, color, progress, style]
 }
 
