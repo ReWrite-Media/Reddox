@@ -2,10 +2,7 @@ package net.minestom.script;
 
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.NbtConversionUtils;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,6 +107,11 @@ public class Script {
                 .build();
 
         Context context = Context.newBuilder(language)
+                // Allows foreign object prototypes
+                .allowExperimentalOptions(true)
+                // Allows native js methods to be used on foreign (java) objects.
+                // For example, calling Array.prototype.filter on java lists.
+                .option("js.experimental-foreign-object-prototype", "true")
                 .allowHostAccess(hostAccess).build();
 
         Value bindings = context.getBindings(language);
