@@ -46,4 +46,17 @@ executor.run("display bossbar create test <red>name")
 
 executor.onSignal("player_join", (properties) => {
     console.log("join "+properties.player.username)
-})
+});
+
+let get = executor.make("utils map get {0}");
+data = get("Test:test");
+console.log("debug: " + data.value.id);
+
+let getMapped = executor.make("utils map get {0}", data => data.value);
+data = getMapped("Test:test");
+console.log("debug: " + data.float);
+
+let objArrayMoreThan2 = executor.make("utils map get test:Test",
+        data => data.value.array.filter(value => value > 2));
+data = objArrayMoreThan2();
+console.log("debug: " + data);

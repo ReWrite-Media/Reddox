@@ -135,9 +135,14 @@ public class Executor {
 
     @NotNull
     public CommandFunction make(@NotNull String string) {
+        return make(string, ProxyObjectMapper.DEFAULT);
+    }
+
+    @NotNull
+    public CommandFunction make(@NotNull String string, @NotNull ProxyObjectMapper mapper) {
         return args -> {
             final String input = MessageFormat.format(string, args);
-            return run(input);
+            return mapper.map(run(input));
         };
     }
 
