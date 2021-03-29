@@ -5,7 +5,9 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
-public interface CommandFunction {
+public interface ProxyObjectMapper {
+    ProxyObjectMapper DEFAULT = Value::asValue;
+
     @Nullable
-    Value run(@Nullable Object... args);
+    Value map(@Nullable ProxyObject input);
 }
