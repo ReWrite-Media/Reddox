@@ -131,9 +131,14 @@ public class Executor {
 
     @NotNull
     public CommandFunction make(@NotNull String string) {
+        return make(string, CommandMapper.DEFAULT);
+    }
+
+    @NotNull
+    public CommandFunction make(@NotNull String string, @NotNull CommandMapper mapper) {
         return args -> {
             final String input = MessageFormat.format(string, args);
-            return run(input);
+            return mapper.map(run(input));
         };
     }
 
