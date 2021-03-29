@@ -4,8 +4,6 @@ const executor = {
     },
     registerCommand() {
     },
-    alias() {
-    },
     make() {
     },
     run() {
