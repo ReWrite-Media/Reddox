@@ -109,7 +109,7 @@ public class Script {
         Value bindings = context.getBindings(language);
 
         // Command globalExecutor
-        bindings.putMember("globalExecutor", globalExecutor);
+        bindings.putMember("executor", globalExecutor);
 
         // Event Signals
         Map<String, Object> eventBindings = new HashMap<String, Object>();
