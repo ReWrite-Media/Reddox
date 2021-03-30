@@ -1,19 +1,25 @@
 package net.minestom.script;
 
-import net.minestom.script.command.*;
-import net.minestom.script.component.ScriptAPI;
-import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.CommandManager;
-import net.minestom.server.entity.Player;
-import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+
+import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import net.minestom.script.command.DisplayCommand;
+import net.minestom.script.command.EntityCommand;
+import net.minestom.script.command.ScriptCommand;
+import net.minestom.script.command.SignalCommand;
+import net.minestom.script.command.UtilsCommand;
+import net.minestom.script.command.WorldCommand;
+import net.minestom.script.component.ScriptAPI;
+import net.minestom.script.documentation.DocumentationHandler;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.Player;
 
 public class ScriptManager {
 
@@ -49,13 +55,13 @@ public class ScriptManager {
 
         // Load commands
         {
-            CommandManager commandManager = MinecraftServer.getCommandManager();
-            commandManager.register(new ScriptCommand());
-            commandManager.register(new SignalCommand());
-            commandManager.register(new WorldCommand());
-            commandManager.register(new EntityCommand());
-            commandManager.register(new DisplayCommand());
-            commandManager.register(new UtilsCommand());
+            DocumentationHandler docManager = DocumentationHandler.INSTANCE;
+            docManager.registerCommand(new ScriptCommand());
+            docManager.registerCommand(new SignalCommand());
+            docManager.registerCommand(new WorldCommand());
+            docManager.registerCommand(new EntityCommand());
+            docManager.registerCommand(new DisplayCommand());
+            docManager.registerCommand(new UtilsCommand());
         }
 
         // Load scripts

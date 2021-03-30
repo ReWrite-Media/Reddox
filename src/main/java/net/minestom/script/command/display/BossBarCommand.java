@@ -1,5 +1,18 @@
 package net.minestom.script.command.display;
 
+import static net.minestom.server.command.builder.arguments.ArgumentType.Entity;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Enum;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
+import static net.minestom.server.command.builder.arguments.ArgumentType.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -8,6 +21,10 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.command.arguments.ArgumentFlexibleComponent;
+import net.minestom.script.documentation.ArgumentDocumentation;
+import net.minestom.script.documentation.ArgumentDocumentationType;
+import net.minestom.script.documentation.CommandDocumentation;
+import net.minestom.script.documentation.Documented;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.arguments.ArgumentEnum;
@@ -15,19 +32,8 @@ import net.minestom.server.command.builder.arguments.minecraft.ArgumentResourceL
 import net.minestom.server.entity.Entity;
 import net.minestom.server.utils.entity.EntityFinder;
 
-import java.lang.String;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
-import static net.minestom.server.command.builder.arguments.ArgumentType.Enum;
-import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
-import static net.minestom.server.command.builder.arguments.ArgumentType.*;
-
-
-public class BossBarCommand extends RichCommand {
+public class BossBarCommand extends RichCommand implements Documented<CommandDocumentation> {
 
     private final static Map<String, BossBar> bossBarMap = new ConcurrentHashMap<>();
 
@@ -96,7 +102,7 @@ public class BossBarCommand extends RichCommand {
 
     }
 
-    private static class SetSubCommand extends RichCommand {
+    private static class SetSubCommand extends RichCommand implements Documented<CommandDocumentation> {
 
         public SetSubCommand(ArgumentResourceLocation identifierArgument, ArgumentFlexibleComponent nameArgument) {
             super("set");
@@ -155,6 +161,86 @@ public class BossBarCommand extends RichCommand {
                 });
             }, identifierArgument, Literal("progress"), Integer("value").between(0, 100));
         }
+
+		@Override
+		public CommandDocumentation getDocumentation() {
+			return new CommandDocumentation(this)
+				.addSyntax(
+					"sets the color of a bossbar",
+					new ArgumentDocumentation()
+						.setName("id")
+						.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+						.setDescription("the specific bossbar"),
+					new ArgumentDocumentation()
+						.setName("color")
+						.setType(ArgumentDocumentationType.LITERAL),
+					new ArgumentDocumentation()
+						.setName("value")
+						.setType(ArgumentDocumentationType.ENUM)
+						.setExamples(ArgumentDocumentation.enumStrings(BossBar.Color.class, ArgumentEnum.Format.LOWER_CASED))
+						.setDescription("the new color of the bossbar")
+				)
+				.addSyntax(
+					"sets the name of a bossbar",
+					new ArgumentDocumentation()
+						.setName("id")
+						.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+						.setDescription("the specific bossbar"),
+					new ArgumentDocumentation()
+						.setName("name")
+						.setType(ArgumentDocumentationType.LITERAL),
+					new ArgumentDocumentation()
+						.setName("name")
+						.setType(ArgumentDocumentationType.FLEXIBLE_COMPONENT)
+						.setDescription("the new name of the bossbar")
+				)
+				.addSyntax(
+					"sets the players of a bossbar",
+					new ArgumentDocumentation()
+						.setName("id")
+						.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+						.setDescription("the specific bossbar"),
+					new ArgumentDocumentation()
+						.setName("players")
+						.setType(ArgumentDocumentationType.LITERAL),
+					new ArgumentDocumentation()
+						.setName("value")
+						.setType(ArgumentDocumentationType.PLAYER)
+						.setRecurring(true)
+						.setDescription("the new players of the bossbar")
+				)
+				.addSyntax(
+					"sets the style of a bossbar",
+					new ArgumentDocumentation()
+						.setName("id")
+						.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+						.setDescription("the specific bossbar"),
+					new ArgumentDocumentation()
+						.setName("style")
+						.setType(ArgumentDocumentationType.LITERAL),
+					new ArgumentDocumentation()
+						.setName("value")
+						.setType(ArgumentDocumentationType.ENUM)
+						.setRecurring(true)
+						.setDescription("the new style of the bossbar")
+						.setExamples(ArgumentDocumentation.enumStrings(BossBar.Overlay.class, ArgumentEnum.Format.LOWER_CASED))
+				)
+				.addSyntax(
+						"sets the progress of a bossbar",
+						new ArgumentDocumentation()
+							.setName("id")
+							.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+							.setDescription("the specific bossbar"),
+						new ArgumentDocumentation()
+							.setName("progress")
+							.setType(ArgumentDocumentationType.LITERAL),
+						new ArgumentDocumentation()
+							.setName("value")
+							.setType(ArgumentDocumentationType.INTEGER)
+							.setDescription("the new progress of the bossbar")
+							.setExamples("0, 2, 76... Any integer between 0 and 100")
+					);
+		}
     }
 
     private static void processBossBar(CommandSender sender, String identifier, Consumer<BossBar> consumer) {
@@ -178,5 +264,37 @@ public class BossBarCommand extends RichCommand {
     private static Component getPropertyComponent(String identifier, String property, String value) {
         return getPropertyComponent(identifier, property, Component.text(value, NamedTextColor.WHITE));
     }
+
+	@Override
+	public CommandDocumentation getDocumentation() {
+		return new CommandDocumentation(this)
+			.addSyntax(
+				"lists the currently active bossbars",
+				new ArgumentDocumentation()
+					.setName("list")
+					.setType(ArgumentDocumentationType.LITERAL)
+			)
+			.addSyntax(
+				"creates a bossbar",
+				new ArgumentDocumentation()
+					.setName("create")
+					.setType(ArgumentDocumentationType.LITERAL),
+				new ArgumentDocumentation()
+					.setName("id")
+					.setType(ArgumentDocumentationType.RESOURCE_LOCATION),
+				new ArgumentDocumentation()
+					.setName("name")
+					.setType(ArgumentDocumentationType.FLEXIBLE_COMPONENT)
+					.setDescription("the name of the bossbar")
+			)
+			.addSyntax("removes a bossbar",
+				new ArgumentDocumentation()
+					.setName("remove")
+					.setType(ArgumentDocumentationType.LITERAL),
+				new ArgumentDocumentation()
+					.setName("id")
+					.setType(ArgumentDocumentationType.RESOURCE_LOCATION)
+			);
+	}
 
 }
