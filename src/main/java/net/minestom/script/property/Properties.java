@@ -3,11 +3,16 @@ package net.minestom.script.property;
 import net.minestom.script.utils.NbtConversionUtils;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.instance.Instance;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.utils.BlockPosition;
+import net.minestom.server.utils.Position;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 import org.jglrxavpok.hephaistos.nbt.NBT;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -56,13 +61,7 @@ public class Properties implements ProxyObject {
     }
 
     public void putMember(String key, Object object) {
-        final Value value;
-        if (object instanceof NBT) {
-            value = NbtConversionUtils.toValue((NBT) object);
-        } else {
-            value = Value.asValue(object);
-        }
-        putMember(key, value);
+        putMember(key, toValue(object));
     }
 
     @NotNull
@@ -72,6 +71,37 @@ public class Properties implements ProxyObject {
         }
 
         return new EntityProperty(entity);
+    }
+
+    @NotNull
+    private static Value toValue(@NotNull Object object) {
+        Value value = null;
+        if (object instanceof NBT) {
+            value = NbtConversionUtils.toValue((NBT) object);
+        } else if (object instanceof List) {
+            List<?> objects = (List<?>) object;
+            Value[] values = new Value[objects.size()];
+            for (int i = 0; i < objects.size(); i++) {
+                values[i] = toValue(objects.get(i));
+            }
+            value = Value.asValue(values);
+        } else if (object instanceof Entity) {
+            value = Value.asValue(fromEntity((Entity) object));
+        } else if (object instanceof BlockPosition) {
+            value = Value.asValue(new BlockPositionProperty((BlockPosition) object));
+        } else if (object instanceof Position) {
+            value = Value.asValue(new PositionProperty((Position) object));
+        } else if (object instanceof ItemStack) {
+            value = Value.asValue(new ItemProperty((ItemStack) object));
+        } else if (object instanceof Instance) {
+            value = Value.asValue(new WorldProperty((Instance) object));
+        }
+
+        if (value == null) {
+            value = Value.asValue(object);
+        }
+
+        return value;
     }
 
 }
