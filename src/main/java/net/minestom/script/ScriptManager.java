@@ -2,6 +2,8 @@ package net.minestom.script;
 
 import net.minestom.script.command.*;
 import net.minestom.script.component.ScriptAPI;
+import net.minestom.script.utils.FileUtils;
+import net.minestom.script.utils.TypeScriptTranspiler;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
@@ -24,9 +26,14 @@ public class ScriptManager {
 
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
+    // extension -> graalvm binding name
     private static final Map<String, String> EXTENSION_MAP = Map.of(
             "js", "js",
+            "ts", "js", // -> typescript is transpiled to js
             "py", "python");
+    // extension -> transpiler function
+    private static final Map<String, Function<String, String>> TRANSPILER_MAP = Map.of(
+            "ts", TypeScriptTranspiler::transpile);
 
     private static volatile boolean loaded;
 
@@ -131,7 +138,17 @@ public class ScriptManager {
             }
 
             final Executor executor = new Executor();
-            Script script = new Script(name, file, language, executor);
+            Script script;
+
+            var transpilerFunction = TRANSPILER_MAP.get(extension);
+            if (transpilerFunction != null) {
+                // File content needs to be converted
+                final String source = transpilerFunction.apply(FileUtils.readFile(file));
+                script = new Script(name, source, language, executor);
+            } else {
+                // Language is natively supported by GraalVM
+                script = new Script(name, file, language, executor);
+            }
 
             SCRIPTS.add(script);
             // Evaluate the script (start registering listeners)

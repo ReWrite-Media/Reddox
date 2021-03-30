@@ -1,14 +1,16 @@
 package net.minestom.script;
 
 import net.minestom.script.property.Properties;
+import net.minestom.script.utils.FileUtils;
 import net.minestom.script.utils.NbtConversionUtils;
-import org.graalvm.polyglot.*;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,7 @@ public class Script {
     }
 
     public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull Executor executor) {
-        this(name, readFile(file), language, executor);
+        this(name, FileUtils.readFile(file), language, executor);
     }
 
     public void load() {
@@ -77,16 +79,6 @@ public class Script {
 
     public boolean isLoaded() {
         return loaded;
-    }
-
-    private static String readFile(File file) {
-        String fileString = null;
-        try {
-            fileString = Files.readString(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return fileString;
     }
 
     private static Context createContext(String language, Executor executor) {
