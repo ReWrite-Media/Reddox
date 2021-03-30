@@ -56,7 +56,7 @@ public enum EventSignal {
 
     protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
 
-        final Executor executor = ScriptManager.API.getExecutor();
+        final GlobalExecutor globalExecutor = ScriptManager.API.getExecutor();
 
         // 'player_join'
         globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
@@ -65,7 +65,7 @@ public enum EventSignal {
 
                 Properties properties = new Properties();
                 properties.putMember("player", new PlayerProperty(player));
-                executor.signal(PLAYER_JOIN.name(), properties);
+                globalExecutor.signal(PLAYER_JOIN.name(), properties);
             }
         });
 
@@ -77,7 +77,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("position", new PositionProperty(position));
-            ProxyObject output = executor.signal(PLAYER_MOVE.name(), properties);
+            ProxyObject output = globalExecutor.signal(PLAYER_MOVE.name(), properties);
             event.setCancelled(isCancelled(output));
         });
 
@@ -89,7 +89,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("item", new ItemProperty(itemStack));
-            ProxyObject output = executor.signal(PLAYER_USE_ITEM.name(), properties);
+            ProxyObject output = globalExecutor.signal(PLAYER_USE_ITEM.name(), properties);
             event.setCancelled(isCancelled(output));
         });
 
@@ -102,7 +102,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            executor.signal(PLAYER_USE_ITEM_ON_BLOCK.name(), properties);
+            globalExecutor.signal(PLAYER_USE_ITEM_ON_BLOCK.name(), properties);
         });
 
         // 'place_block'
@@ -114,7 +114,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("block", new BlockProperty(blockStateId, position));
-            ProxyObject output = executor.signal(PLAYER_BLOCK_PLACE.name(), properties);
+            ProxyObject output = globalExecutor.signal(PLAYER_BLOCK_PLACE.name(), properties);
             event.setCancelled(isCancelled(output));
         });
 
@@ -132,7 +132,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(PLAYER_ENTITY_INTERACT.name(), properties);
+            globalExecutor.signal(PLAYER_ENTITY_INTERACT.name(), properties);
         });
 
         // 'attack'
@@ -143,7 +143,7 @@ public enum EventSignal {
             Properties properties = new Properties();
             properties.putMember("entity", Properties.fromEntity(entity));
             properties.putMember("target", Properties.fromEntity(target));
-            executor.signal(ENTITY_ATTACK.name(), properties);
+            globalExecutor.signal(ENTITY_ATTACK.name(), properties);
         });
     }
 

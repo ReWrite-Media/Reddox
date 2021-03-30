@@ -1,8 +1,7 @@
 package net.minestom.script.command.editor;
 
 import net.kyori.adventure.text.Component;
-import net.minestom.script.Executor;
-import net.minestom.script.Script;
+import net.minestom.script.GlobalExecutor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.chat.ColoredText;
@@ -70,8 +69,8 @@ public class EditorCommand extends RichCommand {
 
                 //String fileString = String.join("\n", meta.getPages());
 
-                final Executor executor = new Executor();
-                //Script script = new Script("IG-Script", fileString, meta.getTitle(), executor);
+                final GlobalExecutor globalExecutor = new GlobalExecutor();
+                //Script script = new Script("IG-Script", fileString, meta.getTitle(), globalExecutor);
                 // FIXME
                 //ScriptManager.addScript(script);
 

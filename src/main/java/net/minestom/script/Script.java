@@ -21,20 +21,20 @@ public class Script {
     private final String name;
     private final String fileString;
     private final String language;
-    private final Executor executor;
+    private final GlobalExecutor globalExecutor;
 
     private boolean loaded;
     private Context context;
 
-    public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull Executor executor) {
+    public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
         this.name = name;
         this.fileString = fileString;
         this.language = language;
-        this.executor = executor;
+        this.globalExecutor = globalExecutor;
     }
 
-    public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull Executor executor) {
-        this(name, FileUtils.readFile(file), language, executor);
+    public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
+        this(name, FileUtils.readFile(file), language, globalExecutor);
     }
 
     public void load() {
@@ -44,16 +44,16 @@ public class Script {
 
         final Source source = Source.create(language, fileString);
         assert source != null;
-        this.context = createContext(source.getLanguage(), executor);
+        this.context = createContext(source.getLanguage(), globalExecutor);
         this.context.eval(source);
-        this.executor.register();
+        this.globalExecutor.register();
     }
 
     public void unload() {
         if (!loaded)
             return;
         this.loaded = false;
-        this.executor.unregister();
+        this.globalExecutor.unregister();
         this.context.close();
     }
 
@@ -73,15 +73,15 @@ public class Script {
     }
 
     @NotNull
-    public Executor getExecutor() {
-        return executor;
+    public GlobalExecutor getExecutor() {
+        return globalExecutor;
     }
 
     public boolean isLoaded() {
         return loaded;
     }
 
-    private static Context createContext(String language, Executor executor) {
+    private static Context createContext(String language, GlobalExecutor globalExecutor) {
         HostAccess hostAccess = HostAccess.newBuilder(HostAccess.ALL)
                 // Fix list being sent as map
                 .targetTypeMapping(
@@ -108,8 +108,8 @@ public class Script {
 
         Value bindings = context.getBindings(language);
 
-        // Command executor
-        bindings.putMember("executor", executor);
+        // Command globalExecutor
+        bindings.putMember("globalExecutor", globalExecutor);
 
         // Event Signals
         Map<String, Object> eventBindings = new HashMap<String, Object>();

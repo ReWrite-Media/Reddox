@@ -137,17 +137,17 @@ public class ScriptManager {
                 continue;
             }
 
-            final Executor executor = new Executor();
+            final GlobalExecutor globalExecutor = new GlobalExecutor();
             Script script;
 
             var transpilerFunction = TRANSPILER_MAP.get(extension);
             if (transpilerFunction != null) {
                 // File content needs to be converted
                 final String source = transpilerFunction.apply(FileUtils.readFile(file));
-                script = new Script(name, source, language, executor);
+                script = new Script(name, source, language, globalExecutor);
             } else {
                 // Language is natively supported by GraalVM
-                script = new Script(name, file, language, executor);
+                script = new Script(name, file, language, globalExecutor);
             }
 
             SCRIPTS.add(script);

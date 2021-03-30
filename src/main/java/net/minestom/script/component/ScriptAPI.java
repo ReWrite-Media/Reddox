@@ -1,16 +1,16 @@
 package net.minestom.script.component;
 
-import net.minestom.script.Executor;
+import net.minestom.script.GlobalExecutor;
 import org.jetbrains.annotations.NotNull;
 
 public class ScriptAPI {
 
-    private final Executor executor = new Executor();
+    private final GlobalExecutor globalExecutor = new GlobalExecutor();
     private final RegionComponent regionComponent = new RegionComponent();
 
     @NotNull
-    public Executor getExecutor() {
-        return executor;
+    public GlobalExecutor getExecutor() {
+        return globalExecutor;
     }
 
     @NotNull
