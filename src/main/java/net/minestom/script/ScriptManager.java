@@ -22,7 +22,7 @@ public class ScriptManager {
     public static final ScriptAPI API = new ScriptAPI();
 
     public static final String SCRIPT_FOLDER = "scripts";
-    public static final String MAIN_SCRIPT = "main";
+    private static final String MAIN_SCRIPT = "main";
 
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
 
