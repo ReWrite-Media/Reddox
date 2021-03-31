@@ -80,7 +80,7 @@ declare class GlobalExecutor implements Executor {
     /**
      * @inheritDoc
      */
-    make(alias: string): (...args: any[]) => any;
+    make(alias: string, mapper?: (any) => any): (...args: any[]) => any;
 
     /**
      * Generates an executor with the given options.
