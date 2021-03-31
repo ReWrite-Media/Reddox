@@ -44,7 +44,7 @@ public class ScriptDemo {
             ScriptManager.load();
         }
 
-        minecraftServer.start("localhost", 25565);
+        minecraftServer.start("0.0.0.0", 25565);
     }
 
     private static class GeneratorDemo implements ChunkGenerator {
