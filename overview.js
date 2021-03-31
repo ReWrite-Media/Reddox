@@ -1,14 +1,3 @@
-// Should stop intellij from getting mad about executor methods
-const executor = {
-    onSignal() {
-    },
-    registerCommand() {
-    },
-    make() {
-    },
-    run() {
-    }
-}
 // Minescript interacts with the server using various commands and signals.
 // Commands allow you to take action, and signal to listen to certain events.
 
