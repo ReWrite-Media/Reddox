@@ -34,6 +34,6 @@ public class KillCommand extends RichCommand {
                 }
             }
             sender.sendMessage(Component.text("Entities removed!"));
-        }, ArgumentType.Entity("targets").setDefaultValue(new EntityFinder()));
+        }, ArgumentType.Entity("targets").setDefaultValue(EntityFinder::new));
     }
 }

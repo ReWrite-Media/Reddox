@@ -123,7 +123,7 @@ public class ScriptManager {
                 file = findMainFile(file);
                 if (file == null) {
                     System.err.println("Directory " +
-                            file + " is invalid, you need a script with the name " +
+                            name + " is invalid, you need a script with the name " +
                             MAIN_SCRIPT);
                     continue;
                 }

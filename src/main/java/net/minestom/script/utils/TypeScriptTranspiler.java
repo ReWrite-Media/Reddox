@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class TypeScriptTranspiler {
 
-    private static Value transpileModuleFunction;
+    private static final Value TRANSPILE_MODULE_FUNCTION;
 
     static {
         URL url;
@@ -25,13 +25,13 @@ public class TypeScriptTranspiler {
         Context context = Context.create("js");
         Source source = Source.newBuilder("js", url).buildLiteral();
         context.eval(source);
-        transpileModuleFunction = context.eval("js", "ts.transpileModule");
+        TRANSPILE_MODULE_FUNCTION = context.eval("js", "ts.transpileModule");
     }
 
     @NotNull
     public static String transpile(@NotNull String source) {
-        assert transpileModuleFunction != null;
-        var result = transpileModuleFunction.execute(source, ProxyObject.fromMap(Map.of("lib", "es2020")));
+        assert TRANSPILE_MODULE_FUNCTION != null;
+        var result = TRANSPILE_MODULE_FUNCTION.execute(source, ProxyObject.fromMap(Map.of("lib", "es2020")));
         var outputText = result.getMember("outputText").asString();
         assert result.getMember("diagnostics").getArraySize() == 0;
         return outputText;

@@ -145,7 +145,7 @@ public class TeleportCommand extends RichCommand {
                         teleport(entity, position);
                         sendTeleportedMessage(sender, entity, position);
                     });
-            sender.sendMessage("Teleported target(s)");
+            sender.sendMessage(Component.text("Teleported target(s)"));
         } else {
             sender.sendMessage(Component.text("No target found", NamedTextColor.RED));
         }

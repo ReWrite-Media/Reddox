@@ -9,6 +9,7 @@ import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.arguments.ArgumentString;
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.network.packet.server.play.DeclareCommandsPacket;
+import net.minestom.server.utils.binary.BinaryWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.StringReader;
@@ -47,9 +48,8 @@ public class ArgumentFlexibleComponent extends Argument<Component> {
     public void processNodes(@NotNull NodeMaker nodeMaker, boolean executable) {
         DeclareCommandsPacket.Node stringNode = simpleArgumentNode(this, executable, false, false);
         stringNode.parser = "brigadier:string";
-        stringNode.properties = packetWriter -> {
-            packetWriter.writeVarInt(infinite ? 2 : 1); // Greedy or quotable depending on the type
-        };
+        stringNode.properties = BinaryWriter.makeArray(binaryWriter ->
+                binaryWriter.writeVarInt(infinite ? 2 : 1)); // Greedy or quotable depending on the type
 
         nodeMaker.addNodes(new DeclareCommandsPacket.Node[]{stringNode});
     }

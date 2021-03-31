@@ -50,9 +50,9 @@ public class RegionComponent extends ScriptComponent {
     }
 
     public static class Region {
-        private String identifier;
-        private Vector minPos, maxPos;
-        private NBTCompound nbtCompound;
+        private final String identifier;
+        private final Vector minPos, maxPos;
+        private final NBTCompound nbtCompound;
 
         protected Region(String identifier, Vector minPos, Vector maxPos, NBTCompound nbtCompound) {
             this.identifier = identifier;

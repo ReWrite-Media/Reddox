@@ -16,7 +16,7 @@ public class WeatherCommand extends RichCommand {
             } else if (type.equals("rain")) {
             } else if (type.equals("thunder")) {
             }
-        }, Word("type").from("clear", "rain", "thunder"), Integer("duration").setDefaultValue(0));
+        }, Word("type").from("clear", "rain", "thunder"), Integer("duration").setDefaultValue(() -> 0));
 
         // TODO query
 

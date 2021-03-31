@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class EditorCommand extends RichCommand {
 
-    private Map<Player, ItemStack> items = new HashMap<Player, ItemStack>();
+    private final Map<Player, ItemStack> items = new HashMap<Player, ItemStack>();
 
     public EditorCommand() {
         super("editor");

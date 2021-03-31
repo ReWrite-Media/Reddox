@@ -66,8 +66,8 @@ public class EffectCommand extends RichCommand {
 
                         sender.sendMessage(Component.text("Potion effect applied successfully!"));
                     }, Literal("give"), targetArgument, effectArgument,
-                    Integer("seconds").setDefaultValue(30),
-                    Integer("amplifier").setDefaultValue(0));
+                    Integer("seconds").setDefaultValue(() -> 30),
+                    Integer("amplifier").setDefaultValue(() -> 0));
         }
 
     }

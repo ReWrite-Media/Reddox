@@ -36,7 +36,7 @@ public class ScriptCommand extends RichCommand {
 
 
         var pathArgument = StringArray("path")
-                .setDefaultValue(new String[0])
+                .setDefaultValue(() -> new String[0])
                 .setSuggestionCallback(this::pathSuggestion);
 
         addSyntax((sender, context) -> {
