@@ -1,22 +1,27 @@
 package net.minestom.script;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.PlayerProperty;
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.CommandUtils;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.adventure.audience.Audiences;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.entity.Player;
+import net.minestom.server.utils.validate.Check;
 import org.apache.commons.lang3.StringUtils;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -40,8 +45,25 @@ public class GlobalExecutor implements Executor {
         return CommandUtils.retrieveCommandData(result, command);
     }
 
-    @NotNull
-    public CommandFunction make(@NotNull String string, @NotNull ProxyObjectMapper mapper) {
+    public @Nullable ProxyObject runAs(@NotNull Value playerValue, @NotNull Object... inputs) {
+        Check.argCondition(!playerValue.isProxyObject(), "#runAs requires a player!");
+        {
+            ProxyObject proxyObject = playerValue.asProxyObject();
+            Check.argCondition(!(proxyObject instanceof PlayerProperty), "#runAs requires a player!");
+        }
+        final PlayerProperty playerProperty = playerValue.asProxyObject();
+
+        final UUID uuid = UUID.fromString(((Value) playerProperty.getMember("uuid")).asString());
+        final Player player = MinecraftServer.getConnectionManager().getPlayer(uuid);
+        if (player == null)
+            return null;
+
+        final String command = inputToString(inputs);
+        final CommandResult result = MinecraftServer.getCommandManager().execute(player, command);
+        return CommandUtils.retrieveCommandData(result, command);
+    }
+
+    public @NotNull CommandFunction make(@NotNull String string, @NotNull ProxyObjectMapper mapper) {
         return args -> {
             final String input = MessageFormat.format(string, args);
             return mapper.map(run(input));
@@ -65,7 +87,7 @@ public class GlobalExecutor implements Executor {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
                 for (SignalCallback callback : listeners) {
-                    callback.accept(properties, result);
+                    handleException(() -> callback.accept(properties, result));
                 }
             }
         }
@@ -96,7 +118,7 @@ public class GlobalExecutor implements Executor {
             Properties properties = new Properties();
             context.getMap().forEach(properties::putMember);
 
-            callback.accept(playerProperty, properties);
+            handleException(() -> callback.accept(playerProperty, properties));
         }, ArgumentType.generate(format));
 
         this.commandMap.put(commandName, command);
@@ -126,6 +148,18 @@ public class GlobalExecutor implements Executor {
         return Arrays.stream(inputs)
                 .map(Object::toString)
                 .collect(Collectors.joining(StringUtils.SPACE));
+    }
+
+    private static void handleException(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (PolyglotException e) {
+            var sourceLocation = e.getSourceLocation();
+            var audiences = Audiences.players(player -> ScriptManager.getCommandPermission().apply(player));
+            audiences.sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
+            audiences.sendMessage(Component.text("Line " + sourceLocation.getStartLine() + ":" + sourceLocation.getEndLine()));
+            audiences.sendMessage(Component.text(String.valueOf(sourceLocation.getCharacters()), NamedTextColor.RED));
+        }
     }
 
 }

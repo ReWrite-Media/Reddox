@@ -27,7 +27,7 @@ executor.onSignal("move", (properties, output) => {
 
 // Commands are defined by a syntax and an executor, the syntax consists
 // of a single string, and the executor is a callback.
-executor.registerCommand('test [name: String] [value: Integer]', (context) => {
+executor.registerCommand('test String<name> Integer<value>', (context) => {
     // The context gives us data relative to the command execution.
     // In this case, the argument values.
     let name = context.name
