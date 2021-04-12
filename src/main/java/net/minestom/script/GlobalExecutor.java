@@ -159,6 +159,7 @@ public class GlobalExecutor implements Executor {
             audiences.sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
             audiences.sendMessage(Component.text("Line " + sourceLocation.getStartLine() + ":" + sourceLocation.getEndLine()));
             audiences.sendMessage(Component.text(String.valueOf(sourceLocation.getCharacters()), NamedTextColor.RED));
+            e.printStackTrace();
         }
     }
 
