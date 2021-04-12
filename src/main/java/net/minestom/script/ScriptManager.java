@@ -2,6 +2,7 @@ package net.minestom.script;
 
 import net.minestom.script.command.*;
 import net.minestom.script.component.ScriptAPI;
+import net.minestom.script.utils.ExceptionUtils;
 import net.minestom.script.utils.FileUtils;
 import net.minestom.script.utils.TypeScriptTranspiler;
 import net.minestom.server.MinecraftServer;
@@ -53,6 +54,9 @@ public class ScriptManager {
         {
             EventSignal.init(MinecraftServer.getGlobalEventHandler());
         }
+
+        // Handle exception
+        MinecraftServer.getExceptionManager().setExceptionHandler(ExceptionUtils::handleException);
 
         // Load commands
         {

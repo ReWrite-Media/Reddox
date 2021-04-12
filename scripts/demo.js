@@ -38,14 +38,14 @@ const object = {
         num: 5
     }
 };
-executor.run("utils map set Test:test",object)
+executor.run("utils map set Test:test", object)
 let data = executor.run("utils map get Test:test")
-console.log("debug: "+data.value.array[1])
+console.log("debug: " + data.value.array[1])
 
 executor.run("display bossbar create test <red>name")
 
 executor.onSignal("player_join", (properties) => {
-    console.log("join "+properties.player.username)
+    console.log("join " + properties.player.username)
 });
 
 let get = executor.make("utils map get {0}");
@@ -57,6 +57,6 @@ data = getMapped("Test:test");
 console.log("debug: " + data.float);
 
 let objArrayMoreThan2 = executor.make("utils map get test:Test",
-        data => data.value.array.filter(value => value > 2));
+    data => data.value.array.filter(value => value > 2));
 data = objArrayMoreThan2();
 console.log("debug: " + data);

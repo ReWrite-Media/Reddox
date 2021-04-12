@@ -6,15 +6,14 @@ import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.PlayerProperty;
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.CommandUtils;
+import net.minestom.script.utils.ExceptionUtils;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.adventure.audience.Audiences;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.validate.Check;
 import org.apache.commons.lang3.StringUtils;
-import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +86,7 @@ public class GlobalExecutor implements Executor {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
                 for (SignalCallback callback : listeners) {
-                    handleException(() -> callback.accept(properties, result));
+                    callback.accept(properties, result);
                 }
             }
         }
@@ -111,14 +110,16 @@ public class GlobalExecutor implements Executor {
         command.addSyntax((sender, context) -> {
             if (!sender.isPlayer()) {
                 // TODO console support
-                System.err.println("Currently only players can use script commands");
+                ExceptionUtils.sendMessage(
+                        Component.text("Currently only players can use script commands",
+                                NamedTextColor.RED));
                 return;
             }
             PlayerProperty playerProperty = new PlayerProperty(sender.asPlayer());
             Properties properties = new Properties();
             context.getMap().forEach(properties::putMember);
 
-            handleException(() -> callback.accept(playerProperty, properties));
+            callback.accept(playerProperty, properties);
         }, ArgumentType.generate(format));
 
         this.commandMap.put(commandName, command);
@@ -126,7 +127,7 @@ public class GlobalExecutor implements Executor {
         CommandUtils.updateCommands();
     }
 
-    protected void register() {
+    protected synchronized void register() {
         GLOBAL_EXECUTORS.add(this);
     }
 
@@ -148,19 +149,6 @@ public class GlobalExecutor implements Executor {
         return Arrays.stream(inputs)
                 .map(Object::toString)
                 .collect(Collectors.joining(StringUtils.SPACE));
-    }
-
-    private static void handleException(Runnable runnable) {
-        try {
-            runnable.run();
-        } catch (PolyglotException e) {
-            var sourceLocation = e.getSourceLocation();
-            var audiences = Audiences.players(player -> ScriptManager.getCommandPermission().apply(player));
-            audiences.sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
-            audiences.sendMessage(Component.text("Line " + sourceLocation.getStartLine() + ":" + sourceLocation.getEndLine()));
-            audiences.sendMessage(Component.text(String.valueOf(sourceLocation.getCharacters()), NamedTextColor.RED));
-            e.printStackTrace();
-        }
     }
 
 }

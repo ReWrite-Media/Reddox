@@ -104,7 +104,8 @@ public class Script {
                 // Allows native js methods to be used on foreign (java) objects.
                 // For example, calling Array.prototype.filter on java lists.
                 .option("js.experimental-foreign-object-prototype", "true")
-                .allowHostAccess(hostAccess).build();
+                .allowHostAccess(hostAccess)
+                .build();
 
         Value bindings = context.getBindings(language);
 
