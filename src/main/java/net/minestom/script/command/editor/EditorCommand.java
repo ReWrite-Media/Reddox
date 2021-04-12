@@ -42,11 +42,11 @@ public class EditorCommand extends RichCommand {
         items.put(player, mainHand);
 
         // Open Book
-        ItemStack bookItem = new ItemStack(Material.WRITABLE_BOOK, (byte) 1);
-        WritableBookMeta meta = new WritableBookMeta();
-        meta.setPages(
-                List.of(Component.text("// Put code here:\n"))
-        );
+        ItemStack bookItem = ItemStack.builder(Material.WRITABLE_BOOK)
+                .meta(WritableBookMeta.class, builder -> {
+                    builder.pages(List.of(Component.text("// Put code here:\n")));
+                })
+                .build();
 
         inventory.setItemInMainHand(bookItem);
         player.sendTitleSubtitleMessage(ColoredText.of("Right click to open editor"), ColoredText.of("sign the book with one of js/python"));
@@ -63,7 +63,7 @@ public class EditorCommand extends RichCommand {
             ClientEditBookPacket packet = (ClientEditBookPacket) ambiguousPacket;
 
             if (packet.isSigning) {
-                WritableBookMeta meta = (WritableBookMeta) packet.book.getItemMeta();
+                WritableBookMeta meta = (WritableBookMeta) packet.book.getMeta();
 
                 player.sendMessage("Running Script...");
 

@@ -4,9 +4,13 @@ import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.inventory.PlayerInventory;
+import net.minestom.server.inventory.TransactionOption;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.entity.EntityFinder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.Integer;
@@ -21,16 +25,28 @@ public class GiveCommand extends RichCommand {
 
         addSyntax((sender, context) -> {
             final EntityFinder entityFinder = context.get("target");
-            final ItemStack itemStack = context.get("item");
-            final int count = context.get("count");
-            // FIXME: support count > 64
-            itemStack.setAmount((byte) count);
+            int count = context.get("count");
+            count = Math.min(count, PlayerInventory.INVENTORY_SIZE * 64);
+            ItemStack itemStack = context.get("item");
+
+            List<ItemStack> itemStacks;
+            if (count <= 64) {
+                itemStack = itemStack.withAmount(count);
+                itemStacks = Collections.singletonList(itemStack);
+            } else {
+                itemStacks = new ArrayList<>();
+                while (count > 64) {
+                    itemStacks.add(itemStack.withAmount(64));
+                    count -= 64;
+                }
+                itemStacks.add(itemStack.withAmount(count));
+            }
 
             final List<Entity> targets = entityFinder.find(sender);
             for (Entity target : targets) {
                 if (target instanceof Player) {
                     Player player = (Player) target;
-                    player.getInventory().addItemStack(itemStack.clone());
+                    player.getInventory().addItemStacks(itemStacks, TransactionOption.ALL);
                 }
             }
 
