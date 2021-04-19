@@ -7,12 +7,16 @@ import net.minestom.script.utils.FileUtils;
 import net.minestom.script.utils.TypeScriptTranspiler;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
+import net.minestom.server.instance.Instance;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +42,9 @@ public class ScriptManager {
 
     private static volatile boolean loaded;
 
+    private static Function<CommandSender, Collection<Instance>> instanceSupplier = sender ->
+            sender.isPlayer() ? Collections.singleton(sender.asPlayer().getInstance()) :
+                    MinecraftServer.getInstanceManager().getInstances();
     private static Function<Player, Boolean> commandPermission = player -> true;
 
     /**
@@ -93,13 +100,19 @@ public class ScriptManager {
      *
      * @return a list containing the scripts
      */
-    @NotNull
-    public static List<Script> getScripts() {
+    public static @NotNull List<Script> getScripts() {
         return SCRIPTS;
     }
 
-    @NotNull
-    public static Function<Player, Boolean> getCommandPermission() {
+    public static @NotNull Function<CommandSender, Collection<Instance>> getInstanceSupplier() {
+        return instanceSupplier;
+    }
+
+    public static void setInstanceSupplier(@NotNull Function<CommandSender, Collection<Instance>> instanceSupplier) {
+        ScriptManager.instanceSupplier = instanceSupplier;
+    }
+
+    public static @NotNull Function<Player, Boolean> getCommandPermission() {
         return commandPermission;
     }
 

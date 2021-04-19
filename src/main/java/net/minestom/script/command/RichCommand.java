@@ -3,8 +3,12 @@ package net.minestom.script.command;
 import net.kyori.adventure.text.Component;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.component.ScriptAPI;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
+import net.minestom.server.instance.Instance;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 /**
  * Represents a MineScript command, commands extending this
@@ -35,13 +39,18 @@ public class RichCommand extends Command {
         this(name, ScriptCategory.UNKNOWN);
     }
 
-    @NotNull
-    public ScriptAPI getApi() {
+    public @NotNull ScriptAPI getApi() {
         return ScriptManager.API;
     }
 
-    @NotNull
-    public String getCategory() {
+    public @NotNull String getCategory() {
         return category;
     }
+
+    public void processInstances(@NotNull CommandSender sender,
+                                 @NotNull Consumer<Instance> consumer) {
+        var instances = ScriptManager.getInstanceSupplier().apply(sender);
+        instances.forEach(consumer);
+    }
+
 }

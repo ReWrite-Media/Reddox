@@ -3,7 +3,6 @@ package net.minestom.script.command.world;
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.component.RegionComponent;
-import net.minestom.script.utils.InstanceUtils;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.location.RelativeBlockPosition;
@@ -21,7 +20,7 @@ public class BlockCommand extends RichCommand {
             final Block block = context.get("block");
             RelativeBlockPosition relativeBlockPosition = context.get("position");
             BlockPosition blockPosition = relativeBlockPosition.from(sender.isPlayer() ? sender.asPlayer() : null);
-            InstanceUtils.processInstances(sender, instance -> {
+            processInstances(sender, instance -> {
                 instance.setBlock(blockPosition, block);
             });
         }, Literal("set"), BlockState("block"), RelativeBlockPosition("position"));
