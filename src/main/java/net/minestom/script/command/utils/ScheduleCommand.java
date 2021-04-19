@@ -5,6 +5,8 @@ import net.minestom.script.command.RichCommand;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
+import net.minestom.server.command.builder.CommandContext;
+import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.command.builder.ParsedCommand;
 import net.minestom.server.timer.SchedulerManager;
@@ -75,7 +77,7 @@ public class ScheduleCommand extends RichCommand {
                 final UpdateOption delay = context.get("delay");
                 final CommandResult commandResult = context.get("command");
 
-                scheduleTask(sender, commandResult, delay, null);
+                scheduleTask(sender, context, commandResult, delay, null);
             }, Literal("delayed"), Time("delay"), Command("command"));
         }
 
@@ -86,7 +88,7 @@ public class ScheduleCommand extends RichCommand {
                 final UpdateOption repeat = context.get("repeat");
                 final CommandResult commandResult = context.get("command");
 
-                scheduleTask(sender, commandResult, delay, repeat);
+                scheduleTask(sender, context, commandResult, delay, repeat);
             }, Literal("delayed_repeat"), Time("delay"), Time("repeat"), Command("command"));
         }
 
@@ -96,7 +98,7 @@ public class ScheduleCommand extends RichCommand {
                 final UpdateOption repeat = context.get("repeat");
                 final CommandResult commandResult = context.get("command");
 
-                scheduleTask(sender, commandResult, null, repeat);
+                scheduleTask(sender, context, commandResult, null, repeat);
             }, Literal("repeat"), Time("repeat"), Command("command"));
         }
 
@@ -116,13 +118,13 @@ public class ScheduleCommand extends RichCommand {
                     delay = new UpdateOption(seconds, TimeUnit.SECOND);
                 }
 
-                scheduleTask(sender, commandResult, delay, null);
+                scheduleTask(sender, context, commandResult, delay, null);
             }, Literal("gmt"), Word("utc_time"), Command("command"));
         }
 
     }
 
-    private static void scheduleTask(@NotNull CommandSender sender, @NotNull CommandResult commandResult,
+    private static void scheduleTask(@NotNull CommandSender sender, CommandContext context, @NotNull CommandResult commandResult,
                                      @Nullable UpdateOption delay, @Nullable UpdateOption repeat) {
         final ParsedCommand parsedCommand = commandResult.getParsedCommand();
         if (parsedCommand == null) {
@@ -153,6 +155,10 @@ public class ScheduleCommand extends RichCommand {
         final Task task = taskBuilder.schedule();
         taskReference.set(task);
         SCHEDULED_TASKS_MAP.put(task, input);
+
+        CommandData commandData = new CommandData();
+        commandData.set("taskId", task.getId());
+        context.setReturnData(commandData);
 
         sender.sendMessage(Component.text("You created the task " + task.getId() + " successfully (" + input + ")"));
     }
