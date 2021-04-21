@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Script {
 
@@ -25,6 +26,7 @@ public class Script {
 
     private boolean loaded;
     private Context context;
+    private ReentrantLock lock = new ReentrantLock();
 
     public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
         this.name = name;
@@ -57,6 +59,20 @@ public class Script {
         this.loaded = false;
         this.globalExecutor.unregister();
         this.context.close();
+    }
+
+    protected void enter() {
+        if (context == null)
+            return;
+        this.lock.lock();
+        this.context.enter();
+    }
+
+    protected void leave() {
+        if (context == null)
+            return;
+        this.lock.unlock();
+        this.context.leave();
     }
 
     public @NotNull String getFileString() {

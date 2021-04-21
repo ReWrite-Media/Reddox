@@ -14,7 +14,6 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.validate.Check;
 import org.apache.commons.lang3.StringUtils;
-import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +78,15 @@ public class GlobalExecutor implements Executor {
     public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
-        listeners.add(callback);
+        listeners.add((properties, output) -> {
+            if (script != null) {
+                script.enter();
+                callback.accept(properties, output);
+                script.leave();
+            } else {
+                callback.accept(properties, output);
+            }
+        });
     }
 
     @NotNull
@@ -89,14 +96,7 @@ public class GlobalExecutor implements Executor {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
                 for (SignalCallback callback : listeners) {
-                    if (globalExecutor.script != null) {
-                        Context context = globalExecutor.script.getContext();
-                        context.enter();
-                        callback.accept(properties, result);
-                        context.leave();
-                    } else {
-                        callback.accept(properties, result);
-                    }
+                    callback.accept(properties, result);
                 }
             }
         }
@@ -130,10 +130,9 @@ public class GlobalExecutor implements Executor {
             context.getMap().forEach(properties::putMember);
 
             if (script != null) {
-                Context scriptContext = script.getContext();
-                scriptContext.enter();
+                script.enter();
                 callback.accept(playerProperty, properties);
-                scriptContext.leave();
+                script.leave();
             } else {
                 callback.accept(playerProperty, properties);
             }
