@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.ArgumentUtils;
-import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.entity.Entity;
@@ -18,11 +17,10 @@ import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
 
+import java.lang.String;
 import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
-
-import java.lang.String;
 
 public class EntityEditorCommand extends RichCommand {
 
@@ -43,14 +41,10 @@ public class EntityEditorCommand extends RichCommand {
             final EntityType entityType = context.get("entity_type");
             final RelativeVec relativeVec = context.get("spawn_position");
 
-            final Vector spawnPosition = relativeVec.from(sender.isPlayer() ? sender.asPlayer() : null);
+            final Vector spawnPosition = ArgumentUtils.from(sender, relativeVec);
 
             EntityCreature creature = new EntityCreature(entityType);
-
-            MinecraftServer.getInstanceManager().getInstances().forEach(instance -> {
-                // TODO select instance
-                creature.setInstance(instance, spawnPosition.toPosition());
-            });
+            processInstances(sender, instance -> creature.setInstance(instance, spawnPosition.toPosition()));
 
             commandData.set("success", true);
             commandData.set("entity", Properties.fromEntity(creature));
