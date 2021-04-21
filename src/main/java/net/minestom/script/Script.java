@@ -45,7 +45,9 @@ public class Script {
         final Source source = Source.create(language, fileString);
         assert source != null;
         this.context = createContext(source.getLanguage(), globalExecutor);
+        this.context.enter();
         this.context.eval(source);
+        this.context.leave();
         this.globalExecutor.register();
     }
 
@@ -57,28 +59,28 @@ public class Script {
         this.context.close();
     }
 
-    @NotNull
-    public String getFileString() {
+    public @NotNull String getFileString() {
         return fileString;
     }
 
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
-    @NotNull
-    public String getLanguage() {
+    public @NotNull String getLanguage() {
         return language;
     }
 
-    @NotNull
-    public GlobalExecutor getExecutor() {
+    public @NotNull GlobalExecutor getExecutor() {
         return globalExecutor;
     }
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     private static Context createContext(String language, GlobalExecutor globalExecutor) {

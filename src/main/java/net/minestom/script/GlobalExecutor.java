@@ -14,6 +14,7 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.utils.validate.Check;
 import org.apache.commons.lang3.StringUtils;
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,8 @@ public class GlobalExecutor implements Executor {
 
     private final Map<String, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
     private final Map<String, Command> commandMap = new ConcurrentHashMap<>();
+
+    protected volatile Script script;
 
     @Override
     public ProxyObject run(@NotNull Object... inputs) {
@@ -86,7 +89,14 @@ public class GlobalExecutor implements Executor {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
                 for (SignalCallback callback : listeners) {
-                    callback.accept(properties, result);
+                    if (globalExecutor.script != null) {
+                        Context context = globalExecutor.script.getContext();
+                        context.enter();
+                        callback.accept(properties, result);
+                        context.leave();
+                    } else {
+                        callback.accept(properties, result);
+                    }
                 }
             }
         }
@@ -119,7 +129,14 @@ public class GlobalExecutor implements Executor {
             Properties properties = new Properties();
             context.getMap().forEach(properties::putMember);
 
-            callback.accept(playerProperty, properties);
+            if (script != null) {
+                Context scriptContext = script.getContext();
+                scriptContext.enter();
+                callback.accept(playerProperty, properties);
+                scriptContext.leave();
+            } else {
+                callback.accept(playerProperty, properties);
+            }
         }, ArgumentType.generate(format));
 
         this.commandMap.put(commandName, command);

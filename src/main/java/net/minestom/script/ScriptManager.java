@@ -166,7 +166,7 @@ public class ScriptManager {
                 // Language is natively supported by GraalVM
                 script = new Script(name, file, language, globalExecutor);
             }
-
+            globalExecutor.script = script;
             SCRIPTS.add(script);
             // Evaluate the script (start registering listeners)
             script.load();
