@@ -13,6 +13,7 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.pathfinding.NavigableEntity;
+import net.minestom.server.utils.Position;
 import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
@@ -88,13 +89,22 @@ public class EntityEditorCommand extends RichCommand {
                         ((NavigableEntity) entity).getNavigator().setPathTo(vector.toPosition());
                     }
                 }
+
+                if (property.has("view")) {
+                    final RelativeVec relativeVec = property.get("view_value");
+                    final Vector vector = ArgumentUtils.from(sender, relativeVec);
+
+                    Position view = new Position(0, 0, 0, (float) vector.getX(), (float) vector.getZ());
+                    entity.setView(view);
+                }
             }
 
             sender.sendMessage(Component.text("Entity edited!", NamedTextColor.GREEN));
 
         }, Literal("edit"), entityArgument, Loop("properties",
                 Group("position_group", Literal("position"), RelativeVec3("position_value")),
-                Group("path_group", Literal("path"), RelativeVec3("path_value"))));
+                Group("path_group", Literal("path"), RelativeVec3("path_value")),
+                Group("view_group", Literal("view"), RelativeVec2("view_value"))));
 
         // /editor remove
         addSyntax((sender, context) -> {
