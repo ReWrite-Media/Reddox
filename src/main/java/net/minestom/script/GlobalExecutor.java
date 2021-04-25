@@ -34,6 +34,21 @@ public class GlobalExecutor implements Executor {
 
     private final static List<GlobalExecutor> GLOBAL_EXECUTORS = new CopyOnWriteArrayList<>();
 
+    /**
+     * Returns all the signals ever registered.
+     * <p>
+     * Instantiates a new {@link Set} when called, caching the result is recommended.
+     *
+     * @return the registered signals name
+     */
+    public static @NotNull Set<String> retrieveSignals() {
+        Set<String> signals = new HashSet<>();
+        for (GlobalExecutor executor : GLOBAL_EXECUTORS) {
+            signals.addAll(executor.signalMap.keySet());
+        }
+        return Collections.unmodifiableSet(signals);
+    }
+
     private final Map<String, List<SignalCallback>> signalMap = new ConcurrentHashMap<>();
     private final Map<String, Command> commandMap = new ConcurrentHashMap<>();
 
