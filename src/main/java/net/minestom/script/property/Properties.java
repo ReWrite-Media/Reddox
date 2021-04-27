@@ -5,6 +5,7 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.particle.Particle;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
 import org.graalvm.polyglot.Value;
@@ -95,6 +96,8 @@ public class Properties implements ProxyObject {
             value = Value.asValue(new ItemProperty((ItemStack) object));
         } else if (object instanceof Instance) {
             value = Value.asValue(new WorldProperty((Instance) object));
+        } else if (object instanceof Particle) {
+            value = Value.asValue(((Particle) object).getNamespaceID());
         }
 
         if (value == null) {
