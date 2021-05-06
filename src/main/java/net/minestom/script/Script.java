@@ -47,9 +47,9 @@ public class Script {
         final Source source = Source.create(language, fileString);
         assert source != null;
         this.context = createContext(source.getLanguage(), globalExecutor);
-        this.context.enter();
+        enter();
         this.context.eval(source);
-        this.context.leave();
+        leave();
         this.globalExecutor.register();
     }
 

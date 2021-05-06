@@ -82,7 +82,14 @@ public class GlobalExecutor implements Executor {
     public @NotNull CommandFunction make(@NotNull String string, @NotNull ProxyObjectMapper mapper) {
         return args -> {
             final String input = MessageFormat.format(string, args);
-            return mapper.map(run(input));
+            if (script != null) {
+                script.enter();
+                Value result = mapper.map(run(input));
+                script.leave();
+                return result;
+            } else {
+                return mapper.map(run(input));
+            }
         };
     }
 
