@@ -84,7 +84,7 @@ public class GlobalExecutor implements Executor {
             final String input = MessageFormat.format(string, args);
             if (script != null) {
                 script.enter();
-                Value result = mapper.map(run(input));
+                final Value result = mapper.map(run(input));
                 script.leave();
                 return result;
             } else {
@@ -100,19 +100,10 @@ public class GlobalExecutor implements Executor {
     public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
         List<SignalCallback> listeners =
                 signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
-        listeners.add((properties, output) -> {
-            if (script != null) {
-                script.enter();
-                callback.accept(properties, output);
-                script.leave();
-            } else {
-                callback.accept(properties, output);
-            }
-        });
+        listeners.add((properties, output) -> accessScript(script, () -> callback.accept(properties, output)));
     }
 
-    @NotNull
-    public ProxyObject signal(@NotNull String signal, @NotNull Properties properties) {
+    public @NotNull ProxyObject signal(@NotNull String signal, @NotNull Properties properties) {
         ProxyObject result = ProxyObject.fromMap(new HashMap<>());
         for (GlobalExecutor globalExecutor : GLOBAL_EXECUTORS) {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
@@ -151,13 +142,7 @@ public class GlobalExecutor implements Executor {
             Properties properties = new Properties();
             context.getMap().forEach(properties::putMember);
 
-            if (script != null) {
-                script.enter();
-                callback.accept(playerProperty, properties);
-                script.leave();
-            } else {
-                callback.accept(playerProperty, properties);
-            }
+            accessScript(script, () -> callback.accept(playerProperty, properties));
         }, ArgumentType.generate(format));
 
         this.commandMap.put(commandName, command);
@@ -181,6 +166,14 @@ public class GlobalExecutor implements Executor {
         }
 
         GLOBAL_EXECUTORS.remove(this);
+    }
+
+    private static void accessScript(@Nullable Script script, @NotNull Runnable runnable) {
+        if (script != null) {
+            script.sync(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     private static String inputToString(Object... inputs) {

@@ -47,9 +47,7 @@ public class Script {
         final Source source = Source.create(language, fileString);
         assert source != null;
         this.context = createContext(source.getLanguage(), globalExecutor);
-        enter();
-        this.context.eval(source);
-        leave();
+        sync(() -> context.eval(source));
         this.globalExecutor.register();
     }
 
@@ -59,6 +57,12 @@ public class Script {
         this.loaded = false;
         this.globalExecutor.unregister();
         this.context.close();
+    }
+
+    public void sync(@NotNull Runnable runnable) {
+        enter();
+        runnable.run();
+        leave();
     }
 
     protected void enter() {
