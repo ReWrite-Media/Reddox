@@ -85,15 +85,15 @@ public class GlobalExecutor implements Executor {
             try {
                 if (script != null) {
                     script.enter();
-                    final Value result = mapper.map(run(input));
-                    script.leave();
-                    return result;
-                } else {
-                    return mapper.map(run(input));
                 }
+                return mapper.map(run(input));
             } catch (Throwable e) {
                 MinecraftServer.getExceptionManager().handleException(e);
                 return Value.asValue(null);
+            } finally {
+                if (script != null) {
+                    script.leave();
+                }
             }
         };
     }
@@ -179,12 +179,15 @@ public class GlobalExecutor implements Executor {
     private static void accessScript(@Nullable Script script, @NotNull Runnable runnable) {
         try {
             if (script != null) {
-                script.sync(runnable);
-            } else {
-                runnable.run();
+                script.enter();
             }
+            runnable.run();
         } catch (Throwable e) {
             MinecraftServer.getExceptionManager().handleException(e);
+        } finally {
+            if (script != null) {
+                script.leave();
+            }
         }
     }
 
