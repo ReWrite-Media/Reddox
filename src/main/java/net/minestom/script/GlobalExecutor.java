@@ -103,9 +103,9 @@ public class GlobalExecutor implements Executor {
     }
 
     public void onSignal(@NotNull String signal, @NotNull SignalCallback callback) {
-        List<SignalCallback> listeners =
-                signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
-        listeners.add((properties, output) -> accessScript(script, () -> callback.accept(properties, output)));
+        var listeners = signalMap.computeIfAbsent(signal.toLowerCase(), s -> new CopyOnWriteArrayList<>());
+        listeners.add((properties, output) ->
+                accessScript(script, () -> callback.accept(properties, output)));
     }
 
     public @NotNull ProxyObject signal(@NotNull String signal, @NotNull Properties properties) {
@@ -114,6 +114,7 @@ public class GlobalExecutor implements Executor {
             List<SignalCallback> listeners = globalExecutor.signalMap.get(signal.toLowerCase());
             if (listeners != null && !listeners.isEmpty()) {
                 for (SignalCallback callback : listeners) {
+                    // Callback should be thread-safe
                     callback.accept(properties, result);
                 }
             }
@@ -160,8 +161,10 @@ public class GlobalExecutor implements Executor {
     }
 
     protected synchronized void unregister() {
+        // Clear signals
         this.signalMap.clear();
 
+        // Clear registered commands
         final boolean hasCommand = !commandMap.isEmpty();
         if (hasCommand) {
             this.commandMap.forEach((s, command) ->

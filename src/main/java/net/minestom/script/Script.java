@@ -25,8 +25,8 @@ public class Script {
     private final GlobalExecutor globalExecutor;
 
     private boolean loaded;
-    private Context context;
-    private ReentrantLock lock = new ReentrantLock();
+    private volatile Context context;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
         this.name = name;
@@ -66,16 +66,16 @@ public class Script {
     }
 
     protected void enter() {
+        this.lock.lock();
         if (context == null)
             return;
-        this.lock.lock();
         this.context.enter();
     }
 
     protected void leave() {
+        this.lock.unlock();
         if (context == null)
             return;
-        this.lock.unlock();
         this.context.leave();
     }
 
