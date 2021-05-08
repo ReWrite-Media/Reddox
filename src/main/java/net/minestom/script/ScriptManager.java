@@ -8,6 +8,9 @@ import net.minestom.script.utils.TypeScriptTranspiler;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityCreature;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import org.apache.commons.io.FilenameUtils;
@@ -45,6 +48,7 @@ public class ScriptManager {
     private static Function<CommandSender, Collection<Instance>> instanceSupplier = sender ->
             sender.isPlayer() ? Collections.singleton(sender.asPlayer().getInstance()) :
                     MinecraftServer.getInstanceManager().getInstances();
+    private static Function<EntityType, Entity> entitySupplier = EntityCreature::new;
     private static Function<Player, Boolean> commandPermission = player -> true;
 
     /**
@@ -110,6 +114,14 @@ public class ScriptManager {
 
     public static void setInstanceSupplier(@NotNull Function<CommandSender, Collection<Instance>> instanceSupplier) {
         ScriptManager.instanceSupplier = instanceSupplier;
+    }
+
+    public static @NotNull Function<EntityType, Entity> getEntitySupplier() {
+        return entitySupplier;
+    }
+
+    public static void setEntitySupplier(@NotNull Function<EntityType, Entity> entitySupplier) {
+        ScriptManager.entitySupplier = entitySupplier;
     }
 
     public static @NotNull Function<Player, Boolean> getCommandPermission() {

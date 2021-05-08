@@ -4,13 +4,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minestom.script.ScriptManager;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.Properties;
 import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.pathfinding.NavigableEntity;
 import net.minestom.server.utils.Position;
@@ -44,14 +44,14 @@ public class EntityEditorCommand extends RichCommand {
 
             final Vector spawnPosition = ArgumentUtils.from(sender, relativeVec);
 
-            EntityCreature creature = new EntityCreature(entityType);
-            processInstances(sender, instance -> creature.setInstance(instance, spawnPosition.toPosition()));
+            Entity entity = ScriptManager.getEntitySupplier().apply(entityType);
+            processInstances(sender, instance -> entity.setInstance(instance, spawnPosition.toPosition()));
 
             commandData.set("success", true);
-            commandData.set("entity", Properties.fromEntity(creature));
+            commandData.set("entity", Properties.fromEntity(entity));
 
-            final String uuid = creature.getUuid().toString();
-            Component component = Component.text("Entity created:")
+            final String uuid = entity.getUuid().toString();
+            final Component component = Component.text("Entity created:")
                     .append(Component.space())
                     .append(Component.text(uuid)
                             .color(NamedTextColor.GRAY)
