@@ -82,13 +82,18 @@ public class GlobalExecutor implements Executor {
     public @NotNull CommandFunction make(@NotNull String string, @NotNull ProxyObjectMapper mapper) {
         return args -> {
             final String input = MessageFormat.format(string, args);
-            if (script != null) {
-                script.enter();
-                final Value result = mapper.map(run(input));
-                script.leave();
-                return result;
-            } else {
-                return mapper.map(run(input));
+            try {
+                if (script != null) {
+                    script.enter();
+                    final Value result = mapper.map(run(input));
+                    script.leave();
+                    return result;
+                } else {
+                    return mapper.map(run(input));
+                }
+            } catch (Throwable e) {
+                MinecraftServer.getExceptionManager().handleException(e);
+                return Value.asValue(null);
             }
         };
     }
@@ -169,10 +174,14 @@ public class GlobalExecutor implements Executor {
     }
 
     private static void accessScript(@Nullable Script script, @NotNull Runnable runnable) {
-        if (script != null) {
-            script.sync(runnable);
-        } else {
-            runnable.run();
+        try {
+            if (script != null) {
+                script.sync(runnable);
+            } else {
+                runnable.run();
+            }
+        } catch (Throwable e) {
+            MinecraftServer.getExceptionManager().handleException(e);
         }
     }
 
