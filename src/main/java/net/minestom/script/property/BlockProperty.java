@@ -10,6 +10,7 @@ public class BlockProperty extends Properties {
 
     public BlockProperty(short blockStateId, @NotNull BlockPosition blockPosition) {
         this.block = Block.fromStateId(blockStateId);
+        Properties.applyExtensions(BlockProperty.class, block, this);
 
         Properties properties = new Properties();
         {

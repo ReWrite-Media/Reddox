@@ -9,7 +9,7 @@ public class ItemProperty extends Properties {
 
     public ItemProperty(@NotNull ItemStack itemStack) {
         this.itemStack = itemStack;
-
+        Properties.applyExtensions(ItemProperty.class, itemStack, this);
         putMember("material", itemStack.getMaterial().toString());
         putMember("amount", itemStack.getAmount());
     }

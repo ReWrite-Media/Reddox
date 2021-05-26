@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlockPositionProperty extends Properties {
 
     public BlockPositionProperty(@NotNull BlockPosition blockPosition) {
+        Properties.applyExtensions(BlockPositionProperty.class, blockPosition, this);
         putMember("x", blockPosition.getX());
         putMember("y", blockPosition.getY());
         putMember("z", blockPosition.getZ());

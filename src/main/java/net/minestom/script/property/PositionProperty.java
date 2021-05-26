@@ -10,6 +10,7 @@ public class PositionProperty extends Properties {
     public PositionProperty(@NotNull Position position) {
         this.position = position;
 
+        Properties.applyExtensions(PositionProperty.class, position, this);
         putMember("x", position.getX());
         putMember("y", position.getY());
         putMember("z", position.getZ());
