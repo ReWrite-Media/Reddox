@@ -26,7 +26,7 @@ dependencies {
     implementation 'com.github.Minestom:Minestom:a749f07a3f'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.9'
 
     // https://mvnrepository.com/artifact/org.eclipse.dirigible/dirigible-engine-javascript-graalvm
     compile group: 'org.eclipse.dirigible', name: 'dirigible-engine-javascript-graalvm', version: '5.8.0'
