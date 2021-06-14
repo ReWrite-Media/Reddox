@@ -8,6 +8,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.particle.Particle;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
+import net.minestom.server.utils.entity.EntityFinder;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +113,8 @@ public class Properties implements ProxyObject {
             value = Value.asValue(new WorldProperty((Instance) object));
         } else if (object instanceof Particle) {
             value = Value.asValue(((Particle) object).getNamespaceID());
+        } else if (object instanceof EntityFinder) {
+            value = toValue(((EntityFinder) object).find(null, null));
         }
         if (value == null) {
             // Custom property does not exist, cast to value
