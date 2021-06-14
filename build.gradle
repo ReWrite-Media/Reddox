@@ -15,15 +15,15 @@ repositories {
     mavenCentral()
     maven { url 'https://repo.spongepowered.org/maven' }
     maven { url 'https://repo.velocitypowered.com/snapshots/' }
-    maven { url 'https://libraries.minecraft.net' }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.minestom.net/repository/maven-public/' }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    implementation 'com.github.Minestom:Minestom:a749f07a3f'
+    implementation 'com.github.Minestom:Minestom:80d0b8def6'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.9'
