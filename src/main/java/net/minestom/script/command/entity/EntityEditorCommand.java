@@ -28,9 +28,7 @@ public class EntityEditorCommand extends RichCommand {
     public EntityEditorCommand() {
         super("editor");
 
-        setDefaultExecutor((sender, context) -> {
-            sender.sendMessage(Component.text("Usage: /editor <create/edit/remove>"));
-        });
+        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /editor <create/edit/remove>")));
 
         var entityArgument = Entity("entity").singleEntity(true);
 

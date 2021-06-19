@@ -15,14 +15,12 @@ public class BlockCommand extends RichCommand {
 
         final RegionComponent regionComponent = getApi().getRegionHandler();
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world block <set> worlduuid blockstate")));
+        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world block <set> <block>")));
         addSyntax((sender, context) -> {
             final Block block = context.get("block");
             RelativeBlockPosition relativeBlockPosition = context.get("position");
             BlockPosition blockPosition = relativeBlockPosition.from(sender.isPlayer() ? sender.asPlayer() : null);
-            processInstances(sender, instance -> {
-                instance.setBlock(blockPosition, block);
-            });
+            processInstances(sender, instance -> instance.setBlock(blockPosition, block));
         }, Literal("set"), BlockState("block"), RelativeBlockPosition("position"));
     }
 }

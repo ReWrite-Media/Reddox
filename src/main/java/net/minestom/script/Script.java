@@ -135,12 +135,10 @@ public class Script {
         bindings.putMember("executor", globalExecutor);
 
         // Event Signals
-        Map<String, Object> eventBindings = new HashMap<String, Object>();
-
+        Map<String, Object> eventBindings = new HashMap<>();
         for (EventSignal event : EventSignal.values()) {
             eventBindings.put(event.name(), event.name().toLowerCase());
         }
-
         bindings.putMember("signals", ProxyObject.fromMap(eventBindings));
 
         return context;

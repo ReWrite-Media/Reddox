@@ -13,5 +13,6 @@ public class EntityCommand extends RichCommand {
         addSubcommand(new EntityEditorCommand());
         addSubcommand(new KillCommand());
         addSubcommand(new EntityQueryCommand());
+        addSubcommand(new PushCommand());
     }
 }
