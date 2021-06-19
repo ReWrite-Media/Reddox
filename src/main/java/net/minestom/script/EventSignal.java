@@ -59,7 +59,7 @@ public enum EventSignal {
         final GlobalExecutor globalExecutor = ScriptManager.API.getExecutor();
 
         // 'player_join'
-        globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
+        globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
             if (event.isFirstSpawn()) {
                 final Player player = event.getPlayer();
 
@@ -70,7 +70,7 @@ public enum EventSignal {
         });
 
         // 'move'
-        globalEventHandler.addEventCallback(PlayerMoveEvent.class, event -> {
+        globalEventHandler.addListener(PlayerMoveEvent.class, event -> {
             final Player player = event.getPlayer();
             final Position position = event.getNewPosition();
 
@@ -82,7 +82,7 @@ public enum EventSignal {
         });
 
         // 'use_item'
-        globalEventHandler.addEventCallback(PlayerUseItemEvent.class, event -> {
+        globalEventHandler.addListener(PlayerUseItemEvent.class, event -> {
             final Player player = event.getPlayer();
             final ItemStack itemStack = event.getItemStack();
 
@@ -94,7 +94,7 @@ public enum EventSignal {
         });
 
         // 'use_item_block'
-        globalEventHandler.addEventCallback(PlayerUseItemOnBlockEvent.class, event -> {
+        globalEventHandler.addListener(PlayerUseItemOnBlockEvent.class, event -> {
             final Player player = event.getPlayer();
             final BlockPosition position = event.getPosition();
             final short blockStateId = player.getInstance().getBlockStateId(position);
@@ -106,7 +106,7 @@ public enum EventSignal {
         });
 
         // 'place_block'
-        globalEventHandler.addEventCallback(PlayerBlockPlaceEvent.class, event -> {
+        globalEventHandler.addListener(PlayerBlockPlaceEvent.class, event -> {
             final Player player = event.getPlayer();
             final BlockPosition position = event.getBlockPosition();
             final short blockStateId = event.getBlockStateId();
@@ -119,7 +119,7 @@ public enum EventSignal {
         });
 
         // 'entity_interact'
-        globalEventHandler.addEventCallback(PlayerEntityInteractEvent.class, event -> {
+        globalEventHandler.addListener(PlayerEntityInteractEvent.class, event -> {
 
             // Prevent double execution
             if (event.getHand() != Player.Hand.MAIN) {
@@ -136,7 +136,7 @@ public enum EventSignal {
         });
 
         // 'attack'
-        globalEventHandler.addEventCallback(EntityAttackEvent.class, event -> {
+        globalEventHandler.addListener(EntityAttackEvent.class, event -> {
             final Entity entity = event.getEntity();
             final Entity target = event.getTarget();
 

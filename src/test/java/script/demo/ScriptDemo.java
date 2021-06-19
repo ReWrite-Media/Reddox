@@ -29,12 +29,12 @@ public class ScriptDemo {
         instanceContainer.enableAutoChunkLoad(true);
 
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-        globalEventHandler.addEventCallback(PlayerLoginEvent.class, event -> {
+        globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(new Position(0, 42, 0));
         });
-        globalEventHandler.addEventCallback(PlayerSpawnEvent.class, event -> {
+        globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
             event.getPlayer().setGameMode(GameMode.CREATIVE);
         });
 
