@@ -12,6 +12,7 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.validate.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.graalvm.polyglot.Value;
@@ -146,7 +147,15 @@ public class GlobalExecutor implements Executor {
             }
             PlayerProperty playerProperty = new PlayerProperty(sender.asPlayer());
             Properties properties = new Properties();
-            context.getMap().forEach(properties::putMember);
+            for (var entry : context.getMap().entrySet()) {
+                final String key = entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof EntityFinder) {
+                    // Retrieve entities based on the sender
+                    value = ((EntityFinder) value).find(sender);
+                }
+                properties.putMember(key, value);
+            }
 
             accessScript(script, () -> callback.accept(playerProperty, properties));
         }, ArgumentType.generate(format));
