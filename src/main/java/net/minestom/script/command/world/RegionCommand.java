@@ -81,7 +81,8 @@ public class RegionCommand extends RichCommand {
                     final RegionComponent.Region region = regionComponent.getRegion(identifier);
                     boolean inside;
                     if (region != null) {
-                        final Vector vector = ArgumentUtils.from(sender, context.get("position"));
+                        RelativeVec relativeVec = context.get("position");
+                        final Vector vector = ArgumentUtils.from(sender, relativeVec);
                         inside = region.isInside(vector);
                         sender.sendMessage(Component.text("inside: " + inside));
                     } else {

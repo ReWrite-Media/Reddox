@@ -8,7 +8,8 @@ public class WorldCommand extends RichCommand {
 
         addSubcommand(new RegionCommand());
         addSubcommand(new ParticleCommand());
-        addSubcommand(new BlockCommand());
+        addSubcommand(new SetBlockCommand());
+        addSubcommand(new GetBlockCommand());
         addSubcommand(new TimeCommand());
         addSubcommand(new WeatherCommand());
     }

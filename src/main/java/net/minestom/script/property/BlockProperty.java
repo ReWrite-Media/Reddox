@@ -12,15 +12,10 @@ public class BlockProperty extends Properties {
         this.block = block;
         Properties.applyExtensions(BlockProperty.class, block, this);
 
-        Properties properties = new Properties();
-        {
-            var propertiesMap = block.properties();
-            propertiesMap.forEach(properties::putMember);
-        }
-
         putMember("type", block.toString());
         putMember("position", new BlockPositionProperty(blockPosition));
-        putMember("properties", properties);
+        putMember("properties", block.properties());
+        putMember("nbt", block.nbt());
     }
 
     @Override
