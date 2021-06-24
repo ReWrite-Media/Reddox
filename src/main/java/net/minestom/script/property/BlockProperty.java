@@ -8,14 +8,13 @@ public class BlockProperty extends Properties {
 
     private final Block block;
 
-    public BlockProperty(short blockStateId, @NotNull BlockPosition blockPosition) {
-        this.block = Block.fromStateId(blockStateId);
+    public BlockProperty(Block block, @NotNull BlockPosition blockPosition) {
+        this.block = block;
         Properties.applyExtensions(BlockProperty.class, block, this);
 
         Properties properties = new Properties();
         {
-            var propertiesMap = block.getAlternative(blockStateId)
-                    .createPropertiesMap();
+            var propertiesMap = block.properties();
             propertiesMap.forEach(properties::putMember);
         }
 

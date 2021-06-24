@@ -6,6 +6,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.player.*;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.Position;
@@ -97,11 +98,11 @@ public enum EventSignal {
         globalEventHandler.addListener(PlayerUseItemOnBlockEvent.class, event -> {
             final Player player = event.getPlayer();
             final BlockPosition position = event.getPosition();
-            final short blockStateId = player.getInstance().getBlockStateId(position);
+            final Block block = player.getInstance().getBlock(position);
 
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
-            properties.putMember("block", new BlockProperty(blockStateId, position));
+            properties.putMember("block", new BlockProperty(block, position));
             globalExecutor.signal(PLAYER_USE_ITEM_ON_BLOCK.name(), properties);
         });
 
@@ -109,11 +110,11 @@ public enum EventSignal {
         globalEventHandler.addListener(PlayerBlockPlaceEvent.class, event -> {
             final Player player = event.getPlayer();
             final BlockPosition position = event.getBlockPosition();
-            final short blockStateId = event.getBlockStateId();
+            final Block block = event.getBlock();
 
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
-            properties.putMember("block", new BlockProperty(blockStateId, position));
+            properties.putMember("block", new BlockProperty(block, position));
             ProxyObject output = globalExecutor.signal(PLAYER_BLOCK_PLACE.name(), properties);
             event.setCancelled(isCancelled(output));
         });
