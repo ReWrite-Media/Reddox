@@ -3,12 +3,13 @@ package net.minestom.script.command.world;
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.component.RegionComponent;
-import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.utils.BlockPosition;
-import net.minestom.server.utils.location.RelativeBlockPosition;
+import net.minestom.server.utils.location.RelativeVec;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.BlockState;
+import static net.minestom.server.command.builder.arguments.ArgumentType.RelativeVec3;
 
 public class SetBlockCommand extends RichCommand {
     public SetBlockCommand() {
@@ -16,12 +17,12 @@ public class SetBlockCommand extends RichCommand {
 
         final RegionComponent regionComponent = getApi().getRegionHandler();
 
-        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world setblock <block>")));
+        setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world setblock <pos> <block>")));
         addSyntax((sender, context) -> {
             final Block block = context.get("block");
-            RelativeBlockPosition relativeBlockPosition = context.get("position");
-            BlockPosition blockPosition = relativeBlockPosition.from(sender.isPlayer() ? sender.asPlayer() : null);
+            RelativeVec relativeVec = context.get("position");
+            BlockPosition blockPosition = ArgumentUtils.from(sender, relativeVec).toPosition().toBlockPosition();
             processInstances(sender, instance -> instance.setBlock(blockPosition, block));
-        }, BlockState("block"), ArgumentType.RelativeBlockPosition("position"));
+        }, RelativeVec3("position"), BlockState("block"));
     }
 }

@@ -7,7 +7,7 @@ import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.utils.BlockPosition;
-import net.minestom.server.utils.location.RelativeBlockPosition;
+import net.minestom.server.utils.location.RelativeVec;
 
 public class GetBlockCommand extends RichCommand {
     public GetBlockCommand() {
@@ -15,8 +15,8 @@ public class GetBlockCommand extends RichCommand {
 
         setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world getblock <pos>")));
         addSyntax((sender, context) -> {
-            RelativeBlockPosition relativeBlockPosition = context.get("position");
-            BlockPosition blockPosition = ArgumentUtils.from(sender, relativeBlockPosition);
+            RelativeVec relativeVec = context.get("position");
+            BlockPosition blockPosition = ArgumentUtils.from(sender, relativeVec).toPosition().toBlockPosition();
             processInstances(sender, instance -> {
                 Block block = instance.getBlock(blockPosition);
                 CommandData commandData = new CommandData();
@@ -32,6 +32,6 @@ public class GetBlockCommand extends RichCommand {
                 }
                 sender.sendMessage(component);
             });
-        }, ArgumentType.RelativeBlockPosition("position"));
+        }, ArgumentType.RelativeVec3("position"));
     }
 }
