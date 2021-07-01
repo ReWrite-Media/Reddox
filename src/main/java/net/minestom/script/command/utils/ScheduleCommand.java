@@ -71,6 +71,17 @@ public class ScheduleCommand extends RichCommand {
             }, Literal("remove"), Integer("task_id"));
         }
 
+        // /schedule removeall
+        {
+            addSyntax((sender, context) -> {
+                SCHEDULED_TASKS_MAP.keySet().removeIf(task -> {
+                    SCHEDULER_MANAGER.removeTask(task);
+                    return true;
+                });
+                sender.sendMessage(Component.text("All tasks have been removed!"));
+            }, Literal("removeall"));
+        }
+
         // /schedule delayed <delay> <command>
         {
             addSyntax((sender, context) -> {
