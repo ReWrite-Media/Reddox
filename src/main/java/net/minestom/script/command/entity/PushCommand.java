@@ -1,7 +1,7 @@
 package net.minestom.script.command.entity;
 
 import net.minestom.script.command.RichCommand;
-import net.minestom.server.utils.Vector;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
 
@@ -21,8 +21,8 @@ public class PushCommand extends RichCommand {
             RelativeVec relativeVec = context.get("position");
 
             for (var entity : entities) {
-                final Vector vector = relativeVec.from(entity);
-                entity.setVelocity(vector.subtract(entity.getPosition().toVector()));
+                final Vec vector = relativeVec.from(entity);
+                entity.setVelocity(vector.sub(entity.getPosition()));
             }
 
             sender.sendMessage("Pushed");
@@ -35,8 +35,8 @@ public class PushCommand extends RichCommand {
             RelativeVec relativeVec = context.get("position");
 
             for (var entity : entities) {
-                final Vector vector = relativeVec.from(entity);
-                entity.setVelocity(entity.getPosition().getDirection().normalize().multiply(vector));
+                final Vec vector = relativeVec.from(entity);
+                entity.setVelocity(entity.getPosition().direction().normalize().mul(vector));
             }
 
             sender.sendMessage("Pushed forward");

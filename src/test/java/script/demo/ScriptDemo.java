@@ -2,6 +2,7 @@ package script.demo;
 
 import net.minestom.script.ScriptManager;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -11,7 +12,6 @@ import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.utils.Position;
 import net.minestom.server.world.biomes.Biome;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public class ScriptDemo {
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
             event.setSpawningInstance(instanceContainer);
-            player.setRespawnPoint(new Position(0, 42, 0));
+            player.setRespawnPoint(new Pos(0, 42, 0));
         });
         globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
             event.getPlayer().setGameMode(GameMode.CREATIVE);

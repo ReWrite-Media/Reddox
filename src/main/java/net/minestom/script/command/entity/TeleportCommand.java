@@ -10,9 +10,9 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec2;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
-import net.minestom.server.utils.Position;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
 
@@ -75,11 +75,11 @@ public class TeleportCommand extends RichCommand {
         Player player = sender.asPlayer();
 
         RelativeVec relativeVec = context.get(location);
-        Position position = relativeVec.from(player).toPosition();
+        Pos position = relativeVec.from(player).asPosition();
 
         teleport(player, position);
         player.sendMessage(Component.text("Teleported " + player.getUsername() + " to " +
-                position.getX() + ", " + position.getY() + ", " + position.getZ()));
+                position.x() + ", " + position.y() + ", " + position.z()));
     }
 
     public void targetToLocation(CommandSender sender, CommandContext context) {
@@ -94,7 +94,7 @@ public class TeleportCommand extends RichCommand {
                             !sender.isPlayer() ||
                             !sender.asPlayer().getUuid().equals(entity.getUuid()))
                     .forEach(entity -> {
-                        Position position = relativeVec.from(entity).toPosition();
+                        Pos position = relativeVec.from(entity).asPosition();
                         teleport(entity, position);
                         sendTeleportedMessage(sender, entity, position);
                     });
@@ -117,7 +117,7 @@ public class TeleportCommand extends RichCommand {
                             !sender.isPlayer() ||
                             !sender.asPlayer().getUuid().equals(entity.getUuid()))
                     .forEach(entity -> {
-                        Position position = relativeVec.from(entity).toPosition().setDirection(relativeDirection.from(entity));
+                        Pos position = relativeVec.from(entity).asPosition().withDirection(relativeDirection.from(entity));
                         teleport(entity, position);
                         sendTeleportedMessage(sender, entity, position);
                     });
@@ -141,7 +141,7 @@ public class TeleportCommand extends RichCommand {
                             !sender.isPlayer() ||
                             !sender.asPlayer().getUuid().equals(entity.getUuid()))
                     .forEach(entity -> {
-                        Position position = destination.getPosition();
+                        Pos position = destination.getPosition();
                         teleport(entity, position);
                         sendTeleportedMessage(sender, entity, position);
                     });
@@ -164,7 +164,7 @@ public class TeleportCommand extends RichCommand {
                             !sender.isPlayer() ||
                             !sender.asPlayer().getUuid().equals(entity.getUuid()))
                     .forEach(entity -> {
-                        Position position = relativeVec.from(entity).toPosition().setDirection(relativeDirection.from(entity));
+                        Pos position = relativeVec.from(entity).asPosition().withDirection(relativeDirection.from(entity));
                         teleport(entity, position);
                         sendTeleportedMessage(sender, entity, position);
                     });
@@ -174,14 +174,14 @@ public class TeleportCommand extends RichCommand {
         }
     }
 
-    public void teleport(Entity target, Position result) {
+    public void teleport(Entity target, Pos result) {
         target.teleport(result);
     }
 
-    private void sendTeleportedMessage(CommandSender sender, Entity entity, Position position) {
+    private void sendTeleportedMessage(CommandSender sender, Entity entity, Pos position) {
         String entityName = entity.getCustomName() == null ?
                 entity.getEntityType().name() : LegacyComponentSerializer.legacyAmpersand().serialize(entity.getCustomName());
         sender.sendMessage(Component.text("Teleported " + entityName + " to " +
-                position.getX() + ", " + position.getY() + ", " + position.getZ()));
+                position.x() + ", " + position.y() + ", " + position.z()));
     }
 }

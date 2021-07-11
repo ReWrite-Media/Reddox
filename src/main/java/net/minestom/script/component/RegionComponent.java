@@ -1,6 +1,6 @@
 package net.minestom.script.component;
 
-import net.minestom.server.utils.Position;
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.utils.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,18 +18,18 @@ public class RegionComponent extends ScriptComponent {
     }
 
     @Nullable
-    public Region createRegion(String identifier, Vector pos1, Vector pos2, NBTCompound nbtCompound) {
+    public Region createRegion(String identifier, Point pos1, Point pos2, NBTCompound nbtCompound) {
         if (regionMap.containsKey(identifier)) {
             return null;
         }
 
-        final double minX = Math.min(pos1.getX(), pos2.getX());
-        final double minY = Math.min(pos1.getY(), pos2.getY());
-        final double minZ = Math.min(pos1.getZ(), pos2.getZ());
+        final double minX = Math.min(pos1.x(), pos2.x());
+        final double minY = Math.min(pos1.y(), pos2.y());
+        final double minZ = Math.min(pos1.z(), pos2.z());
 
-        final double maxX = Math.max(pos1.getX(), pos2.getX());
-        final double maxY = Math.max(pos1.getY(), pos2.getY());
-        final double maxZ = Math.max(pos1.getZ(), pos2.getZ());
+        final double maxX = Math.max(pos1.x(), pos2.x());
+        final double maxY = Math.max(pos1.y(), pos2.y());
+        final double maxZ = Math.max(pos1.z(), pos2.z());
 
         Region region = new Region(identifier,
                 new Vector(minX, minY, minZ),
@@ -61,17 +61,13 @@ public class RegionComponent extends ScriptComponent {
             this.nbtCompound = nbtCompound;
         }
 
-        public boolean isInside(@NotNull Vector vector) {
-            final double x = vector.getX();
-            final double y = vector.getY();
-            final double z = vector.getZ();
+        public boolean isInside(@NotNull Point vector) {
+            final double x = vector.x();
+            final double y = vector.y();
+            final double z = vector.z();
             return x >= minPos.getX() && x <= maxPos.getX() &&
                     y >= minPos.getY() && y <= maxPos.getY() &&
                     z >= minPos.getZ() && z <= maxPos.getZ();
-        }
-
-        public boolean isInside(@NotNull Position position) {
-            return isInside(position.toVector());
         }
 
         public String getIdentifier() {

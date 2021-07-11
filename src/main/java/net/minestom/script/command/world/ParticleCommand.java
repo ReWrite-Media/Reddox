@@ -2,11 +2,10 @@ package net.minestom.script.command.world;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
-import net.minestom.script.utils.ArgumentUtils;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
 import net.minestom.server.particle.ParticleCreator;
-import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.location.RelativeVec;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.Float;
@@ -27,12 +26,12 @@ public class ParticleCommand extends RichCommand {
                     final float speed = context.get("speed");
                     final int count = context.get("count");
 
-                    final Vector position = ArgumentUtils.from(sender, relativePosition);
-                    final Vector delta = ArgumentUtils.from(sender, relativeDelta);
+                    final Vec position = relativePosition.fromSender(sender);
+                    final Vec delta = relativeDelta.fromSender(sender);
 
                     ParticlePacket particlePacket = ParticleCreator.createParticlePacket(
-                            particle, false, position.getX(), position.getY(), position.getZ(),
-                            (float) delta.getX(), (float) delta.getY(), (float) delta.getZ(), speed, count, null);
+                            particle, false, position.x(), position.y(), position.z(),
+                            (float) delta.x(), (float) delta.y(), (float) delta.z(), speed, count, null);
 
                     if (sender.isPlayer()) {
                         sender.asPlayer().sendPacketToViewersAndSelf(particlePacket);

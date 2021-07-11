@@ -7,14 +7,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.ScriptManager;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.property.Properties;
-import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.CommandData;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.pathfinding.NavigableEntity;
-import net.minestom.server.utils.Position;
-import net.minestom.server.utils.Vector;
 import net.minestom.server.utils.entity.EntityFinder;
 import net.minestom.server.utils.location.RelativeVec;
 
@@ -40,10 +38,10 @@ public class EntityEditorCommand extends RichCommand {
             final EntityType entityType = context.get("entity_type");
             final RelativeVec relativeVec = context.get("spawn_position");
 
-            final Vector spawnPosition = ArgumentUtils.from(sender, relativeVec);
+            final Vec spawnPosition = relativeVec.fromSender(sender);
 
             Entity entity = ScriptManager.getEntitySupplier().apply(entityType);
-            processInstances(sender, instance -> entity.setInstance(instance, spawnPosition.toPosition()));
+            processInstances(sender, instance -> entity.setInstance(instance, spawnPosition.asPosition()));
 
             commandData.set("success", true);
             commandData.set("entity", Properties.fromEntity(entity));
@@ -74,26 +72,24 @@ public class EntityEditorCommand extends RichCommand {
             for (CommandContext property : properties) {
                 if (property.has("position")) {
                     final RelativeVec relativeVec = property.get("position_value");
-                    final Vector vector = ArgumentUtils.from(sender, relativeVec);
+                    final Vec vector = relativeVec.fromSender(sender);
 
-                    entity.teleport(vector.toPosition());
+                    entity.teleport(vector.asPosition());
                 }
 
                 if (property.has("path")) {
                     final RelativeVec relativeVec = property.get("path_value");
-                    final Vector vector = ArgumentUtils.from(sender, relativeVec);
+                    final Vec vector = relativeVec.fromSender(sender);
 
                     if (entity instanceof NavigableEntity) {
-                        ((NavigableEntity) entity).getNavigator().setPathTo(vector.toPosition());
+                        ((NavigableEntity) entity).getNavigator().setPathTo(vector.asPosition());
                     }
                 }
 
                 if (property.has("view")) {
                     final RelativeVec relativeVec = property.get("view_value");
-                    final Vector vector = ArgumentUtils.from(sender, relativeVec);
-
-                    Position view = new Position(0, 0, 0, (float) vector.getX(), (float) vector.getZ());
-                    entity.setView(view);
+                    final Vec vector = relativeVec.fromSender(sender);
+                    entity.setView((float) vector.x(), (float) vector.z());
                 }
             }
 

@@ -2,11 +2,10 @@ package net.minestom.script.command.world;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
-import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandData;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.location.RelativeVec;
 
 public class GetBlockCommand extends RichCommand {
@@ -16,7 +15,7 @@ public class GetBlockCommand extends RichCommand {
         setDefaultExecutor((sender, context) -> sender.sendMessage(Component.text("Usage: /world getblock <pos>")));
         addSyntax((sender, context) -> {
             RelativeVec relativeVec = context.get("position");
-            BlockPosition blockPosition = ArgumentUtils.from(sender, relativeVec).toPosition().toBlockPosition();
+            Vec blockPosition = relativeVec.fromSender(sender);
             processInstances(sender, instance -> {
                 Block block = instance.getBlock(blockPosition);
                 CommandData commandData = new CommandData();

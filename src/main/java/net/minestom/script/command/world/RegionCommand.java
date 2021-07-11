@@ -3,9 +3,8 @@ package net.minestom.script.command.world;
 import net.kyori.adventure.text.Component;
 import net.minestom.script.command.RichCommand;
 import net.minestom.script.component.RegionComponent;
-import net.minestom.script.utils.ArgumentUtils;
 import net.minestom.server.command.builder.CommandData;
-import net.minestom.server.utils.Vector;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.utils.location.RelativeVec;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
@@ -39,7 +38,7 @@ public class RegionCommand extends RichCommand {
             RelativeVec posEnd = context.get("pos2");
             NBTCompound data = context.get("region_data");
 
-            RegionComponent.Region region = regionComponent.createRegion(identifier, ArgumentUtils.from(sender, posStart), ArgumentUtils.from(sender, posEnd), data);
+            RegionComponent.Region region = regionComponent.createRegion(identifier, posStart.fromSender(sender), posEnd.fromSender(sender), data);
             final boolean success = region != null;
             if (success) {
                 sender.sendMessage(Component.text("Region '" + identifier + "' created successfully!"));
@@ -82,7 +81,7 @@ public class RegionCommand extends RichCommand {
                     boolean inside;
                     if (region != null) {
                         RelativeVec relativeVec = context.get("position");
-                        final Vector vector = ArgumentUtils.from(sender, relativeVec);
+                        final Vec vector = relativeVec.fromSender(sender);
                         inside = region.isInside(vector);
                         sender.sendMessage(Component.text("inside: " + inside));
                     } else {

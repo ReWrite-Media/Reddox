@@ -1,14 +1,14 @@
 package net.minestom.script.property;
 
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.utils.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockProperty extends Properties {
 
     private final Block block;
 
-    public BlockProperty(Block block, @NotNull BlockPosition blockPosition) {
+    public BlockProperty(Block block, @NotNull Point blockPosition) {
         this.block = block;
         Properties.applyExtensions(BlockProperty.class, block, this);
 

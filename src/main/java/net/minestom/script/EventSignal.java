@@ -1,6 +1,8 @@
 package net.minestom.script;
 
 import net.minestom.script.property.*;
+import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -8,8 +10,6 @@ import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.utils.BlockPosition;
-import net.minestom.server.utils.Position;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public enum EventSignal {
         // 'move'
         globalEventHandler.addListener(PlayerMoveEvent.class, event -> {
             final Player player = event.getPlayer();
-            final Position position = event.getNewPosition();
+            final Pos position = event.getNewPosition();
 
             Properties properties = new Properties();
             properties.putMember("player", new PlayerProperty(player));
@@ -97,7 +97,7 @@ public enum EventSignal {
         // 'use_item_block'
         globalEventHandler.addListener(PlayerUseItemOnBlockEvent.class, event -> {
             final Player player = event.getPlayer();
-            final BlockPosition position = event.getPosition();
+            final Point position = event.getPosition();
             final Block block = player.getInstance().getBlock(position);
 
             Properties properties = new Properties();
@@ -109,7 +109,7 @@ public enum EventSignal {
         // 'place_block'
         globalEventHandler.addListener(PlayerBlockPlaceEvent.class, event -> {
             final Player player = event.getPlayer();
-            final BlockPosition position = event.getBlockPosition();
+            final Point position = event.getBlockPosition();
             final Block block = event.getBlock();
 
             Properties properties = new Properties();

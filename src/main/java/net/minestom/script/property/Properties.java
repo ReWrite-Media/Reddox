@@ -1,13 +1,13 @@
 package net.minestom.script.property;
 
 import net.minestom.script.utils.NbtConversionUtils;
+import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.particle.Particle;
-import net.minestom.server.utils.BlockPosition;
-import net.minestom.server.utils.Position;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -103,10 +103,10 @@ public class Properties implements ProxyObject {
             value = Value.asValue(values);
         } else if (object instanceof Entity) {
             value = Value.asValue(fromEntity((Entity) object));
-        } else if (object instanceof BlockPosition) {
-            value = Value.asValue(new BlockPositionProperty((BlockPosition) object));
-        } else if (object instanceof Position) {
-            value = Value.asValue(new PositionProperty((Position) object));
+        } else if (object instanceof Pos) {
+            value = Value.asValue(new PositionProperty((Pos) object));
+        } else if (object instanceof Point) {
+            value = Value.asValue(new BlockPositionProperty((Point) object));
         } else if (object instanceof ItemStack) {
             value = Value.asValue(new ItemProperty((ItemStack) object));
         } else if (object instanceof Instance) {

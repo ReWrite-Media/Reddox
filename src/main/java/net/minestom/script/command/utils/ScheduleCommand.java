@@ -12,15 +12,12 @@ import net.minestom.server.command.builder.ParsedCommand;
 import net.minestom.server.timer.SchedulerManager;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskBuilder;
-import net.minestom.server.utils.time.TimeUnit;
-import net.minestom.server.utils.time.UpdateOption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.String;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -85,7 +82,7 @@ public class ScheduleCommand extends RichCommand {
         // /schedule delayed <delay> <command>
         {
             addSyntax((sender, context) -> {
-                final UpdateOption delay = context.get("delay");
+                final Duration delay = context.get("delay");
                 final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, context, commandResult, delay, null);
@@ -95,8 +92,8 @@ public class ScheduleCommand extends RichCommand {
         // /schedule delayed_repeat <delay> <repeat> <command>
         {
             addSyntax((sender, context) -> {
-                final UpdateOption delay = context.get("delay");
-                final UpdateOption repeat = context.get("repeat");
+                final Duration delay = context.get("delay");
+                final Duration repeat = context.get("repeat");
                 final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, context, commandResult, delay, repeat);
@@ -106,7 +103,7 @@ public class ScheduleCommand extends RichCommand {
         // /schedule repeat <repeat> <command>
         {
             addSyntax((sender, context) -> {
-                final UpdateOption repeat = context.get("repeat");
+                final Duration repeat = context.get("repeat");
                 final CommandResult commandResult = context.get("command");
 
                 scheduleTask(sender, context, commandResult, null, repeat);
@@ -121,22 +118,16 @@ public class ScheduleCommand extends RichCommand {
 
                 final Instant now = Instant.now();
                 final Instant time = Instant.parse(timeString);
+                final Duration duration = Duration.between(now, time);
 
-                final UpdateOption delay;
-                {
-                    final Duration duration = Duration.between(now, time);
-                    final long seconds = duration.get(ChronoUnit.SECONDS);
-                    delay = new UpdateOption(seconds, TimeUnit.SECOND);
-                }
-
-                scheduleTask(sender, context, commandResult, delay, null);
+                scheduleTask(sender, context, commandResult, duration, null);
             }, Literal("gmt"), Word("utc_time"), Command("command"));
         }
 
     }
 
     private static void scheduleTask(@NotNull CommandSender sender, CommandContext context, @NotNull CommandResult commandResult,
-                                     @Nullable UpdateOption delay, @Nullable UpdateOption repeat) {
+                                     @Nullable Duration delay, @Nullable Duration repeat) {
         final ParsedCommand parsedCommand = commandResult.getParsedCommand();
         if (parsedCommand == null) {
             sender.sendMessage(Component.text("Invalid command"));
@@ -156,11 +147,11 @@ public class ScheduleCommand extends RichCommand {
         });
 
         if (delay != null) {
-            taskBuilder.delay(delay.getValue(), delay.getTimeUnit());
+            taskBuilder.delay(delay);
         }
 
         if (repeat != null) {
-            taskBuilder.repeat(repeat.getValue(), repeat.getTimeUnit());
+            taskBuilder.repeat(repeat);
         }
 
         final Task task = taskBuilder.schedule();
