@@ -6,7 +6,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.script.Script;
 import net.minestom.script.ScriptManager;
-import net.minestom.script.command.editor.EditorCommand;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.suggestion.Suggestion;
@@ -28,12 +27,9 @@ public class ScriptCommand extends RichCommand {
     public ScriptCommand() {
         super("script");
 
-        this.addSubcommand(new EditorCommand());
-
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage(Component.text("Usage: /script <list/load/unload> [path]"));
         });
-
 
         var pathArgument = StringArray("path")
                 .setDefaultValue(() -> new String[0])
