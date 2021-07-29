@@ -1,7 +1,7 @@
 package net.minestom.script.component;
 
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.utils.Vector;
+import net.minestom.server.coordinate.Vec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
@@ -32,8 +32,8 @@ public class RegionComponent extends ScriptComponent {
         final double maxZ = Math.max(pos1.z(), pos2.z());
 
         Region region = new Region(identifier,
-                new Vector(minX, minY, minZ),
-                new Vector(maxX, maxY, maxZ),
+                new Vec(minX, minY, minZ),
+                new Vec(maxX, maxY, maxZ),
                 nbtCompound);
 
         this.regionMap.put(identifier, region);
@@ -51,10 +51,10 @@ public class RegionComponent extends ScriptComponent {
 
     public static class Region {
         private final String identifier;
-        private final Vector minPos, maxPos;
+        private final Point minPos, maxPos;
         private final NBTCompound nbtCompound;
 
-        protected Region(String identifier, Vector minPos, Vector maxPos, NBTCompound nbtCompound) {
+        protected Region(String identifier, Point minPos, Point maxPos, NBTCompound nbtCompound) {
             this.identifier = identifier;
             this.minPos = minPos;
             this.maxPos = maxPos;
@@ -65,20 +65,20 @@ public class RegionComponent extends ScriptComponent {
             final double x = vector.x();
             final double y = vector.y();
             final double z = vector.z();
-            return x >= minPos.getX() && x <= maxPos.getX() &&
-                    y >= minPos.getY() && y <= maxPos.getY() &&
-                    z >= minPos.getZ() && z <= maxPos.getZ();
+            return x >= minPos.x() && x <= maxPos.x() &&
+                    y >= minPos.y() && y <= maxPos.y() &&
+                    z >= minPos.z() && z <= maxPos.z();
         }
 
         public String getIdentifier() {
             return identifier;
         }
 
-        public Vector getMinPos() {
+        public Point getMinPos() {
             return minPos;
         }
 
-        public Vector getMaxPos() {
+        public Point getMaxPos() {
             return maxPos;
         }
 
@@ -87,5 +87,4 @@ public class RegionComponent extends ScriptComponent {
         }
 
     }
-
 }

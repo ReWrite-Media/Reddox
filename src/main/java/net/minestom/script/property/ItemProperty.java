@@ -16,7 +16,7 @@ public class ItemProperty extends Properties {
 
     @Override
     public String toString() {
-        final String namespace = itemStack.getMaterial().getName();
+        final String namespace = itemStack.getMaterial().name();
         final String nbt = itemStack.getMeta().toSNBT();
         return namespace + nbt;
     }

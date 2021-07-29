@@ -112,7 +112,7 @@ public class Properties implements ProxyObject {
         } else if (object instanceof Instance) {
             value = Value.asValue(new WorldProperty((Instance) object));
         } else if (object instanceof Particle) {
-            value = Value.asValue(((Particle) object).getNamespaceID());
+            value = Value.asValue(((Particle) object).name());
         } else if (object instanceof EntityFinder) {
             value = toValue(((EntityFinder) object).find(null, null));
         }
