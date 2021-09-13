@@ -1,5 +1,5 @@
 /*
-* MineScript language-inspecific concept definition v0
+* Reddox language-inspecific concept definition v0
 */
 
 /**

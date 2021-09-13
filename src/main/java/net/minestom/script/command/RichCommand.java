@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 /**
- * Represents a MineScript command, commands extending this
- * are expected to contains rich command data to be used within scripts.
+ * Represents a Reddox command, commands extending this
+ * are expected to contain rich command data to be used within scripts.
  */
 public class RichCommand extends Command {
 

@@ -1,4 +1,4 @@
-// Minescript interacts with the server using various commands and signals.
+// Reddox interacts with the server using various commands and signals.
 // Commands allow you to take action, and signal to listen to certain events.
 
 // Each of those relies on properties. Commands and signals provide you context
