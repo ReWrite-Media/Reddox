@@ -10,17 +10,16 @@ import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Script {
-
+public final class Script {
     private final String name;
-    private final String fileString;
+    private final String source;
     private final String language;
     private final GlobalExecutor globalExecutor;
 
@@ -28,23 +27,25 @@ public class Script {
     private volatile Context context;
     private final ReentrantLock lock = new ReentrantLock();
 
-    public Script(@NotNull String name, @NotNull String fileString, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
+    private Script(@NotNull String name, @NotNull String language, @NotNull String source, @NotNull GlobalExecutor globalExecutor) {
         this.name = name;
-        this.fileString = fileString;
+        this.source = source;
         this.language = language;
         this.globalExecutor = globalExecutor;
     }
 
-    public Script(@NotNull String name, @NotNull File file, @NotNull String language, @NotNull GlobalExecutor globalExecutor) {
-        this(name, FileUtils.readFile(file), language, globalExecutor);
+    public static Script fromString(String name, String language, String source, GlobalExecutor executor) {
+        return new Script(name, language, source, executor);
+    }
+
+    public static Script fromFile(String name, String language, Path source, GlobalExecutor executor) {
+        return new Script(name, language, FileUtils.readFile(source), executor);
     }
 
     public void load() {
-        if (loaded)
-            return;
+        if (loaded) return;
         this.loaded = true;
-
-        final Source source = Source.create(language, fileString);
+        final Source source = Source.create(language, this.source);
         assert source != null;
         this.context = createContext(source.getLanguage(), globalExecutor);
         sync(() -> context.eval(source));
@@ -52,8 +53,7 @@ public class Script {
     }
 
     public void unload() {
-        if (!loaded)
-            return;
+        if (!loaded) return;
         this.loaded = false;
         this.globalExecutor.unregister();
         this.context.close();
@@ -65,33 +65,33 @@ public class Script {
         leave();
     }
 
-    protected void enter() {
+    void enter() {
         this.lock.lock();
-        if (context == null)
-            return;
-        this.context.enter();
+        if (context != null) {
+            this.context.enter();
+        }
     }
 
-    protected void leave() {
+    void leave() {
         this.lock.unlock();
-        if (context == null)
-            return;
-        this.context.leave();
+        if (context != null) {
+            this.context.leave();
+        }
     }
 
-    public @NotNull String getFileString() {
-        return fileString;
-    }
-
-    public @NotNull String getName() {
+    public @NotNull String name() {
         return name;
     }
 
-    public @NotNull String getLanguage() {
+    public @NotNull String language() {
         return language;
     }
 
-    public @NotNull GlobalExecutor getExecutor() {
+    public @NotNull String source() {
+        return source;
+    }
+
+    public @NotNull GlobalExecutor executor() {
         return globalExecutor;
     }
 
@@ -99,7 +99,7 @@ public class Script {
         return loaded;
     }
 
-    public Context getContext() {
+    public Context context() {
         return context;
     }
 

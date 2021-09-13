@@ -43,7 +43,7 @@ public class ScriptCommand extends RichCommand {
             sender.sendMessage(component);
 
             for (Script script : scripts) {
-                final String name = script.getName();
+                final String name = script.name();
                 Component scriptComponent = Component.text(name, script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED)
                         .append(Component.space())
                         .append(Component.text("[Load]")
@@ -110,7 +110,7 @@ public class ScriptCommand extends RichCommand {
     private void processPath(CommandSender sender, String path, Consumer<Script> scriptConsumer) {
         Optional<Script> optionalScript = getScripts()
                 .stream()
-                .filter(script -> Objects.equals(script.getName(), path))
+                .filter(script -> Objects.equals(script.name(), path))
                 .findFirst();
 
         optionalScript.ifPresentOrElse(scriptConsumer, () ->
@@ -120,7 +120,7 @@ public class ScriptCommand extends RichCommand {
     private void pathSuggestion(CommandSender sender, CommandContext context, Suggestion suggestion) {
         final String input = suggestion.getInput();
         for (Script script : getScripts()) {
-            final String name = script.getName();
+            final String name = script.name();
             if (name.toLowerCase().contains(input.toLowerCase())) {
                 suggestion.addEntry(new SuggestionEntry(name));
             }

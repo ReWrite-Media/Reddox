@@ -15,21 +15,19 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-public class ScriptManager {
-
+public final class ScriptManager {
     public static final ScriptAPI API = new ScriptAPI();
 
-    public static final String SCRIPT_FOLDER = "scripts";
+    public static final Path SCRIPT_FOLDER = Path.of("scripts");
     private static final String MAIN_SCRIPT = "main";
 
     private static final List<Script> SCRIPTS = new CopyOnWriteArrayList<>();
@@ -62,9 +60,7 @@ public class ScriptManager {
         loaded = true;
 
         // Init events for signals
-        {
-            EventSignal.init(MinecraftServer.getGlobalEventHandler());
-        }
+        EventSignal.init(MinecraftServer.getGlobalEventHandler());
 
         // Handle exception
         MinecraftServer.getExceptionManager().setExceptionHandler(ExceptionUtils::handleException);
@@ -91,12 +87,10 @@ public class ScriptManager {
 
     public static synchronized void shutdown() {
         // Unload all current scripts
-        {
-            for (Script script : getScripts()) {
-                script.unload();
-            }
-            SCRIPTS.clear();
+        for (Script script : getScripts()) {
+            script.unload();
         }
+        SCRIPTS.clear();
     }
 
     /**
@@ -133,71 +127,57 @@ public class ScriptManager {
     }
 
     private static synchronized void loadScripts() {
-        final File scriptFolder = new File(SCRIPT_FOLDER);
+        if (!Files.isDirectory(SCRIPT_FOLDER)) return;
 
-        if (!scriptFolder.exists()) {
-            return; // No script folder
-        }
+        try (Stream<Path> walkStream = Files.list(SCRIPT_FOLDER)) {
+            Iterator<Path> iterator = walkStream.iterator();
+            while (iterator.hasNext()) {
+                Path path = iterator.next();
+                final String exposedName = path.getFileName().toString();
+                if (Files.isDirectory(path)) {
+                    // Find main file
+                    path = findMainFile(path);
+                }
 
-        final File[] folderFiles = scriptFolder.listFiles();
-        if (folderFiles == null) {
-            System.err.println(scriptFolder + " is not a folder!");
-            return;
-        }
-
-        for (File file : folderFiles) {
-            final String name = file.getName();
-            if (file.isDirectory()) {
-                // Find main file
-                file = findMainFile(file);
-                if (file == null) {
-                    System.err.println("Directory " +
-                            name + " is invalid, you need a script with the name " +
-                            MAIN_SCRIPT);
+                final String name = path.getFileName().toString();
+                final String extension = FilenameUtils.getExtension(name);
+                final String language = EXTENSION_MAP.get(extension);
+                if (language == null) {
+                    // Invalid file extension
+                    System.err.println("Invalid file extension for " + path + ", ignored");
                     continue;
                 }
-            }
-            final String extension = FilenameUtils.getExtension(file.getName());
 
-            final String language = EXTENSION_MAP.get(extension);
-            if (language == null) {
-                // Invalid file extension
-                System.err.println("Invalid file extension for " + file + ", ignored");
-                continue;
+                final GlobalExecutor globalExecutor = new GlobalExecutor();
+                Script script;
+                final Function<String, String> transpilerFunction = TRANSPILER_MAP.get(extension);
+                if (transpilerFunction != null) {
+                    // File content needs to be converted
+                    final String source = transpilerFunction.apply(FileUtils.readFile(path));
+                    script = Script.fromString(exposedName, language, source, globalExecutor);
+                } else {
+                    // Language is natively supported by GraalVM
+                    script = Script.fromFile(exposedName, language, path, globalExecutor);
+                }
+                globalExecutor.script = script;
+                SCRIPTS.add(script);
+                // Evaluate the script (start registering listeners)
+                script.load();
             }
-
-            final GlobalExecutor globalExecutor = new GlobalExecutor();
-            Script script;
-
-            var transpilerFunction = TRANSPILER_MAP.get(extension);
-            if (transpilerFunction != null) {
-                // File content needs to be converted
-                final String source = transpilerFunction.apply(FileUtils.readFile(file));
-                script = new Script(name, source, language, globalExecutor);
-            } else {
-                // Language is natively supported by GraalVM
-                script = new Script(name, file, language, globalExecutor);
-            }
-            globalExecutor.script = script;
-            SCRIPTS.add(script);
-            // Evaluate the script (start registering listeners)
-            script.load();
+        } catch (IOException e) {
+            MinecraftServer.getExceptionManager().handleException(e);
         }
     }
 
-    @Nullable
-    private static File findMainFile(@NotNull File directory) {
-        final File[] folderFiles = directory.listFiles();
-        if (folderFiles == null) {
-            return null;
-        }
-
-        for (File file : folderFiles) {
-            final String name = FilenameUtils.removeExtension(file.getName());
+    private static Path findMainFile(@NotNull Path directory) throws IOException {
+        Iterator<Path> iterator = Files.walk(directory).iterator();
+        while (iterator.hasNext()) {
+            final Path path = iterator.next();
+            final String name = FilenameUtils.removeExtension(path.getFileName().toString());
             if (name.equals(MAIN_SCRIPT)) {
-                return file;
+                return path;
             }
         }
-        return null;
+        throw new IOException("Invalid script folder");
     }
 }
