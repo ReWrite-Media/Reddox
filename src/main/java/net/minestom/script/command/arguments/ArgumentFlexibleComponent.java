@@ -37,9 +37,9 @@ public class ArgumentFlexibleComponent extends Argument<Component> {
         } catch (Exception e) {
             if (!infinite) {
                 // Input needs to be quoted
-                input = ArgumentString.staticParse(input);
+                input = Argument.parse(new ArgumentString(input));
             }
-            // Otherwise parse with MiniMessage
+            // Otherwise, parse with MiniMessage
             return MINI_MESSAGE.parse(input);
         }
     }

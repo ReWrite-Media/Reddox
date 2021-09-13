@@ -27,9 +27,8 @@ public class ScriptCommand extends RichCommand {
     public ScriptCommand() {
         super("script");
 
-        setDefaultExecutor((sender, context) -> {
-            sender.sendMessage(Component.text("Usage: /script <list/load/unload> [path]"));
-        });
+        setDefaultExecutor((sender, context) ->
+                sender.sendMessage(Component.text("Usage: /script <list/load/unload> [path]")));
 
         var pathArgument = StringArray("path")
                 .setDefaultValue(() -> new String[0])

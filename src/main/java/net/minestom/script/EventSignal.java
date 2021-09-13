@@ -55,8 +55,7 @@ public enum EventSignal {
 
     private static final String CANCEL_MEMBER = "cancel";
 
-    protected static void init(@NotNull GlobalEventHandler globalEventHandler) {
-
+    static void init(@NotNull GlobalEventHandler globalEventHandler) {
         final GlobalExecutor globalExecutor = ScriptManager.API.getExecutor();
 
         // 'player_join'
@@ -149,11 +148,9 @@ public enum EventSignal {
     }
 
     private static boolean isCancelled(ProxyObject output) {
-        if (!output.hasMember(CANCEL_MEMBER))
-            return false;
+        if (!output.hasMember(CANCEL_MEMBER)) return false;
         final Object member = output.getMember(CANCEL_MEMBER);
-        if (!(member instanceof Value))
-            return false;
+        if (!(member instanceof Value)) return false;
 
         final Value cancelled = (Value) member;
         if (cancelled.isBoolean()) {
@@ -161,5 +158,4 @@ public enum EventSignal {
         }
         return false;
     }
-
 }
