@@ -37,7 +37,7 @@ test {
 }
 
 shadowJar {
-    archiveName("Reddox.jar")
+    archiveName("reddox.jar")
     // Only merge dependencies with the 'compile' configuration
     configurations = [project.configurations.compile]
 }
