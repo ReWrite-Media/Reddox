@@ -35,12 +35,9 @@ public class ScriptCommand extends RichCommand {
                 .setSuggestionCallback(this::pathSuggestion);
 
         addSyntax((sender, context) -> {
-            var scripts = getScripts();
+            List<Script> scripts = getScripts();
 
-            Component component = Component.text("Scripts (" + scripts.size() + "):", NamedTextColor.WHITE);
-
-            sender.sendMessage(component);
-
+            sender.sendMessage(Component.text("Scripts (" + scripts.size() + "):", NamedTextColor.WHITE));
             for (Script script : scripts) {
                 final String name = script.name();
                 Component scriptComponent = Component.text(name, script.isLoaded() ? NamedTextColor.GREEN : NamedTextColor.RED)
@@ -95,14 +92,13 @@ public class ScriptCommand extends RichCommand {
             } else {
                 // Reload all scripts
                 ScriptManager.reload();
-                var scripts = getScripts();
+                final List<Script> scripts = getScripts();
                 sender.sendMessage(Component.text("You did reload " + scripts.size() + " scripts!", NamedTextColor.GREEN));
             }
         }, Literal("reload"), pathArgument);
     }
 
-    @NotNull
-    private List<Script> getScripts() {
+    private @NotNull List<Script> getScripts() {
         return ScriptManager.getScripts();
     }
 
