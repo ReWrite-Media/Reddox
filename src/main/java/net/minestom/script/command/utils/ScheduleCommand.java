@@ -11,7 +11,6 @@ import net.minestom.server.command.builder.CommandResult;
 import net.minestom.server.command.builder.ParsedCommand;
 import net.minestom.server.timer.SchedulerManager;
 import net.minestom.server.timer.Task;
-import net.minestom.server.timer.TaskBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +40,7 @@ public class ScheduleCommand extends RichCommand {
                 for (Map.Entry<Task, String> entry : SCHEDULED_TASKS_MAP.entrySet()) {
                     final Task task = entry.getKey();
                     final String command = entry.getValue();
-                    sender.sendMessage(Component.text("Task id '" + task.getId() + "' with cmd " + command));
+                    sender.sendMessage(Component.text("Task id '" + task.id() + "' with cmd " + command));
                 }
             }, Literal("list"));
         }
@@ -53,8 +52,8 @@ public class ScheduleCommand extends RichCommand {
                 final int id = context.get("task_id");
 
                 final boolean removed = SCHEDULED_TASKS_MAP.keySet().removeIf(task -> {
-                    if (task.getId() == id) {
-                        SCHEDULER_MANAGER.removeTask(task);
+                    if (task.id() == id) {
+                        task.cancel();
 
                         sender.sendMessage(Component.text("You removed the task " + id + " successfully"));
                         return true;
@@ -72,7 +71,7 @@ public class ScheduleCommand extends RichCommand {
         {
             addSyntax((sender, context) -> {
                 SCHEDULED_TASKS_MAP.keySet().removeIf(task -> {
-                    SCHEDULER_MANAGER.removeTask(task);
+                    task.cancel();
                     return true;
                 });
                 sender.sendMessage(Component.text("All tasks have been removed!"));
@@ -136,7 +135,7 @@ public class ScheduleCommand extends RichCommand {
 
         final String input = commandResult.getInput();
         AtomicReference<Task> taskReference = new AtomicReference<>();
-        TaskBuilder taskBuilder = SCHEDULER_MANAGER.buildTask(() -> {
+        Task.Builder taskBuilder = SCHEDULER_MANAGER.buildTask(() -> {
             parsedCommand.execute(COMMAND_MANAGER.getConsoleSender());
             if (repeat == null) {
                 final Task task = taskReference.get();
@@ -159,9 +158,9 @@ public class ScheduleCommand extends RichCommand {
         SCHEDULED_TASKS_MAP.put(task, input);
 
         CommandData commandData = new CommandData();
-        commandData.set("taskId", task.getId());
+        commandData.set("taskId", task.id());
         context.setReturnData(commandData);
 
-        sender.sendMessage(Component.text("You created the task " + task.getId() + " successfully (" + input + ")"));
+        sender.sendMessage(Component.text("You created the task " + task.id() + " successfully (" + input + ")"));
     }
 }

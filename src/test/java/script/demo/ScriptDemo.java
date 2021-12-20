@@ -12,10 +12,8 @@ import net.minestom.server.extras.optifine.OptifineSupport;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.world.biomes.Biome;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ScriptDemo {
@@ -26,7 +24,6 @@ public class ScriptDemo {
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
         instanceContainer.setChunkGenerator(new GeneratorDemo());
-        instanceContainer.enableAutoChunkLoad(true);
 
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
@@ -61,14 +58,8 @@ public class ScriptDemo {
         }
 
         @Override
-        public void fillBiomes(Biome[] biomes, int chunkX, int chunkZ) {
-            Arrays.fill(biomes, Biome.PLAINS);
-        }
-
-        @Override
         public List<ChunkPopulator> getPopulators() {
             return null;
         }
     }
-
 }

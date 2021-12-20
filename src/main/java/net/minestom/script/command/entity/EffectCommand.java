@@ -58,7 +58,7 @@ public class EffectCommand extends RichCommand {
                         final int amplifier = context.get("amplifier");
                         final List<Entity> targets = entityFinder.find(sender);
 
-                        Potion potion = new Potion(potionEffect, (byte) amplifier, ticks * 20);
+                        Potion potion = new Potion(potionEffect, (byte) amplifier, ticks * 20, (byte) 0);
 
                         for (Entity target : targets) {
                             target.addEffect(potion);
